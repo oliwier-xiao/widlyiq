@@ -40,8 +40,9 @@ export function PortalTable({ portals, className }: { portals: PortalRow[]; clas
                   {p.mode === 'live' ? (
                     <span className="inline-flex items-center gap-1.5"><span className="size-2 bg-ok" aria-hidden />live</span>
                   ) : (
-                    <span className="inline-flex items-center gap-1.5 text-warn" title={p.reason ?? undefined}>
-                      <span className="size-2 border-[1.5px] border-warn" aria-hidden />
+                    // Same mark as ETL Lab: grey hollow for a snapshot by choice, amber only when a live attempt failed.
+                    <span className={`inline-flex items-center gap-1.5 ${p.reason && p.reason !== 'tryb snapshot' ? 'text-warn' : 'text-ink-2'}`}>
+                      <span className={`size-2 border-[1.5px] ${p.reason && p.reason !== 'tryb snapshot' ? 'border-warn' : 'border-ink-2'}`} aria-hidden />
                       snapshot{p.reason && p.reason !== 'tryb snapshot' ? ` (${p.reason})` : ''}
                     </span>
                   )}

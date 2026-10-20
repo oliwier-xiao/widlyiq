@@ -8,10 +8,12 @@ type PanelProps = {
   children: ReactNode
   className?: string
   bodyClassName?: string
+  /** false keeps the footer directly under the content when a grid row is taller than the panel. */
+  stretch?: boolean
 }
 
 /** Panels tile edge to edge on 1px seams; the grid around them paints the seam, panels never draw borders or shadows. */
-export function Panel({ title, subtitle, actions, footer, children, className = '', bodyClassName = '' }: PanelProps) {
+export function Panel({ title, subtitle, actions, footer, children, className = '', bodyClassName = '', stretch = true }: PanelProps) {
   return (
     <section className={`flex min-w-0 flex-col bg-paper ${className}`}>
       <header className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 px-5 pb-3 pt-4">
@@ -21,7 +23,7 @@ export function Panel({ title, subtitle, actions, footer, children, className = 
         </div>
         {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
       </header>
-      <div className={`min-h-0 flex-1 ${bodyClassName}`}>{children}</div>
+      <div className={`min-h-0 ${stretch ? 'flex-1' : ''} ${bodyClassName}`}>{children}</div>
       {footer && <footer className="t-meta px-5 pb-4 pt-3">{footer}</footer>}
     </section>
   )

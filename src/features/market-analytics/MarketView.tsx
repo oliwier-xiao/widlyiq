@@ -52,6 +52,7 @@ export function MarketView({ filters, regions, run }: ViewProps) {
         {/* On a phone the answer comes first; on a desktop the field leads on the left. */}
         <Panel
           className="order-2 lg:order-1"
+          stretch={false}
           title="Pole ofert"
           subtitle={`Każda kropka to jedna oferta (${scopeLabel}, zł ${CONTRACT_UNITS[filters.contract]}). Pomarańczowe: ${regionLabel}. Kliknij poziom, żeby go wybrać.`}
           actions={<CodeButton anchor="normalize-nbp" />}
