@@ -41,7 +41,7 @@ CLEAN_COLUMNS = ["offer_id", "source", "source_mode", "is_synthetic", "title", "
 RAW_COLUMNS = ["offer_id", "source", "source_mode", "title", "company", "category_raw", "seniority_raw",
                "contract_raw", "salary_from", "salary_to", "currency", "period_raw", "city", "region_raw",
                "skills_raw", "published_at", "raw_json"]
-REJECTED_COLUMNS = ["offer_id", "source", "stage", "reason", "title", "seniority", "category", "region",
+REJECTED_COLUMNS = ["offer_id", "source", "stage", "reason", "title", "seniority", "category", "contract", "region",
                     "salary_pln_month", "lower_fence", "upper_fence", "z_score", "group_key"]
 
 
