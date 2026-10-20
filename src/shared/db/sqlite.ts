@@ -18,7 +18,8 @@ function handle(): Handle {
 }
 
 export function hasDatabase(): boolean {
-  if (!existsSync(DB_PATH)) return false
+  // The database is a runtime file the pipeline rewrites; it must never be traced into the build output.
+  if (!existsSync(/*turbopackIgnore: true*/ DB_PATH)) return false
   const row = handle().prepare("SELECT count(*) AS n FROM sqlite_master WHERE type = 'table' AND name = 'offers_clean'").get() as { n: number }
   return row.n > 0
 }

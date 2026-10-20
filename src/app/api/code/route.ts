@@ -38,7 +38,8 @@ export async function GET(request: Request) {
   }
   // Fixed file list: the anchor picks a snippet, it never names a path.
   for (const rel of SOURCES) {
-    const text = await readFile(path.join(ROOT, rel), 'utf8').catch(() => null)
+    // Source files are read at request time from a fixed list; tracing them into the bundle buys nothing.
+    const text = await readFile(path.join(/*turbopackIgnore: true*/ ROOT, rel), 'utf8').catch(() => null)
     if (!text) continue
     const lines = text.split('\n')
     const hit = lines.findIndex((l) => l.includes(`# [${anchor}]`) || l.includes(`// [${anchor}]`))
