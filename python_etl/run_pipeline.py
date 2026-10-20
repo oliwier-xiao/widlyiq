@@ -123,6 +123,11 @@ def run(mode: str, paths: dict[str, Path], reporter: Reporter) -> dict:
     order, clusters = features.heatmap_order(cooccur, fs.skills)
     stats["heatmap_order"] = stats["skill"].map(order)
     stats["heatmap_cluster"] = stats["skill"].map(clusters)
+    # A cluster is named after the job category its skills appear in most, so the heatmap blocks read as "Data", "Frontend".
+    pairs = clean[["category", "skills"]].explode("skills")
+    pairs["cluster"] = pairs["skills"].map(clusters)
+    dominant = pairs.dropna(subset=["cluster"]).groupby("cluster")["category"].agg(lambda c: c.value_counts().index[0])
+    stats["heatmap_cluster_label"] = stats["heatmap_cluster"].map(dominant)
     reporter.done("cooccur-matrix", len(clean), 0, pairs=len(cooccur), shape=[len(fs.skills), len(fs.skills)])
 
     reporter.start("ml-ridge", len(clean))
