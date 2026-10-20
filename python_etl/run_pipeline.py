@@ -120,6 +120,7 @@ def run(mode: str, paths: dict[str, Path], reporter: Reporter) -> dict:
     reporter.start("cooccur-matrix", len(clean))
     cooccur = features.cooccurrence(fs, clean["salary_pln_month"].to_numpy(dtype=float))
     stats = features.skill_stats(clean, fs.skills)
+    stats["heatmap_order"] = stats["skill"].map(features.heatmap_order(cooccur, fs.skills))
     reporter.done("cooccur-matrix", len(clean), 0, pairs=len(cooccur), shape=[len(fs.skills), len(fs.skills)])
 
     reporter.start("ml-ridge", len(clean))

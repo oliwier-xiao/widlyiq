@@ -7,6 +7,8 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 from scipy import sparse
+from scipy.cluster.hierarchy import leaves_list, linkage
+from scipy.spatial.distance import squareform
 from sklearn.preprocessing import StandardScaler
 
 TOP_SKILLS = 40
@@ -97,3 +99,15 @@ def skill_stats(df: pd.DataFrame, skills: list[str]) -> pd.DataFrame:
     }).fillna({"podkarpackie_demand": 0})
     stats["share"] = (stats["demand"] / len(df)).round(4)
     return stats.reset_index(names="skill")
+
+
+def heatmap_order(cooccur: pd.DataFrame, skills: list[str]) -> dict[str, int]:
+    """Average-linkage clustering on 1 - Jaccard puts skills that travel together next to each other on the heatmap."""
+    idx = {s: i for i, s in enumerate(skills)}
+    dist = np.ones((len(skills), len(skills)))
+    for row in cooccur.itertuples(index=False):
+        dist[idx[row.skill_a], idx[row.skill_b]] = 1.0 - row.jaccard
+    np.fill_diagonal(dist, 0.0)
+    dist = (dist + dist.T) / 2
+    order = leaves_list(linkage(squareform(dist, checks=False), method="average"))
+    return {skills[i]: rank for rank, i in enumerate(order)}
