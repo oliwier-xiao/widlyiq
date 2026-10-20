@@ -11,6 +11,177 @@
         ],
         "createdAt": "2026-10-20T14:23:30.366Z",
         "reason": "agent decision: canon card is the category standard played straight by contract (new-work standing exit), Inter is intentional there only"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/canon.html"
+        ],
+        "createdAt": "2026-10-20T16:29:21.797Z",
+        "reason": "agent decision: spent decision-round sketch of a non-chosen or pre-system world, kept for the record, gitignored, never shipped"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/canon.html"
+        ],
+        "createdAt": "2026-10-20T16:29:21.821Z",
+        "reason": "agent decision: spent decision-round sketch of a non-chosen or pre-system world, kept for the record, gitignored, never shipped"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/canon.html"
+        ],
+        "createdAt": "2026-10-20T16:29:21.844Z",
+        "reason": "agent decision: spent decision-round sketch of a non-chosen or pre-system world, kept for the record, gitignored, never shipped"
+      },
+      {
+        "rule": "design-system-radius",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/canon.html"
+        ],
+        "createdAt": "2026-10-20T16:29:21.866Z",
+        "reason": "agent decision: spent decision-round sketch of a non-chosen or pre-system world, kept for the record, gitignored, never shipped"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/variant-a.html"
+        ],
+        "createdAt": "2026-10-20T16:29:22.173Z",
+        "reason": "agent decision: spent decision-round sketch of a non-chosen or pre-system world, kept for the record, gitignored, never shipped"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/variant-a.html"
+        ],
+        "createdAt": "2026-10-20T16:29:22.197Z",
+        "reason": "agent decision: spent decision-round sketch of a non-chosen or pre-system world, kept for the record, gitignored, never shipped"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/variant-b.html"
+        ],
+        "createdAt": "2026-10-20T16:29:22.467Z",
+        "reason": "agent decision: spent decision-round sketch of a non-chosen or pre-system world, kept for the record, gitignored, never shipped"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/variant-b.html"
+        ],
+        "createdAt": "2026-10-20T16:29:22.492Z",
+        "reason": "agent decision: spent decision-round sketch of a non-chosen or pre-system world, kept for the record, gitignored, never shipped"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/variant-b.html"
+        ],
+        "createdAt": "2026-10-20T16:29:22.517Z",
+        "reason": "agent decision: spent decision-round sketch of a non-chosen or pre-system world, kept for the record, gitignored, never shipped"
+      },
+      {
+        "rule": "design-system-radius",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/variant-b.html"
+        ],
+        "createdAt": "2026-10-20T16:29:22.542Z",
+        "reason": "agent decision: spent decision-round sketch of a non-chosen or pre-system world, kept for the record, gitignored, never shipped"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/variant-c.html"
+        ],
+        "createdAt": "2026-10-20T16:29:22.883Z",
+        "reason": "agent decision: spent decision-round sketch of a non-chosen or pre-system world, kept for the record, gitignored, never shipped"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/variant-c.html"
+        ],
+        "createdAt": "2026-10-20T16:29:22.907Z",
+        "reason": "agent decision: spent decision-round sketch of a non-chosen or pre-system world, kept for the record, gitignored, never shipped"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/variant-c.html"
+        ],
+        "createdAt": "2026-10-20T16:29:22.931Z",
+        "reason": "agent decision: spent decision-round sketch of a non-chosen or pre-system world, kept for the record, gitignored, never shipped"
+      },
+      {
+        "rule": "design-system-radius",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/variant-c.html"
+        ],
+        "createdAt": "2026-10-20T16:29:22.956Z",
+        "reason": "agent decision: spent decision-round sketch of a non-chosen or pre-system world, kept for the record, gitignored, never shipped"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/chosen-c-light.html"
+        ],
+        "createdAt": "2026-10-20T16:29:23.249Z",
+        "reason": "agent decision: spent decision-round sketch of a non-chosen or pre-system world, kept for the record, gitignored, never shipped"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/chosen-c-light.html"
+        ],
+        "createdAt": "2026-10-20T16:29:23.272Z",
+        "reason": "agent decision: spent decision-round sketch of a non-chosen or pre-system world, kept for the record, gitignored, never shipped"
+      },
+      {
+        "rule": "design-system-radius",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/chosen-c-light.html"
+        ],
+        "createdAt": "2026-10-20T16:29:23.293Z",
+        "reason": "agent decision: spent decision-round sketch of a non-chosen or pre-system world, kept for the record, gitignored, never shipped"
+      },
+      {
+        "rule": "repeating-stripes-gradient",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/canon.html"
+        ],
+        "createdAt": "2026-10-20T16:29:33.277Z",
+        "reason": "agent decision: spent decision-round sketch, gitignored, never shipped"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/variant-a.html"
+        ],
+        "createdAt": "2026-10-20T16:29:33.569Z",
+        "reason": "agent decision: spent decision-round sketch, gitignored, never shipped"
       }
     ]
   }

@@ -77,7 +77,7 @@ function Metric({ term, value }: { term: string; value: string }) {
   return (
     <div>
       <dt className="t-meta">{term}</dt>
-      <dd className="mt-0.5 text-[20px] font-bold tnum [font-stretch:85%]">{value}</dd>
+      <dd className="mt-0.5 t-figure-sm">{value}</dd>
     </div>
   )
 }

@@ -49,13 +49,13 @@ export function PipelineRibbon({ run }: { run: RibbonRun }) {
                 aria-describedby={focused ? 'ribbon-hint' : undefined}
                 className={`relative flex h-full w-full items-center overflow-hidden px-1.5 text-left md:px-3 ${focused ? 'outline-2 -outline-offset-2 outline-paper' : ''}`}
                 // While a run streams, the cell stays grey and the fill span reveals its colour left to right.
-                style={{ background: snap && live.status === 'idle' ? meta.color : running ? 'transparent' : '#e7e9e4' }}
+                style={{ background: snap && live.status === 'idle' ? meta.color : running ? 'transparent' : 'var(--color-pending)' }}
               >
                 {running && <span className="ribbon-running absolute inset-0" aria-hidden />}
                 {snap && live.status !== 'idle' && (
                   <span key={`${snap.rows_out}-${snap.duration_ms}`} className="ribbon-fill absolute inset-0" style={{ background: meta.color }} aria-hidden />
                 )}
-                <span className={`relative truncate text-[12px] font-semibold tnum md:t-table md:font-semibold ${snap ? 'text-paper' : 'text-ink-2'}`}>
+                <span className={`relative truncate t-micro md:t-table md:font-semibold ${snap ? 'text-paper' : 'text-ink-2'}`}>
                   <span className="md:hidden">{snap ? ribbonShort(snap) : running ? '…' : ''}</span>
                   <span className="hidden md:inline">{snap ? ribbonLabel(snap) : running ? `${meta.label}…` : meta.label}</span>
                 </span>

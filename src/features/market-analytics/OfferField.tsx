@@ -19,7 +19,7 @@ export function OfferField({ layout, filters }: { layout: FieldLayout; filters: 
   const { g, width, height, lanes, ticks, radius } = layout
   const regionName = filters.region === 'polska' ? 'Polska' : formatRegion(filters.region)
   const plotBottom = lanes.length * g.laneHeight
-  const meta = g.compact ? 'text-[11px]' : 'text-[12px]'
+  const meta = 'text-[12px]'
 
   const select = (s: Seniority) =>
     startTransition(() => router.push(toSearch('market', filters, { seniority: s }), { scroll: false }))

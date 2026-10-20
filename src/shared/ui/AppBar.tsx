@@ -11,7 +11,7 @@ export function AppBar({ view, filters, provenance }: { view: View; filters: Fil
   return (
     <header className="sticky top-0 z-40 bg-carbon text-paper">
       <div className="flex flex-wrap items-center gap-x-5 px-4 md:h-12 md:flex-nowrap lg:px-6">
-        <Link href="/" className="flex h-12 shrink-0 items-center text-[19px] font-extrabold tracking-[-0.01em] text-paper [font-stretch:125%]">
+        <Link href="/" className="flex h-12 shrink-0 items-center t-wordmark text-paper">
           WidlyIQ
         </Link>
         {/* Phones get the tabs on their own scrolling row so all four views stay visible. */}
@@ -21,7 +21,7 @@ export function AppBar({ view, filters, provenance }: { view: View; filters: Fil
         <div className="ml-auto flex h-12 shrink-0 items-center gap-3">
           {provenance && (
             // Always visible: a synthetic figure must never appear without its label, phones included.
-            <span className="inline-flex items-center gap-2 border border-carbon-2 px-2 py-1 text-[12px] text-dot-soft md:px-2.5 md:text-[13px]">
+            <span className="inline-flex items-center gap-2 border border-carbon-2 px-2 py-1 t-micro font-medium text-dot-soft md:px-2.5 md:text-[13px]">
               <span className={`size-2 ${provenance.mode === 'live' && provenance.fallbacks === 0 ? 'bg-[#3ccf74]' : 'border-[1.5px] border-dot-soft'}`} aria-hidden />
               <span className="hidden md:inline">
                 {provenance.mode === 'live'

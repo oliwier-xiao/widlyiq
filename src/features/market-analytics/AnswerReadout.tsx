@@ -32,7 +32,7 @@ export function AnswerReadout({ answer, filters }: { answer: Answer; filters: Fi
         <>
           <p className="mt-5 flex items-end gap-3">
             <span className="t-readout">{formatNumber(p50)}</span>
-            <span className="pb-2 text-[20px] font-semibold leading-none">zł {CONTRACT_UNITS[filters.contract]}</span>
+            <span className="pb-2 t-figure-sm font-semibold">zł {CONTRACT_UNITS[filters.contract]}</span>
           </p>
           <p className={`mt-2 text-[15px] ${SUB}`}>
             Mediana z {formatNumber(answer.n)} ofert z widełkami
@@ -41,12 +41,12 @@ export function AnswerReadout({ answer, filters }: { answer: Answer; filters: Fi
           <dl className="mt-5 grid grid-cols-2 border-t border-[#c2430f]">
             <div className="border-r border-[#c2430f] py-3 pr-4">
               <dt className={`text-[13px] font-medium ${SUB}`}>Krotność płacy GUS</dt>
-              <dd className="mt-0.5 text-[26px] font-extrabold leading-none tnum [font-stretch:90%]">{formatMultiple(p50 / answer.gus)}</dd>
+              <dd className="mt-0.5 t-figure">{formatMultiple(p50 / answer.gus)}</dd>
               <dd className={`mt-1 text-[13px] tnum ${SUB}`}>{formatPLN(answer.gus)} brutto, GUS {answer.gusYear}</dd>
             </div>
             <div className="py-3 pl-4">
               <dt className={`text-[13px] font-medium ${SUB}`}>Względem całej Polski</dt>
-              <dd className="mt-0.5 text-[26px] font-extrabold leading-none tnum [font-stretch:90%]">
+              <dd className="mt-0.5 t-figure">
                 {vsPolska === null ? 'to jest Polska' : formatSignedPct(vsPolska)}
               </dd>
               <dd className={`mt-1 text-[13px] tnum ${SUB}`}>{answer.nationalP50 ? `mediana ${formatPLN(answer.nationalP50)}` : 'za mało ofert'}</dd>
@@ -55,7 +55,7 @@ export function AnswerReadout({ answer, filters }: { answer: Answer; filters: Fi
         </>
       ) : (
         <div className="mt-5">
-          <p className="text-[28px] font-extrabold leading-tight [font-stretch:90%]">Za mało ofert na pewną medianę</p>
+          <p className="t-figure leading-tight">Za mało ofert na pewną medianę</p>
           <p className={`mt-2 text-[15px] ${SUB}`}>
             Ten profil ma {formatNumber(answer.n)} ofert z widełkami, a próg to {MIN_SAMPLE}. Poszerz filtr:
           </p>

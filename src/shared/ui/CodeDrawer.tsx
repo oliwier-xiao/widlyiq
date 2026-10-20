@@ -65,7 +65,7 @@ export function CodeButton({ anchor, label = 'Kod' }: { anchor: Anchor; label?: 
     <button
       type="button"
       onClick={() => open(anchor)}
-      className="inline-flex h-7 shrink-0 items-center gap-1.5 border border-seam bg-paper px-2.5 t-code text-[12px] text-ink transition-[background-color,transform] duration-150 ease-[var(--ease-out)] hover:bg-toolbar active:scale-[0.97]"
+      className="inline-flex h-7 shrink-0 items-center gap-1.5 border border-seam bg-paper px-2.5 font-mono t-micro font-normal text-ink transition-[background-color,transform] duration-150 ease-[var(--ease-out)] hover:bg-toolbar active:scale-[0.97]"
       aria-label={`Pokaż kod Pythona dla [${anchor}]`}
     >
       <CodeIcon size={14} weight="bold" aria-hidden />

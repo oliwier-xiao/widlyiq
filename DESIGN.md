@@ -15,6 +15,7 @@ colors:
   signal: "#ff5b1a"
   signal-ink: "#b83a0b"
   signal-wash: "#fff1ea"
+  signal-tint: "#ffd3bf"
   signal-rule: "#c2430f"
   signal-sub-ink: "#4a1d07"
   ok: "#136234"
@@ -22,6 +23,8 @@ colors:
   warn-wash: "#fdf3e8"
   error: "#a11b15"
   live: "#3ccf74"
+  pending: "#e7e9e4"
+  pending-stripe: "#d2d5ce"
   stage-extract: "#2549b8"
   stage-schema: "#7432b8"
   stage-nbp: "#095a63"
@@ -38,6 +41,20 @@ typography:
     letterSpacing: "-0.02em"
     fontFeature: "tnum"
     fontVariation: "'wdth' 70"
+  figure:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "26px"
+    fontWeight: 800
+    lineHeight: 1
+    fontFeature: "tnum"
+    fontVariation: "'wdth' 90"
+  figure-sm:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "20px"
+    fontWeight: 700
+    lineHeight: 1
+    fontFeature: "tnum"
+    fontVariation: "'wdth' 85"
   headline:
     fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
     fontSize: "22px"
@@ -74,6 +91,20 @@ typography:
     fontSize: "15px"
     fontWeight: 600
     lineHeight: 1.2
+  wordmark:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "19px"
+    fontWeight: 800
+    lineHeight: 1
+    letterSpacing: "-0.01em"
+    fontVariation: "'wdth' 125"
+  micro:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "12px"
+    fontWeight: 600
+    lineHeight: 1.3
+    fontFeature: "tnum"
+    fontVariation: "'wdth' 90"
   code:
     fontFamily: "Red Hat Mono, ui-monospace, monospace"
     fontSize: "13px"
@@ -81,6 +112,7 @@ typography:
     lineHeight: 1.55
 rounded:
   none: "0px"
+  full: "9999px"
 spacing:
   seam: "1px"
   "1": "4px"
@@ -187,7 +219,7 @@ Light only, by decision: the dashboard is presented on a lecture-room projector 
 
 **Key Characteristics:**
 - Carbon 48px bar, white ground, 1px seams painted by the grid gap, never by panels.
-- Square corners everywhere (0px); no shadows, no cards, no gradients.
+- Square corners everywhere (0px); no shadows, no cards, no gradients. The one round element is the loading spinner (rounded.full).
 - Selection by inversion to a carbon plate (or a white plate on carbon).
 - Orange is the answer and the action; stage colours are the pipeline; grey is everyone else.
 - One width-axis family for all text roles; mono only for code.
@@ -198,7 +230,7 @@ Light only, by decision: the dashboard is presented on a lecture-room projector 
 A near-neutral, faintly green-grey world with one hot signal and a closed set of pipeline stage colours.
 
 ### Primary
-- **International Signal Orange** (signal): the answer readout field, Podkarpackie dots and P10 to P90 band, the "Uruchom pipeline" primary button. Text on it is ink, never white. Snapshot provenance uses a hollow grey square and the filter-pending sweep is ink, so orange never means "status".
+- **International Signal Orange** (signal): the answer readout field, Podkarpackie dots and P10 to P90 band, the "Uruchom pipeline" primary button. Text on it is ink, never white. Snapshot provenance uses a hollow grey square and the filter-pending sweep is ink, so orange never means "status". Its light tint (signal-tint) is the text-selection colour.
 - **Burnt Signal Ink** (signal-ink): orange as text or line on white, where signal itself fails contrast: focus rings, code anchor tokens, the anchor line number in the drawer.
 - **Signal Wash** (signal-wash): the highlighted anchor line in the code drawer.
 - **Readout Rule** (signal-rule) and **Readout Sub-ink** (signal-sub-ink): the dividing rules and secondary text inside the orange readout. Secondary text on orange is a dark tint of the same hue, never grey.
@@ -303,7 +335,7 @@ Square. Every corner in the system is 0px: buttons, selects, chips, tabs, panels
 - **Mobile:** tabs move to a second, horizontally scrolling row under a carbon-2 hairline.
 
 ### Pipeline Ribbon (signature)
-Seven flat stage segments with 2px gaps on toolbar grey, each filled with its stage colour and a paper count label ("1 307 surowych", "−78 duplikaty"). Loss stages carry a notch in the 6px row below, its width scaled to the share of records dropped. Hover or focus outlines the segment in paper, highlights the same stage across the ETL Lab list and drawer, and shows a carbon tooltip with the anchor. During a live run, pending cells are grey, the running cell shows 45° moving stripes, and each finished cell fills left to right (320ms ease-out). At rest, nothing animates.
+Seven flat stage segments with 2px gaps on toolbar grey, each filled with its stage colour and a paper count label ("1 307 surowych", "−78 duplikaty"). Loss stages carry a notch in the 6px row below, its width scaled to the share of records dropped. Hover or focus outlines the segment in paper, highlights the same stage across the ETL Lab list and drawer, and shows a carbon tooltip with the anchor. During a live run, pending cells are grey (pending, with pending-stripe for the running stripes), the running cell shows 45° moving stripes, and each finished cell fills left to right (320ms ease-out). At rest, nothing animates.
 
 ### Answer Readout (signature)
 An orange field with the profile as a title, n at right, the 88px readout with its unit, a sentence of basis, and a two-cell grid of secondary figures divided by readout rules. Secondary text uses signal-sub-ink. A "Kod" button closes the field.
