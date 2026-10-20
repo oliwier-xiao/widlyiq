@@ -48,7 +48,7 @@ Built and worked on a laptop. Presented on a lecture-room projector during the p
 - Name: WidlyIQ, package `widlyiq`.
 - Voice: precise, engineering-first, Polish with English terms of art.
 - Category references named by the user: Linear, Vercel Analytics, Stripe Sigma ("Pro-Tool / Data Intelligence").
-- Dials set by the user: DESIGN_VARIANCE 7, MOTION_INTENSITY 6, VISUAL_DENSITY 8.
+- Dials set by the user: DESIGN_VARIANCE 7, MOTION_INTENSITY 6, VISUAL_DENSITY 8, then lowered by the user after reviewing the sketch: density about 6, cleaner text structure, unnecessary elements removed.
 - Bans set by the user: no AI gradients, no row of three equal cards, no em-dash, no placeholder names such as "Jane Doe".
 - Candidate directions named by the user for the first round: A High-Contrast Quantitative Desk, B Editorial Statistical Lab, C Modern Cloud Telemetry.
 

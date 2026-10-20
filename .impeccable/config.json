@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          ".impeccable/mocks/decision/canon.html"
+        ],
+        "createdAt": "2026-10-20T14:23:30.366Z",
+        "reason": "agent decision: canon card is the category standard played straight by contract (new-work standing exit), Inter is intentional there only"
+      }
+    ]
+  }
+}
