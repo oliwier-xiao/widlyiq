@@ -1,5 +1,6 @@
 'use client'
 
+import { MotionConfig } from 'motion/react'
 import { useRouter } from 'next/navigation'
 import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react'
 
@@ -84,7 +85,11 @@ export function PipelineRunProvider({ children }: { children: ReactNode }) {
   }, [apply])
 
   const value = useMemo(() => ({ ...state, start }), [state, start])
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>
+  return (
+    <Ctx.Provider value={value}>
+      <MotionConfig reducedMotion="user">{children}</MotionConfig>
+    </Ctx.Provider>
+  )
 }
 
 export function usePipelineRun(): RunContext {

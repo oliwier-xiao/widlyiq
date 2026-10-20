@@ -139,6 +139,10 @@
   background-size: 28px 100%;
   animation: ribbon-stripes 600ms linear infinite;
 }
+/* A filter change re-swarms the field; dots glide to their new slot so the eye can follow one offer. */
+@utility field-dot {
+  transition: cx 200ms var(--ease-out), cy 200ms var(--ease-out);
+}
 @utility spinner {
   width: 14px;
   height: 14px;

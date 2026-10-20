@@ -7,7 +7,7 @@ import type { OfferRow, RejectedRow } from './queries'
 export const FIELD = { width: 900, laneHeight: 128, labelWidth: 104, plotRight: 752, rejLeft: 784, rejRight: 888, axis: 42 }
 const MAX_DOTS = 2400
 
-export type Dot = { cx: number; cy: number; hi: boolean; i: number }
+export type Dot = { cx: number; cy: number; hi: boolean; i: number; id: string }
 export type Marker = { x: number; value: number }
 export type Lane = {
   seniority: Seniority
@@ -90,14 +90,14 @@ export function layoutField(field: OfferRow[], rejected: RejectedRow[], f: Filte
     const lanePct = all.length ? (quantile([...all].sort((a, b) => a - b), 0.5) ?? 0) : 0
     const toRejDots = (list: RejectedRow[], left: number) =>
       list.slice(0, 18).map((r, k) => ({
-        cx: left + (k % 3) * 11, cy: cy - 22 + Math.floor(k / 3) * 9, hi: false, i: rejectedIndex.get(r) ?? 0,
+        cx: left + (k % 3) * 11, cy: cy - 22 + Math.floor(k / 3) * 9, hi: false, i: rejectedIndex.get(r) ?? 0, id: r.offer_id,
       }))
     return {
       seniority: s,
       top,
       n: all.length,
       nRegion: regional.length,
-      dots: rows.map((o, k) => ({ cx: x(o.salary_pln_month), cy: cy + ys[k], hi: isHi(o), i: shownIndex.get(o) ?? 0 })),
+      dots: rows.map((o, k) => ({ cx: x(o.salary_pln_month), cy: cy + ys[k], hi: isHi(o), i: shownIndex.get(o) ?? 0, id: o.offer_id })),
       national: nat === null ? null : { x: x(nat), value: nat },
       region: pct ? {
         p10: s === f.seniority ? { x: x(pct.p10), value: pct.p10 } : null,

@@ -1,7 +1,7 @@
 'use client'
 
 import { CodeIcon, XIcon } from '@phosphor-icons/react'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 
 import { highlightLine, type Token } from '@/shared/lib/highlight'
@@ -76,13 +76,21 @@ export function CodeButton({ anchor, label = 'Kod' }: { anchor: Anchor; label?: 
 
 function Drawer({ state, onClose }: { state: DrawerState; onClose: () => void }) {
   const panel = useRef<HTMLDivElement>(null)
+  const reduce = useReducedMotion()
+  // Full transform strings run on the compositor; motion's x shorthand animates on the main thread.
+  const hidden = reduce ? { opacity: 0 } : { transform: 'translateX(100%)' }
+  const shown = reduce ? { opacity: 1 } : { transform: 'translateX(0%)' }
 
   useEffect(() => {
     if (!state.anchor) return
+    const opener = document.activeElement as HTMLElement | null
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
     window.addEventListener('keydown', onKey)
     panel.current?.focus()
-    return () => window.removeEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      opener?.focus?.()
+    }
   }, [state.anchor, onClose])
 
   useEffect(() => {
@@ -109,9 +117,9 @@ function Drawer({ state, onClose }: { state: DrawerState; onClose: () => void })
             aria-modal="true"
             aria-label={`Kod źródłowy [${state.anchor}]`}
             className="absolute inset-y-0 right-0 flex w-full max-w-[720px] flex-col bg-paper outline-none"
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%', transition: { duration: 0.18, ease: [0.23, 1, 0.32, 1] } }}
+            initial={hidden}
+            animate={shown}
+            exit={{ ...hidden, transition: { duration: 0.18, ease: [0.23, 1, 0.32, 1] } }}
             transition={{ duration: 0.32, ease: [0.32, 0.72, 0, 1] }}
           >
             <header className="flex items-center justify-between gap-4 bg-carbon px-5 py-3 text-paper">

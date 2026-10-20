@@ -98,14 +98,14 @@ export function OfferField({ layout, filters }: { layout: FieldLayout; filters: 
 
                 <g>
                   {l.dots.filter((d) => !d.hi).map((d) => (
-                    <circle key={d.i} cx={d.cx} cy={d.cy} r={radius} data-i={d.i} data-k="offer" className="fill-dot" fillOpacity={0.7} />
+                    <circle key={d.id} cx={d.cx} cy={d.cy} r={radius} data-i={d.i} data-k="offer" className="field-dot fill-dot" fillOpacity={0.7} />
                   ))}
                   {l.dots.filter((d) => d.hi).map((d) => (
-                    <circle key={d.i} cx={d.cx} cy={d.cy} r={radius + 0.6} data-i={d.i} data-k="offer" className="fill-signal stroke-paper" strokeWidth={0.8} />
+                    <circle key={d.id} cx={d.cx} cy={d.cy} r={radius + 0.6} data-i={d.i} data-k="offer" className="field-dot fill-signal stroke-paper" strokeWidth={0.8} />
                   ))}
                 </g>
                 {[...l.rejectedLow, ...l.rejectedHigh].map((d) => (
-                  <circle key={`r${d.i}`} cx={d.cx} cy={d.cy} r={3.4} data-i={d.i} data-k="rejected" className="fill-paper stroke-stage-iqr" strokeWidth={1.4} />
+                  <circle key={`r${d.id}`} cx={d.cx} cy={d.cy} r={3.4} data-i={d.i} data-k="rejected" className="fill-paper stroke-stage-iqr" strokeWidth={1.4} />
                 ))}
               </g>
             )
