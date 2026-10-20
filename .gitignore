@@ -1,0 +1,27 @@
+# dependencies
+node_modules/
+
+# next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# env
+.env*
+
+# local agent configuration
+.claude/
+CLAUDE.md
+AGENTS.md
+
+# os / editor
+.DS_Store
+*.log
