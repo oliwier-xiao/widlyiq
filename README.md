@@ -68,6 +68,7 @@ Każdy mechanizm ma jednoliniową kotwicę: Ctrl+Shift+F na nazwie w nawiasie kw
 | load-sqlite | `[sqlite-query]` | zapis w jednej transakcji; ta sama kotwica oznacza odczyty w Next.js |
 
 Wynik w trybie snapshot: 1 307 surowych, 18 błędów schematu, 78 duplikatów, 140 imputacji, 40 outlierów, 1 171 czystych ofert.
+Przebieg live z 20.10.2026: 18 001 prawdziwych ogłoszeń z No Fluff Jobs plus snapshoty Just Join IT i SOLID.Jobs dały 5 064 czyste oferty, bo deduplikacja scaliła kopie tej samej oferty publikowanej osobno dla każdego miasta.
 
 ## Tabele SQLite
 
@@ -102,7 +103,7 @@ RidgeCV przewiduje miesięczną płacę w PLN. Cechy binarne nie są skalowane, 
 
 - **Rynek** (start): pole wszystkich ofert w torach Junior do Lead, pomarańczowy odczyt mediany z krotnością GUS i różnicą do Polski, ranking województw, bias portali.
 - **ETL Lab**: uruchamianie pipeline z podglądem etapów na żywo, lejek rekordów, źródła z powodami fallbacku, inspektor Raw vs Clean, wykres diagnostyczny Matplotlib.
-- **Skill Graph**: popyt a płaca dla każdego skilla oraz interaktywna heatmapa X.T @ X.
+- **Skill Graph**: popyt a płaca dla każdego skilla oraz interaktywna heatmapa X.T @ X, ułożona grupowaniem hierarchicznym (average linkage na 1 − Jaccard) i podzielona szwami na 8 klastrów nazwanych od dominującej kategorii ofert.
 - **Estymator**: kalkulator Ridge dla wybranego stacku (premia techniczna w PLN, krotność GUS) i eksport macierzy cech do CSV, JSON i XLSX.
 
 Wstęga pipeline pod górnym paskiem pokazuje bilans rekordów z ostatniego przebiegu na każdym widoku; kliknięcie etapu otwiera jego kod.
