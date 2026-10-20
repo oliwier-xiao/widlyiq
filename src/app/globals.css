@@ -1,0 +1,167 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-redhat-mono), ui-monospace, monospace;
+
+  --color-carbon: #0f1110;
+  --color-carbon-2: #2a2d2b;
+  --color-paper: #ffffff;
+  --color-toolbar: #f3f4f1;
+  --color-seam: #daddd6;
+  --color-ink: #0f1110;
+  --color-ink-2: #4a5059;
+  --color-ink-3: #6b7069;
+  --color-dot: #8b908a;
+  --color-dot-soft: #c9ccc6;
+  --color-signal: #ff5b1a;
+  --color-signal-ink: #b83a0b;
+  --color-signal-wash: #fff1ea;
+
+  --color-ok: #136234;
+  --color-warn: #8a3d06;
+  --color-warn-wash: #fdf3e8;
+  --color-error: #a11b15;
+
+  --color-stage-extract: #2549b8;
+  --color-stage-schema: #7432b8;
+  --color-stage-nbp: #095a63;
+  --color-stage-impute: #8a3d06;
+  --color-stage-iqr: #a11b15;
+  --color-stage-tier: #136234;
+  --color-stage-model: #44505e;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    font-stretch: 100%;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: #ffd3bf;
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-signal-ink);
+    outline-offset: 2px;
+  }
+  a {
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-dot-soft) transparent;
+  }
+}
+
+/* Type roles. Names describe the job, not the size, so a role can retune without renaming. */
+@utility t-readout {
+  font-size: 88px;
+  line-height: 0.88;
+  font-weight: 800;
+  font-stretch: 70%;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+@utility t-headline {
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 650;
+  font-stretch: 100%;
+}
+@utility t-panel {
+  font-size: 17px;
+  line-height: 1.2;
+  font-weight: 700;
+  font-stretch: 112%;
+}
+@utility t-table {
+  font-size: 14px;
+  line-height: 1.35;
+  font-weight: 450;
+  font-stretch: 82%;
+  font-variant-numeric: tabular-nums;
+}
+@utility t-meta {
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 500;
+  font-stretch: 90%;
+  color: var(--color-ink-2);
+}
+@utility t-code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.55;
+}
+@utility tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Ribbon motion only runs during a live pipeline run; a resting dashboard never animates on load. */
+@keyframes ribbon-fill {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes ribbon-stripes {
+  to { background-position: 28px 0; }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@utility ribbon-fill {
+  animation: ribbon-fill 320ms var(--ease-out) both;
+}
+@utility ribbon-running {
+  background: repeating-linear-gradient(-45deg, #e7e9e4 0 7px, #d2d5ce 7px 14px);
+  background-size: 28px 100%;
+  animation: ribbon-stripes 600ms linear infinite;
+}
+@utility spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 9999px;
+  animation: spin 550ms linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes filter-progress {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+@utility filter-progress {
+  overflow: hidden;
+  background: linear-gradient(90deg, transparent, var(--color-signal), transparent);
+  animation: filter-progress 900ms linear infinite;
+}

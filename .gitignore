@@ -30,3 +30,6 @@ AGENTS.md
 .impeccable/mocks/
 .impeccable/review/
 .impeccable/build/
+
+# design hook cache
+.impeccable/hook.cache.json
