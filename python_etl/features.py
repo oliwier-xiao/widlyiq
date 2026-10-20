@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 from scipy import sparse
-from scipy.cluster.hierarchy import leaves_list, linkage
+from scipy.cluster.hierarchy import fcluster, leaves_list, linkage
 from scipy.spatial.distance import squareform
 from sklearn.preprocessing import StandardScaler
 
@@ -101,13 +101,21 @@ def skill_stats(df: pd.DataFrame, skills: list[str]) -> pd.DataFrame:
     return stats.reset_index(names="skill")
 
 
-def heatmap_order(cooccur: pd.DataFrame, skills: list[str]) -> dict[str, int]:
-    """Average-linkage clustering on 1 - Jaccard puts skills that travel together next to each other on the heatmap."""
+HEATMAP_CLUSTERS = 8
+
+
+def heatmap_order(cooccur: pd.DataFrame, skills: list[str]) -> tuple[dict[str, int], dict[str, int]]:
+    """Average-linkage clustering on 1 - Jaccard puts skills that travel together next to each other on the heatmap.
+
+    Returns the leaf order and a flat cut of the same tree; leaves of one cluster are contiguous, so the UI can draw seams.
+    """
     idx = {s: i for i, s in enumerate(skills)}
     dist = np.ones((len(skills), len(skills)))
     for row in cooccur.itertuples(index=False):
         dist[idx[row.skill_a], idx[row.skill_b]] = 1.0 - row.jaccard
     np.fill_diagonal(dist, 0.0)
     dist = (dist + dist.T) / 2
-    order = leaves_list(linkage(squareform(dist, checks=False), method="average"))
-    return {skills[i]: rank for rank, i in enumerate(order)}
+    tree = linkage(squareform(dist, checks=False), method="average")
+    order = leaves_list(tree)
+    clusters = fcluster(tree, t=HEATMAP_CLUSTERS, criterion="maxclust")
+    return {skills[i]: rank for rank, i in enumerate(order)}, {s: int(c) for s, c in zip(skills, clusters)}
