@@ -166,6 +166,6 @@
 }
 @utility filter-progress {
   overflow: hidden;
-  background: linear-gradient(90deg, transparent, var(--color-signal), transparent);
+  background: linear-gradient(90deg, transparent, var(--color-ink), transparent);
   animation: filter-progress 900ms linear infinite;
 }

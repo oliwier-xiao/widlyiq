@@ -22,7 +22,7 @@ export function AppBar({ view, filters, provenance }: { view: View; filters: Fil
           {provenance && (
             // Always visible: a synthetic figure must never appear without its label, phones included.
             <span className="inline-flex items-center gap-2 border border-carbon-2 px-2 py-1 text-[12px] text-dot-soft md:px-2.5 md:text-[13px]">
-              <span className={`size-2 ${provenance.mode === 'live' && provenance.fallbacks === 0 ? 'bg-[#3ccf74]' : 'bg-signal'}`} aria-hidden />
+              <span className={`size-2 ${provenance.mode === 'live' && provenance.fallbacks === 0 ? 'bg-[#3ccf74]' : 'border-[1.5px] border-dot-soft'}`} aria-hidden />
               <span className="hidden md:inline">
                 {provenance.mode === 'live'
                   ? provenance.fallbacks > 0 ? `Live · ${provenance.fallbacks} ze snapshotu` : 'Live'
