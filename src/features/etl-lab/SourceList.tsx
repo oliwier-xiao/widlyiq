@@ -54,10 +54,9 @@ export function SourceList({ sources }: { sources: SourceLog[] }) {
                 </p>
               </div>
               {row && (
-                <span
-                  // Amber only when a live attempt failed; a snapshot run by choice is not a warning.
-                  className={`shrink-0 border px-2 py-0.5 text-[13px] font-semibold ${row.mode === 'live' ? 'border-ok text-ok' : isFallback(row) ? 'border-warn text-warn' : 'border-ink-2 text-ink-2'}`}
-                >
+                // Shape carries state with colour as backup: filled square live, hollow snapshot. Amber only for a failed live try.
+                <span className={`inline-flex shrink-0 items-center gap-1.5 text-[14px] font-semibold ${row.mode === 'live' ? 'text-ok' : isFallback(row) ? 'text-warn' : 'text-ink-2'}`}>
+                  <span className={`size-2.5 ${row.mode === 'live' ? 'bg-ok' : `border-[1.5px] ${isFallback(row) ? 'border-warn' : 'border-ink-2'}`}`} aria-hidden />
                   {row.mode === 'live' ? 'live' : 'snapshot'}
                 </span>
               )}
