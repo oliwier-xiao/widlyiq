@@ -12,9 +12,11 @@ import type { SkillNode } from './types'
 type Point = SkillNode & { median: number; cx: number; cy: number; r: number; ring: number }
 type Label = { skill: string; x: number; y: number; anchor: 'start' | 'end' }
 
-const W = 640
-const H = 460
-const M = { l: 62, r: 20, t: 26, b: 46 }
+type Geo = { W: number; H: number; M: { l: number; r: number; t: number; b: number }; font: number; labels: number }
+// A phone gets its own coordinate system rather than a shrunken desktop chart, so labels stay at a readable size.
+const FULL: Geo = { W: 640, H: 460, M: { l: 62, r: 20, t: 26, b: 46 }, font: 12, labels: 10 }
+const COMPACT: Geo = { W: 380, H: 400, M: { l: 52, r: 10, t: 26, b: 46 }, font: 11, labels: 6 }
+const thousands = new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 1 })
 const LOG_TICKS = [5, 10, 15, 20, 30, 50, 75, 100, 150, 200, 300, 500, 750, 1000, 1500, 2000, 3000, 5000, 10000]
 
 function median(values: number[]): number {
@@ -24,9 +26,9 @@ function median(values: number[]): number {
 }
 
 /** Ten labels chosen for contrast: the most demanded, the best and worst paid, and the largest Ridge premiums. */
-function pickLabelled(points: Point[], forced: string[]): Set<string> {
+function pickLabelled(points: Point[], forced: string[], limit: number): Set<string> {
   const picked = new Set<string>(forced)
-  const take = (list: Point[], n: number) => list.slice(0, n).forEach((p) => picked.size < 10 + forced.length && picked.add(p.skill))
+  const take = (list: Point[], n: number) => list.slice(0, n).forEach((p) => picked.size < limit + forced.length && picked.add(p.skill))
   take([...points].sort((a, b) => b.demand - a.demand), 3)
   take([...points].sort((a, b) => b.median - a.median), 3)
   take([...points].sort((a, b) => a.median - b.median), 2)
@@ -34,13 +36,13 @@ function pickLabelled(points: Point[], forced: string[]): Set<string> {
   return picked
 }
 
-function placeLabels(points: Point[], picked: Set<string>): Label[] {
+function placeLabels(points: Point[], picked: Set<string>, { W, M, font }: Geo): Label[] {
   const placed: { x0: number; x1: number; y: number }[] = []
   return points
     .filter((p) => picked.has(p.skill))
     .sort((a, b) => a.cy - b.cy)
     .map((p) => {
-      const width = p.skill.length * 6.4 + 4
+      const width = p.skill.length * 6.4 * (font / 12) + 4
       const fits = (side: 'r' | 'l') => {
         const x0 = side === 'r' ? p.cx + p.r + 5 : p.cx - p.r - 5 - width
         const inside = side === 'r' ? x0 + width < W - M.r : x0 > M.l
@@ -59,7 +61,9 @@ function placeLabels(points: Point[], picked: Set<string>): Label[] {
     })
 }
 
-export function SkillScatter({ skills, regionLabel }: { skills: SkillNode[]; regionLabel: string | null }) {
+export function SkillScatter({ skills, regionLabel, compact = false }: { skills: SkillNode[]; regionLabel: string | null; compact?: boolean }) {
+  const geo = compact ? COMPACT : FULL
+  const { W, H, M } = geo
   const [active, setActive] = useState<string | null>(null)
   const { activeSkills } = usePairSelection()
 
@@ -88,8 +92,8 @@ export function SkillScatter({ skills, regionLabel }: { skills: SkillNode[]; reg
       xTicks: inRange.filter((_, i) => i % stride === 0),
       guide: { x: x(median(valid.map((s) => s.demand))), y: y(median(valid.map((s) => s.median))) },
     }
-  }, [skills])
-  const labels = useMemo(() => placeLabels(model.points, pickLabelled(model.points, activeSkills)), [model.points, activeSkills])
+  }, [skills, W, H, M])
+  const labels = useMemo(() => placeLabels(model.points, pickLabelled(model.points, activeSkills, geo.labels), geo), [model.points, activeSkills, geo])
 
   if (model.points.length === 0) {
     return <p className="px-5 pb-6 text-[15px] text-ink-2">Za mało ofert z widełkami w tym filtrze, żeby policzyć mediany technologii.</p>
@@ -100,14 +104,14 @@ export function SkillScatter({ skills, regionLabel }: { skills: SkillNode[]; reg
   const plotBottom = H - M.b
 
   return (
-    <div className="overflow-x-auto px-3 pb-2">
-    <div className="relative min-w-[560px]">
+    <div className="px-3 pb-2">
+    <div className="relative">
       <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full" role="group" aria-label="Popyt na technologie a mediana płacy">
-        <g className="t-table" fontSize={12} fill="var(--color-ink-2)">
+        <g className="t-table" fontSize={geo.font} fill="var(--color-ink-2)">
           {model.yTicks.map((t) => (
             <g key={t}>
               <line x1={M.l} x2={plotRight} y1={model.y(t)} y2={model.y(t)} stroke="var(--color-seam)" />
-              <text x={M.l - 8} y={model.y(t) + 4} textAnchor="end">{`${t / 1000} tys.`}</text>
+              <text x={M.l - 8} y={model.y(t) + 4} textAnchor="end">{`${thousands.format(t / 1000)} tys.`}</text>
             </g>
           ))}
           {model.xTicks.map((t) => (

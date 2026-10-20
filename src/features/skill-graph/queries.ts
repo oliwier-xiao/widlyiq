@@ -9,13 +9,13 @@ import type { SkillGraphData, SkillNode, SkillPair } from './types'
 /** Below this many observed salaries a per-skill median says more about one employer than about the skill. */
 export const MIN_SKILL_SAMPLE = 5
 
-type StatRow = { skill: string; demand: number; median_salary: number | null; p25: number | null; p75: number | null; ridge_weight: number | null; heatmap_order: number }
+type StatRow = { skill: string; demand: number; median_salary: number | null; p25: number | null; p75: number | null; ridge_weight: number | null; heatmap_order: number; heatmap_cluster: number }
 type PairRow = { skill_a: string; skill_b: string; count: number; jaccard: number; lift: number; mean_salary: number }
 
 const OFFER_FILTER = "(:category = 'all' OR o.category = :category) AND (:contract = 'all' OR o.contract = :contract)"
 
 function vocabulary(): StatRow[] {
-  return all<StatRow>('SELECT skill, demand, median_salary, p25, p75, ridge_weight, heatmap_order FROM skill_stats ORDER BY heatmap_order')
+  return all<StatRow>('SELECT skill, demand, median_salary, p25, p75, ridge_weight, heatmap_order, heatmap_cluster FROM skill_stats ORDER BY heatmap_order')
 }
 
 // [sqlite-query] demand inside the selected region, same category and contract filters, matrix untouched
@@ -37,7 +37,7 @@ function toPairs(rows: PairRow[], index: Map<string, number>): SkillPair[] {
 
 function fromPython(stats: StatRow[], region: Map<string, number>): SkillGraphData {
   const skills: SkillNode[] = stats.map((s) => ({
-    skill: s.skill, order: s.heatmap_order, demand: s.demand, median: s.median_salary, p25: s.p25, p75: s.p75,
+    skill: s.skill, order: s.heatmap_order, cluster: s.heatmap_cluster, demand: s.demand, median: s.median_salary, p25: s.p25, p75: s.p75,
     weight: s.ridge_weight, regionDemand: region.get(s.skill) ?? 0,
   }))
   const index = new Map(skills.map((s, i) => [s.skill, i]))
@@ -76,7 +76,7 @@ function fromSqlite(stats: StatRow[], filters: Filters, region: Map<string, numb
     const values = bySkill.get(s.skill) ?? []
     const enough = values.length >= MIN_SKILL_SAMPLE
     return {
-      skill: s.skill, order: s.heatmap_order, demand: freq.get(s.skill) ?? 0,
+      skill: s.skill, order: s.heatmap_order, cluster: s.heatmap_cluster, demand: freq.get(s.skill) ?? 0,
       median: enough ? quantile(values, 0.5) : null, p25: enough ? quantile(values, 0.25) : null,
       p75: enough ? quantile(values, 0.75) : null, weight: s.ridge_weight, regionDemand: region.get(s.skill) ?? 0,
     }

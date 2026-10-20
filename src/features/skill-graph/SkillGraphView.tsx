@@ -50,7 +50,8 @@ export function SkillGraphView({ filters, regions, run }: ViewProps) {
             actions={<CodeButton anchor="onehot-encode" />}
             footer={`Mediana bez ofert z imputacją. Premia Ridge pochodzi z modelu na wszystkich ofertach.${hidden > 0 ? ` Pominięto ${hidden} technologii z mniej niż ${MIN_SKILL_SAMPLE} ofertami z widełkami.` : ''}`}
           >
-            <SkillScatter skills={plotted} regionLabel={regionLabel} />
+            <div className="hidden md:block"><SkillScatter skills={plotted} regionLabel={regionLabel} /></div>
+            <div className="md:hidden"><SkillScatter skills={plotted} regionLabel={regionLabel} compact /></div>
           </Panel>
         </SeamGrid>
       </PairSelectionProvider>

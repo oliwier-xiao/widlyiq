@@ -1,6 +1,7 @@
 export type SkillNode = {
   skill: string
   order: number
+  cluster: number
   demand: number
   median: number | null
   p25: number | null

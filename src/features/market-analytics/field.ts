@@ -4,7 +4,15 @@ import { median, MIN_SAMPLE, percentiles, quantile } from '@/shared/lib/stats'
 
 import type { OfferRow, RejectedRow } from './queries'
 
-export const FIELD = { width: 900, laneHeight: 128, labelWidth: 104, plotRight: 752, rejLeft: 784, rejRight: 888, axis: 42 }
+export type Geometry = {
+  width: number; laneHeight: number; labelWidth: number; plotRight: number; rejLeft: number; rejRight: number
+  axis: number; dotCenter: number; spread: number; maxRadius: number; tickStep: number; rejCols: number; rejGap: number; compact: boolean
+}
+// Two geometries instead of one scaled SVG: a 900-unit chart shrunk to a phone turns 13 px labels into 5 px ones.
+export const DESKTOP: Geometry = { width: 900, laneHeight: 196, labelWidth: 104, plotRight: 752, rejLeft: 784, rejRight: 888, axis: 42,
+  dotCenter: 114, spread: 54, maxRadius: 3.4, tickStep: 5000, rejCols: 3, rejGap: 11, compact: false }
+export const MOBILE: Geometry = { width: 400, laneHeight: 150, labelWidth: 64, plotRight: 322, rejLeft: 342, rejRight: 396, axis: 42,
+  dotCenter: 92, spread: 38, maxRadius: 2.6, tickStep: 10000, rejCols: 2, rejGap: 9, compact: true }
 const MAX_DOTS = 2400
 
 export type Dot = { cx: number; cy: number; hi: boolean; i: number; id: string }
@@ -21,6 +29,7 @@ export type Lane = {
   rejectedHigh: Dot[]
 }
 export type FieldLayout = {
+  g: Geometry
   width: number
   height: number
   lanes: Lane[]
@@ -63,25 +72,25 @@ function stride<T>(rows: T[], keep: (r: T) => boolean, limit: number): T[] {
   return [...kept, ...rest.filter((_, i) => i % step === 0)]
 }
 
-export function layoutField(field: OfferRow[], rejected: RejectedRow[], f: Filters): FieldLayout {
+export function layoutField(field: OfferRow[], rejected: RejectedRow[], f: Filters, g: Geometry = DESKTOP): FieldLayout {
   const isHi = (o: OfferRow) => f.region !== 'polska' && o.region === f.region
   const shownRows = stride(field, isHi, MAX_DOTS)
   const sorted = field.map((o) => o.salary_pln_month).sort((a, b) => a - b)
   const lo = Math.max(0, Math.floor((quantile(sorted, 0.003) ?? 0) / 5000) * 5000)
   const hi = Math.ceil((quantile(sorted, 0.997) ?? 50000) / 5000) * 5000
-  const { width, laneHeight, labelWidth, plotRight, rejLeft, rejRight, axis } = FIELD
+  const { width, laneHeight, labelWidth, plotRight, rejLeft, rejRight, axis } = g
   const x = (v: number) => labelWidth + ((Math.min(Math.max(v, lo), hi) - lo) / (hi - lo || 1)) * (plotRight - labelWidth)
   const busiest = Math.max(1, ...SENIORITIES.map((s) => shownRows.filter((o) => o.seniority === s).length))
-  const radius = Math.min(3.4, Math.max(1.6, 3.6 - busiest / 260))
-  const step = hi - lo > 50000 ? 10000 : 5000
+  const radius = Math.min(g.maxRadius, Math.max(1.4, 3.6 - busiest / 260))
+  const step = hi - lo > 50000 ? Math.max(10000, g.tickStep) : g.tickStep
   const shownIndex = new Map(shownRows.map((o, i) => [o, i]))
   const rejectedIndex = new Map(rejected.map((r, i) => [r, i]))
 
   const lanes: Lane[] = SENIORITIES.map((s, li) => {
     const top = li * laneHeight
-    const cy = top + 86
+    const cy = top + g.dotCenter
     const rows = shownRows.filter((o) => o.seniority === s)
-    const ys = swarm(rows.map((o) => x(o.salary_pln_month)), radius, 34)
+    const ys = swarm(rows.map((o) => x(o.salary_pln_month)), radius, g.spread)
     const all = field.filter((o) => o.seniority === s).map((o) => o.salary_pln_month)
     const regional = f.region === 'polska' ? all : field.filter((o) => o.seniority === s && isHi(o)).map((o) => o.salary_pln_month)
     const pct = percentiles(regional)
@@ -89,8 +98,8 @@ export function layoutField(field: OfferRow[], rejected: RejectedRow[], f: Filte
     const rej = rejected.filter((r) => r.seniority === s)
     const lanePct = all.length ? (quantile([...all].sort((a, b) => a - b), 0.5) ?? 0) : 0
     const toRejDots = (list: RejectedRow[], left: number) =>
-      list.slice(0, 18).map((r, k) => ({
-        cx: left + (k % 3) * 11, cy: cy - 22 + Math.floor(k / 3) * 9, hi: false, i: rejectedIndex.get(r) ?? 0, id: r.offer_id,
+      list.slice(0, g.rejCols * 6).map((r, k) => ({
+        cx: left + (k % g.rejCols) * g.rejGap, cy: cy - 22 + Math.floor(k / g.rejCols) * 9, hi: false, i: rejectedIndex.get(r) ?? 0, id: r.offer_id,
       }))
     return {
       seniority: s,
@@ -104,14 +113,15 @@ export function layoutField(field: OfferRow[], rejected: RejectedRow[], f: Filte
         p50: { x: x(pct.p50), value: pct.p50 },
         p90: s === f.seniority ? { x: x(pct.p90), value: pct.p90 } : null,
       } : null,
-      rejectedLow: toRejDots(rej.filter((r) => r.salary_pln_month < lanePct), rejLeft + 6),
-      rejectedHigh: toRejDots(rej.filter((r) => r.salary_pln_month >= lanePct), (rejLeft + rejRight) / 2 + 6),
+      rejectedLow: toRejDots(rej.filter((r) => r.salary_pln_month < lanePct), rejLeft + 4),
+      rejectedHigh: toRejDots(rej.filter((r) => r.salary_pln_month >= lanePct), (rejLeft + rejRight) / 2 + 4),
     }
   })
 
   const ticks: Marker[] = []
   for (let v = Math.ceil(lo / step) * step; v <= hi; v += step) ticks.push({ x: x(v), value: v })
   return {
+    g,
     width,
     height: SENIORITIES.length * laneHeight + axis,
     lanes,

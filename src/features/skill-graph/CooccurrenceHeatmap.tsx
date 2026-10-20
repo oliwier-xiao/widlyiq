@@ -19,6 +19,8 @@ const METRICS: { id: Metric; label: string }[] = [
 const CELL = 15
 const LEFT = 104
 const TOP = 104
+// Room on the right for the last rotated column labels, which otherwise clip at the edge.
+const RIGHT = 56
 const PAPER = [255, 255, 255]
 const CARBON = [15, 17, 16]
 const dec1 = new Intl.NumberFormat('pl-PL', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
@@ -96,6 +98,63 @@ export function CooccurrenceHeatmap({ skills, pairs, minPairCount }: { skills: S
   const { hover, pinned, active, setHover, togglePin } = usePairSelection()
   const { n, lookup, max, maxDemand } = usePairIndex(skills, pairs, minPairCount)
   const size = n * CELL
+  const seams = skills.flatMap((s, i) => (i > 0 && s.cluster !== skills[i - 1].cluster ? [i] : []))
+  const grid = (compact: boolean) => (
+    <svg
+      viewBox={compact ? `${LEFT - 1} ${TOP - 1} ${size + 2} ${size + 2}` : `0 0 ${LEFT + size + RIGHT} ${TOP + size + 4}`}
+      className="block h-auto w-full"
+      style={compact ? undefined : { maxWidth: LEFT + size + RIGHT }}
+      role="img"
+      aria-label={`Macierz współwystępowania ${n} technologii, miara: ${METRICS.find((m) => m.id === metric)?.label}. Lista najsilniejszych par jest obok.`}
+    >
+      {!compact && (
+        <g className="t-table" fontSize={12}>
+          {skills.map((s, i) => {
+            const on = active !== null && (active[0] === i || active[1] === i)
+            const fill = on ? 'var(--color-ink)' : 'var(--color-ink-2)'
+            return (
+              <g key={s.skill}>
+                <text x={LEFT - 6} y={TOP + i * CELL + 11} textAnchor="end" fill={fill} fontWeight={on ? 700 : 450}>{s.skill}</text>
+                <text transform={`translate(${LEFT + i * CELL + 11} ${TOP - 6}) rotate(-60)`} fill={fill} fontWeight={on ? 700 : 450}>{s.skill}</text>
+              </g>
+            )
+          })}
+        </g>
+      )}
+      <g
+        onPointerMove={(e) => {
+          const c = cellFrom(e.target)
+          if (c && (hover?.[0] !== c[0] || hover?.[1] !== c[1])) setHover(c)
+        }}
+        onPointerLeave={() => setHover(null)}
+        onClick={(e) => {
+          const c = cellFrom(e.target)
+          if (c) togglePin(c)
+        }}
+        className="cursor-crosshair"
+      >
+        <Cells n={n} lookup={lookup} metric={metric} max={max} maxDemand={maxDemand} />
+      </g>
+      {/* Seams mark the flat cut of the clustering tree, so a white block reads as "these groups rarely meet", not missing data. */}
+      <g pointerEvents="none" stroke="var(--color-carbon)" strokeWidth={1.5}>
+        {seams.map((i) => (
+          <g key={i}>
+            <line x1={LEFT + i * CELL} x2={LEFT + i * CELL} y1={TOP} y2={TOP + size} />
+            <line x1={LEFT} x2={LEFT + size} y1={TOP + i * CELL} y2={TOP + i * CELL} />
+          </g>
+        ))}
+      </g>
+      <rect x={LEFT} y={TOP} width={size} height={size} fill="none" stroke="var(--color-seam)" pointerEvents="none" />
+      {active && (
+        <g pointerEvents="none" fill="none">
+          <rect x={LEFT} y={TOP + active[0] * CELL} width={size} height={CELL} stroke="var(--color-ink-2)" />
+          <rect x={LEFT + active[1] * CELL} y={TOP} width={CELL} height={size} stroke="var(--color-ink-2)" />
+          <rect x={LEFT + active[1] * CELL - 1} y={TOP + active[0] * CELL - 1} width={CELL + 2} height={CELL + 2}
+            stroke="var(--color-ink)" strokeWidth={2} strokeDasharray={pinned ? undefined : '3 2'} />
+        </g>
+      )}
+    </svg>
+  )
 
   return (
     <div className="px-5 pb-2">
@@ -107,46 +166,9 @@ export function CooccurrenceHeatmap({ skills, pairs, minPairCount }: { skills: S
           </button>
         ))}
       </div>
-      <div className="overflow-x-auto">
-        <svg width={LEFT + size + 4} height={TOP + size + 4} className="block" role="img"
-          aria-label={`Macierz współwystępowania ${n} technologii, miara: ${METRICS.find((m) => m.id === metric)?.label}. Lista najsilniejszych par jest obok.`}>
-          <g className="t-table" fontSize={12}>
-            {skills.map((s, i) => {
-              const on = active !== null && (active[0] === i || active[1] === i)
-              const fill = on ? 'var(--color-ink)' : 'var(--color-ink-2)'
-              return (
-                <g key={s.skill}>
-                  <text x={LEFT - 6} y={TOP + i * CELL + 11} textAnchor="end" fill={fill} fontWeight={on ? 700 : 450}>{s.skill}</text>
-                  <text transform={`translate(${LEFT + i * CELL + 11} ${TOP - 6}) rotate(-60)`} fill={fill} fontWeight={on ? 700 : 450}>{s.skill}</text>
-                </g>
-              )
-            })}
-          </g>
-          <g
-            onPointerMove={(e) => {
-              const c = cellFrom(e.target)
-              if (c && (hover?.[0] !== c[0] || hover?.[1] !== c[1])) setHover(c)
-            }}
-            onPointerLeave={() => setHover(null)}
-            onClick={(e) => {
-              const c = cellFrom(e.target)
-              if (c) togglePin(c)
-            }}
-            className="cursor-crosshair"
-          >
-            <Cells n={n} lookup={lookup} metric={metric} max={max} maxDemand={maxDemand} />
-          </g>
-          <rect x={LEFT} y={TOP} width={size} height={size} fill="none" stroke="var(--color-seam)" pointerEvents="none" />
-          {active && (
-            <g pointerEvents="none" fill="none">
-              <rect x={LEFT} y={TOP + active[0] * CELL} width={size} height={CELL} stroke="var(--color-ink-2)" />
-              <rect x={LEFT + active[1] * CELL} y={TOP} width={CELL} height={size} stroke="var(--color-ink-2)" />
-              <rect x={LEFT + active[1] * CELL - 1} y={TOP + active[0] * CELL - 1} width={CELL + 2} height={CELL + 2}
-                stroke="var(--color-ink)" strokeWidth={2} strokeDasharray={pinned ? undefined : '3 2'} />
-            </g>
-          )}
-        </svg>
-      </div>
+      {/* Desktop keeps 15 px cells with labels; a phone drops the labels so all 40 columns fit, and the pair panel names the tap. */}
+      <div className="hidden md:block">{grid(false)}</div>
+      <div className="md:hidden">{grid(true)}</div>
       <Legend metric={metric} max={max} />
     </div>
   )
