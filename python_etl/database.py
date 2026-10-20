@@ -103,6 +103,11 @@ def write_run(con: sqlite3.Connection, run: dict, logs: list[dict], stages: list
     except Exception:
         con.execute("ROLLBACK")
         raise
+    # Dropped tables leave their pages on the freelist: without VACUUM the file grows with every run and keeps old rows.
+    try:
+        con.execute("VACUUM")
+    except sqlite3.OperationalError:
+        pass  # a reader holding a transaction blocks VACUUM; the next run reclaims the space
 
 
 def build_tables(raw: pd.DataFrame, clean: pd.DataFrame, rejected: pd.DataFrame, features: pd.DataFrame,
