@@ -100,11 +100,15 @@ export function CooccurrenceHeatmap({ skills, pairs, minPairCount }: { skills: S
   const { n, lookup, max, maxDemand } = usePairIndex(skills, pairs, minPairCount)
   const size = n * CELL
   const seams = skills.flatMap((s, i) => (i > 0 && s.cluster !== skills[i - 1].cluster ? [i] : []))
-  const blocks = [0, ...seams].map((start, k) => {
+  const raw = [0, ...seams].map((start, k) => {
     const end = k < seams.length ? seams[k] : skills.length
     const label = skills[start].clusterLabel
-    return { n: k + 1, start, end, name: label ? CATEGORY_LABELS[label] ?? label : 'Inne', members: skills.slice(start, end).map((x) => x.skill) }
+    const members = skills.slice(start, end)
+    const lead = [...members].sort((a, b) => b.demand - a.demand)[0]?.skill ?? ''
+    return { n: k + 1, start, end, name: label ? CATEGORY_LABELS[label] ?? label : 'Inne', lead, members: members.map((x) => x.skill) }
   })
+  // Several clusters can share a dominant category; the most demanded skill tells them apart ("Backend · Docker").
+  const blocks = raw.map((b) => (raw.filter((o) => o.name === b.name).length > 1 ? { ...b, name: `${b.name} · ${b.lead}` } : b))
   const grid = (compact: boolean) => (
     <svg
       viewBox={compact ? `${LEFT - 1} ${TOP - 26} ${size + 2} ${size + 27}` : `0 0 ${LEFT + size + RIGHT} ${TOP + size + 4}`}
