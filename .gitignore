@@ -33,3 +33,7 @@ AGENTS.md
 
 # design hook cache
 .impeccable/hook.cache.json
+
+# sqlite runtime files
+data/*.db-wal
+data/*.db-shm
