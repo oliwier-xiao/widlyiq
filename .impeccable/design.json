@@ -1,0 +1,661 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-20T16:23:31+00:00",
+  "title": "Design System: WidlyIQ",
+  "extensions": {
+    "colorMeta": {
+      "carbon": {
+        "role": "neutral",
+        "displayName": "Carbon",
+        "canonical": "oklch(17.5% 0.004 164.6)",
+        "tonalRamp": [
+          "#0a0c0b",
+          "#222523",
+          "#3e403f",
+          "#5c5e5d",
+          "#7e817f",
+          "#a2a5a4",
+          "#c8cbca",
+          "#ecefee"
+        ]
+      },
+      "carbon-2": {
+        "role": "neutral",
+        "displayName": "Carbon Lift",
+        "canonical": "oklch(29.3% 0.006 156.9)",
+        "tonalRamp": [
+          "#090c0a",
+          "#222523",
+          "#3d413e",
+          "#5b5f5c",
+          "#7e817f",
+          "#a2a6a3",
+          "#c8ccc9",
+          "#ecf0ed"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#404040",
+          "#5d5d5d",
+          "#808080",
+          "#a4a4a4",
+          "#cacaca",
+          "#eeeeee"
+        ]
+      },
+      "toolbar": {
+        "role": "neutral",
+        "displayName": "Toolbar Grey",
+        "canonical": "oklch(96.6% 0.004 121.6)",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#242422",
+          "#3f403e",
+          "#5d5e5b",
+          "#80817e",
+          "#a4a5a2",
+          "#cacbc8",
+          "#eeefec"
+        ]
+      },
+      "seam": {
+        "role": "neutral",
+        "displayName": "Seam",
+        "canonical": "oklch(89.3% 0.010 125.7)",
+        "tonalRamp": [
+          "#0a0c08",
+          "#232520",
+          "#3e413b",
+          "#5c5f59",
+          "#7f817b",
+          "#a3a69f",
+          "#c9ccc5",
+          "#edf0e9"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(17.5% 0.004 164.6)",
+        "tonalRamp": [
+          "#0a0c0b",
+          "#222523",
+          "#3e403f",
+          "#5c5e5d",
+          "#7e817f",
+          "#a2a5a4",
+          "#c8cbca",
+          "#ecefee"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink 2",
+        "canonical": "oklch(42.9% 0.017 258.4)",
+        "tonalRamp": [
+          "#070b12",
+          "#1f242c",
+          "#3a4049",
+          "#585e67",
+          "#7a818a",
+          "#9ea5af",
+          "#c4cbd6",
+          "#e8effa"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Ink 3",
+        "canonical": "oklch(53.9% 0.012 136.6)",
+        "tonalRamp": [
+          "#090c07",
+          "#212520",
+          "#3d413b",
+          "#5a5f58",
+          "#7d827b",
+          "#a1a69f",
+          "#c7ccc5",
+          "#ebf0e8"
+        ]
+      },
+      "dot": {
+        "role": "neutral",
+        "displayName": "Offer Dot",
+        "canonical": "oklch(64.7% 0.011 140.5)",
+        "tonalRamp": [
+          "#090c08",
+          "#212521",
+          "#3d413c",
+          "#5a5f5a",
+          "#7d827c",
+          "#a1a6a0",
+          "#c7ccc6",
+          "#ebf0ea"
+        ]
+      },
+      "dot-soft": {
+        "role": "neutral",
+        "displayName": "Soft Dot",
+        "canonical": "oklch(84.1% 0.009 128.6)",
+        "tonalRamp": [
+          "#0a0c08",
+          "#232520",
+          "#3e413c",
+          "#5c5f59",
+          "#7e817c",
+          "#a3a6a0",
+          "#c9ccc6",
+          "#edf0e9"
+        ]
+      },
+      "signal": {
+        "role": "primary",
+        "displayName": "International Signal Orange",
+        "canonical": "oklch(68.3% 0.211 38.5)",
+        "tonalRamp": [
+          "#210000",
+          "#460c00",
+          "#702102",
+          "#a03407",
+          "#da4701",
+          "#ff7548",
+          "#fbb8a3",
+          "#fee9e3"
+        ]
+      },
+      "signal-ink": {
+        "role": "primary",
+        "displayName": "Burnt Signal Ink",
+        "canonical": "oklch(52.8% 0.170 37.3)",
+        "tonalRamp": [
+          "#220000",
+          "#450e00",
+          "#721f01",
+          "#a23105",
+          "#d1522a",
+          "#fb7851",
+          "#fdb7a2",
+          "#ffe9e3"
+        ]
+      },
+      "signal-wash": {
+        "role": "primary",
+        "displayName": "Signal Wash",
+        "canonical": "oklch(96.7% 0.018 48.5)",
+        "tonalRamp": [
+          "#110905",
+          "#2b221d",
+          "#483d38",
+          "#665b55",
+          "#8a7d77",
+          "#afa29b",
+          "#d5c7c1",
+          "#f9ebe4"
+        ]
+      },
+      "signal-rule": {
+        "role": "primary",
+        "displayName": "Readout Rule",
+        "canonical": "oklch(55.6% 0.172 38.7)",
+        "tonalRamp": [
+          "#220000",
+          "#450e00",
+          "#6f2306",
+          "#9e370e",
+          "#d15123",
+          "#fc784c",
+          "#feb7a0",
+          "#ffe9e2"
+        ]
+      },
+      "signal-sub-ink": {
+        "role": "primary",
+        "displayName": "Readout Sub-ink",
+        "canonical": "oklch(29.4% 0.076 43.8)",
+        "tonalRamp": [
+          "#1f0000",
+          "#401400",
+          "#60311c",
+          "#814f39",
+          "#a7715b",
+          "#ce967e",
+          "#f6bba3",
+          "#feeae1"
+        ]
+      },
+      "ok": {
+        "role": "tertiary",
+        "displayName": "Ok Green",
+        "canonical": "oklch(43.8% 0.105 152.4)",
+        "tonalRamp": [
+          "#001102",
+          "#002d12",
+          "#004e25",
+          "#236e3f",
+          "#4a9261",
+          "#6fb884",
+          "#95dfa9",
+          "#c9fed6"
+        ]
+      },
+      "warn": {
+        "role": "tertiary",
+        "displayName": "Warn Rust",
+        "canonical": "oklch(45.5% 0.120 48.1)",
+        "tonalRamp": [
+          "#1e0100",
+          "#3f1600",
+          "#692b00",
+          "#924412",
+          "#b9683a",
+          "#e18c5f",
+          "#feb895",
+          "#ffeadf"
+        ]
+      },
+      "warn-wash": {
+        "role": "tertiary",
+        "displayName": "Warn Wash",
+        "canonical": "oklch(96.9% 0.018 70.2)",
+        "tonalRamp": [
+          "#100a04",
+          "#2a231b",
+          "#463e35",
+          "#645c53",
+          "#877f75",
+          "#aca399",
+          "#d2c9be",
+          "#f7ede2"
+        ]
+      },
+      "error": {
+        "role": "tertiary",
+        "displayName": "Error Red",
+        "canonical": "oklch(45.8% 0.170 28.7)",
+        "tonalRamp": [
+          "#220000",
+          "#4a0202",
+          "#7a0a08",
+          "#a8241c",
+          "#d24e41",
+          "#fd7565",
+          "#feb5aa",
+          "#ffe9e5"
+        ]
+      },
+      "live": {
+        "role": "tertiary",
+        "displayName": "Live Green",
+        "canonical": "oklch(75.7% 0.178 151.7)",
+        "tonalRamp": [
+          "#001102",
+          "#002d11",
+          "#004e23",
+          "#007136",
+          "#1a9950",
+          "#2ac369",
+          "#5eeb8e",
+          "#c9fed5"
+        ]
+      },
+      "stage-extract": {
+        "role": "secondary",
+        "displayName": "Extract Blue",
+        "canonical": "oklch(45.2% 0.180 265.6)",
+        "tonalRamp": [
+          "#010038",
+          "#050079",
+          "#122e9d",
+          "#2c52c1",
+          "#4c77ea",
+          "#7aa1fc",
+          "#b2caff",
+          "#e7effe"
+        ]
+      },
+      "stage-schema": {
+        "role": "secondary",
+        "displayName": "Schema Violet",
+        "canonical": "oklch(48.0% 0.199 301.7)",
+        "tonalRamp": [
+          "#14002b",
+          "#32005b",
+          "#540f8d",
+          "#7432b8",
+          "#975ae1",
+          "#b888fb",
+          "#d5bdfe",
+          "#f1ebfe"
+        ]
+      },
+      "stage-nbp": {
+        "role": "secondary",
+        "displayName": "NBP Teal",
+        "canonical": "oklch(42.9% 0.071 207.1)",
+        "tonalRamp": [
+          "#000f12",
+          "#002a2f",
+          "#094850",
+          "#206972",
+          "#488c96",
+          "#6db2bb",
+          "#93d8e2",
+          "#cbf8fe"
+        ]
+      },
+      "stage-impute": {
+        "role": "secondary",
+        "displayName": "Impute Rust",
+        "canonical": "oklch(45.5% 0.120 48.1)",
+        "tonalRamp": [
+          "#1e0100",
+          "#3f1600",
+          "#692b00",
+          "#924412",
+          "#b9683a",
+          "#e18c5f",
+          "#feb895",
+          "#ffeadf"
+        ]
+      },
+      "stage-iqr": {
+        "role": "secondary",
+        "displayName": "IQR Red",
+        "canonical": "oklch(45.8% 0.170 28.7)",
+        "tonalRamp": [
+          "#220000",
+          "#4a0202",
+          "#7a0a08",
+          "#a8241c",
+          "#d24e41",
+          "#fd7565",
+          "#feb5aa",
+          "#ffe9e5"
+        ]
+      },
+      "stage-tier": {
+        "role": "secondary",
+        "displayName": "Tier Green",
+        "canonical": "oklch(43.8% 0.105 152.4)",
+        "tonalRamp": [
+          "#001102",
+          "#002d12",
+          "#004e25",
+          "#236e3f",
+          "#4a9261",
+          "#6fb884",
+          "#95dfa9",
+          "#c9fed6"
+        ]
+      },
+      "stage-model": {
+        "role": "secondary",
+        "displayName": "Model Slate",
+        "canonical": "oklch(42.6% 0.028 252.4)",
+        "tonalRamp": [
+          "#040c17",
+          "#1a2531",
+          "#35414e",
+          "#535f6d",
+          "#758291",
+          "#99a6b6",
+          "#beccdd",
+          "#e4f0fe"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "readout": {
+        "displayName": "Readout",
+        "purpose": "The one answer number per view (median, estimate)."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Plain-language sentence opening a view."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Panel titles and the readout profile line."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Explanations and supporting prose."
+      },
+      "table": {
+        "displayName": "Table",
+        "purpose": "Table rows, axis labels, ribbon labels."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Meta: subtitles, column heads, footers, provenance."
+      },
+      "control": {
+        "displayName": "Control",
+        "purpose": "Tabs, segmented options, select values, primary button."
+      },
+      "code": {
+        "displayName": "Code",
+        "purpose": "Code anchors, file paths, the code drawer."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Default UI easing, 150 to 250ms: hover, press, dot glide, ribbon fill, drawer exit."
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(0.77, 0, 0.175, 1)",
+        "purpose": "Declared token for symmetric moves."
+      },
+      {
+        "name": "ease-drawer",
+        "value": "cubic-bezier(0.32, 0.72, 0, 1)",
+        "purpose": "Code drawer entrance, 320ms."
+      },
+      {
+        "name": "ribbon-fill",
+        "value": "320ms ease-out clip-path inset reveal",
+        "purpose": "A finished stage fills left to right during a live run only."
+      },
+      {
+        "name": "ribbon-running",
+        "value": "600ms linear 45deg stripes, 7px bands #e7e9e4/#d2d5ce",
+        "purpose": "The stage currently running."
+      },
+      {
+        "name": "field-dot",
+        "value": "cx/cy 200ms ease-out",
+        "purpose": "Offer dots glide to new slots on a filter change."
+      },
+      {
+        "name": "filter-progress",
+        "value": "900ms linear ink sweep, 2px",
+        "purpose": "Filter transition in flight."
+      },
+      {
+        "name": "press",
+        "value": "scale(0.97), 150ms ease-out",
+        "purpose": "Active state on primary and code buttons."
+      },
+      {
+        "name": "readout-spring",
+        "value": "spring visualDuration 0.4s, bounce 0",
+        "purpose": "Estimator readout number counting to a new value."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "all durations 0.01ms; drawer fades",
+        "purpose": "prefers-reduced-motion: reduce."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single primary action per view: Uruchom pipeline.",
+      "html": "<button class=\"ds-btn-primary\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 256 256\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M240 128a15.74 15.74 0 0 1-7.6 13.51L88.32 229.65a16 16 0 0 1-16.2.3A15.86 15.86 0 0 1 64 216.13V39.87a15.86 15.86 0 0 1 8.12-13.82 16 16 0 0 1 16.2.3l144.08 88.14A15.74 15.74 0 0 1 240 128Z\"/></svg><span>Uruchom pipeline</span></button>",
+      "css": ".ds-btn-primary{font-family: var(--font-archivo), Archivo, ui-sans-serif, system-ui, sans-serif; display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 16px;border:0;border-radius:0;background:#ff5b1a;color:#0f1110;font-size:15px;font-weight:600;cursor:pointer;transition:transform 150ms cubic-bezier(0.23,1,0.32,1),background-color 150ms cubic-bezier(0.23,1,0.32,1);} .ds-btn-primary:hover{background:#ff6f36;} .ds-btn-primary:active{transform:scale(0.97);} .ds-btn-primary:focus-visible{outline:2px solid #b83a0b;outline-offset:2px;} .ds-btn-primary:disabled{background:#ffb08c;cursor:progress;}"
+    },
+    {
+      "name": "Solid Button",
+      "kind": "button",
+      "refersTo": "button-solid",
+      "description": "Carbon action: filter-widening links, export buttons.",
+      "html": "<button class=\"ds-btn-solid\">Cała Polska</button>",
+      "css": ".ds-btn-solid{font-family: var(--font-archivo), Archivo, ui-sans-serif, system-ui, sans-serif; padding:6px 12px;border:0;border-radius:0;background:#0f1110;color:#fff;font-size:14px;font-weight:600;cursor:pointer;transition:background-color 150ms cubic-bezier(0.23,1,0.32,1);} .ds-btn-solid:hover{background:#2a2d2b;} .ds-btn-solid:focus-visible{outline:2px solid #b83a0b;outline-offset:2px;}"
+    },
+    {
+      "name": "Code Button",
+      "kind": "button",
+      "refersTo": "button-code",
+      "description": "One per panel; opens the Python source at a Ctrl+F anchor.",
+      "html": "<button class=\"ds-btn-code\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 256 256\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"24\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"64 88 16 128 64 168\"/><polyline points=\"192 88 240 128 192 168\"/><line x1=\"160\" y1=\"40\" x2=\"96\" y2=\"216\"/></svg>Kod <span class=\"ds-btn-code-anchor\">[filter-iqr]</span></button>",
+      "css": ".ds-btn-code{font-family: var(--font-redhat-mono), 'Red Hat Mono', ui-monospace, monospace; display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border:1px solid #daddd6;border-radius:0;background:#fff;color:#0f1110;font-size:12px;cursor:pointer;transition:background-color 150ms cubic-bezier(0.23,1,0.32,1),transform 150ms cubic-bezier(0.23,1,0.32,1);} .ds-btn-code-anchor{color:#4a5059;} .ds-btn-code:hover{background:#f3f4f1;} .ds-btn-code:active{transform:scale(0.97);} .ds-btn-code:focus-visible{outline:2px solid #b83a0b;outline-offset:2px;}"
+    },
+    {
+      "name": "Select",
+      "kind": "input",
+      "refersTo": "select",
+      "description": "Filter select with inline meta label; signal square flags Podkarpackie.",
+      "html": "<label class=\"ds-select\"><span class=\"ds-select-label\">Region</span><span class=\"ds-select-flag\"></span><select><option>Podkarpackie</option><option>Cała Polska</option></select><span class=\"ds-select-caret\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 256 256\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"24\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"208 96 128 176 48 96\"/></svg></span></label>",
+      "css": ".ds-select{font-family: var(--font-archivo), Archivo, ui-sans-serif, system-ui, sans-serif; position:relative;display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 32px 0 12px;border:1px solid #daddd6;background:#fff;} .ds-select:focus-within{border-color:#0f1110;} .ds-select-label{font-size:13px;font-weight:500;font-stretch:90%;color:#4a5059;} .ds-select-flag{width:8px;height:8px;background:#ff5b1a;} .ds-select select{appearance:none;border:0;background:transparent;outline:none;font:inherit;font-size:15px;font-weight:600;color:#0f1110;cursor:pointer;} .ds-select-caret{position:absolute;right:10px;display:flex;color:#4a5059;pointer-events:none;}"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "chip",
+      "refersTo": "segmented",
+      "description": "Seniority switch; the chosen option is a carbon plate.",
+      "html": "<div class=\"ds-seg\" role=\"radiogroup\"><button role=\"radio\" aria-checked=\"false\">Junior</button><button role=\"radio\" aria-checked=\"true\">Mid</button><button role=\"radio\" aria-checked=\"false\">Senior</button><button role=\"radio\" aria-checked=\"false\">Lead</button></div>",
+      "css": ".ds-seg{font-family: var(--font-archivo), Archivo, ui-sans-serif, system-ui, sans-serif; display:inline-flex;height:36px;padding:3px;border:1px solid #daddd6;background:#fff;} .ds-seg button{padding:0 12px;border:0;border-radius:0;background:transparent;color:#4a5059;font:inherit;font-size:15px;font-weight:600;cursor:pointer;transition:color 150ms,background-color 150ms;} .ds-seg button:hover{color:#0f1110;} .ds-seg button[aria-checked=true]{background:#0f1110;color:#fff;} .ds-seg button:focus-visible{outline:2px solid #b83a0b;outline-offset:2px;}"
+    },
+    {
+      "name": "App Bar with Tabs",
+      "kind": "nav",
+      "refersTo": "app-bar",
+      "description": "Carbon 48px bar; active tab is a paper plate; provenance chip and primary action at right.",
+      "html": "<header class=\"ds-bar\"><span class=\"ds-bar-mark\">WidlyIQ</span><nav class=\"ds-tabs\"><a aria-current=\"page\" href=\"#\">Rynek</a><a href=\"#\">ETL Lab</a><a href=\"#\">Skill Graph</a><a href=\"#\">Estymator</a></nav><span class=\"ds-prov\"><span class=\"ds-prov-sq\"></span>Snapshot · dane syntetyczne</span></header>",
+      "css": ".ds-bar{font-family: var(--font-archivo), Archivo, ui-sans-serif, system-ui, sans-serif; display:flex;align-items:center;gap:20px;height:48px;padding:0 24px;background:#0f1110;color:#fff;} .ds-bar-mark{font-size:19px;font-weight:800;font-stretch:125%;letter-spacing:-0.01em;} .ds-tabs{display:flex;gap:4px;} .ds-tabs a{padding:6px 12px;font-size:15px;font-weight:600;color:#c9ccc6;text-decoration:none;transition:color 150ms;} .ds-tabs a:hover{color:#fff;} .ds-tabs a[aria-current=page]{background:#fff;color:#0f1110;} .ds-tabs a:focus-visible{outline:2px solid #b83a0b;outline-offset:2px;} .ds-prov{margin-left:auto;display:inline-flex;align-items:center;gap:8px;padding:4px 10px;border:1px solid #2a2d2b;font-size:13px;color:#c9ccc6;} .ds-prov-sq{width:8px;height:8px;background:#ff5b1a;}"
+    },
+    {
+      "name": "Seam Grid Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Flat paper panels tiled on a 1px seam gap; no borders, no shadows.",
+      "html": "<div class=\"ds-seamgrid\"><section class=\"ds-panel\"><h2>Krotność GUS według województw</h2><p>Mediana IT podzielona przez przeciętną płacę brutto GUS 2025</p></section><section class=\"ds-panel\"><h2>Bias portali</h2><p>Ile portal płaci powyżej lub poniżej modelu Ridge</p></section></div>",
+      "css": ".ds-seamgrid{font-family: var(--font-archivo), Archivo, ui-sans-serif, system-ui, sans-serif; display:grid;grid-template-columns:1.6fr 1fr;gap:1px;background:#daddd6;} .ds-panel{background:#fff;padding:16px 20px;} .ds-panel h2{margin:0;font-size:17px;line-height:1.2;font-weight:700;font-stretch:112%;color:#0f1110;} .ds-panel p{margin:4px 0 0;font-size:13px;line-height:1.4;font-weight:500;font-stretch:90%;color:#4a5059;}"
+    },
+    {
+      "name": "Answer Readout",
+      "kind": "custom",
+      "refersTo": "answer-readout",
+      "description": "The orange answer field: profile, huge condensed median, same-hue secondary ink.",
+      "html": "<section class=\"ds-readout\"><div class=\"ds-readout-head\"><h2>Mid · Podkarpackie · B2B</h2><span>n = 38</span></div><p class=\"ds-readout-fig\"><span class=\"ds-readout-num\">17 675</span><span class=\"ds-readout-unit\">zł netto / mies.</span></p><p class=\"ds-readout-sub\">Mediana z 38 ofert z widełkami.</p><dl class=\"ds-readout-grid\"><div><dt>Krotność płacy GUS</dt><dd>2,16×</dd></div><div><dt>Względem całej Polski</dt><dd>−8,7%</dd></div></dl></section>",
+      "css": ".ds-readout{font-family: var(--font-archivo), Archivo, ui-sans-serif, system-ui, sans-serif; background:#ff5b1a;color:#0f1110;padding:20px 24px;} .ds-readout-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;} .ds-readout-head h2{margin:0;font-size:17px;font-weight:700;font-stretch:112%;} .ds-readout-head span{font-size:14px;font-weight:600;color:#4a1d07;font-variant-numeric:tabular-nums;} .ds-readout-fig{display:flex;align-items:flex-end;gap:12px;margin:20px 0 0;} .ds-readout-num{font-size:88px;line-height:0.88;font-weight:800;font-stretch:70%;letter-spacing:-0.02em;font-variant-numeric:tabular-nums;} .ds-readout-unit{padding-bottom:8px;font-size:20px;font-weight:600;line-height:1;} .ds-readout-sub{margin:8px 0 0;font-size:15px;color:#4a1d07;} .ds-readout-grid{display:grid;grid-template-columns:1fr 1fr;margin:20px 0 0;border-top:1px solid #c2430f;} .ds-readout-grid div{padding:12px 16px 12px 0;} .ds-readout-grid div+div{border-left:1px solid #c2430f;padding-left:16px;} .ds-readout-grid dt{font-size:13px;font-weight:500;color:#4a1d07;} .ds-readout-grid dd{margin:2px 0 0;font-size:26px;line-height:1;font-weight:800;font-stretch:90%;font-variant-numeric:tabular-nums;}"
+    },
+    {
+      "name": "Pipeline Ribbon",
+      "kind": "custom",
+      "refersTo": "ribbon",
+      "description": "Seven stage segments with counts; loss notches scale with records dropped; hover outlines in paper.",
+      "html": "<ol class=\"ds-ribbon\"><li><button style=\"background:#2549b8\">1 307 surowych</button></li><li><button style=\"background:#7432b8\">−18 schemat</button><span class=\"ds-notch\" style=\"background:#7432b8;width:10px\"></span></li><li><button style=\"background:#7432b8\">−78 duplikaty</button><span class=\"ds-notch\" style=\"background:#7432b8;width:24px\"></span></li><li><button style=\"background:#095a63\">65 walut · 113 × 168 h</button></li><li><button style=\"background:#8a3d06\">140 imputacji</button></li><li><button style=\"background:#a11b15\">−40 IQR</button><span class=\"ds-notch\" style=\"background:#a11b15;width:12px\"></span></li><li><button style=\"background:#136234\">1 171 czystych</button></li></ol>",
+      "css": ".ds-ribbon{font-family: var(--font-archivo), Archivo, ui-sans-serif, system-ui, sans-serif; display:flex;gap:2px;height:44px;margin:0;padding:0 2px 0 0;list-style:none;background:#f3f4f1;} .ds-ribbon li{position:relative;flex:1;min-width:0;padding-bottom:6px;} .ds-ribbon button{width:100%;height:100%;padding:0 12px;border:0;border-radius:0;text-align:left;color:#fff;font:inherit;font-size:14px;font-weight:600;font-stretch:82%;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;} .ds-ribbon button:hover,.ds-ribbon button:focus-visible{outline:2px solid #fff;outline-offset:-2px;} .ds-notch{position:absolute;bottom:0;right:8px;height:6px;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Telemetry Console",
+    "overview": "Every salary is a reading and every reading carries its proof. The system is a carbon instrument bar over a white work ground, divided by 1px seams into flat panels that tile edge to edge. Nothing floats, nothing is rounded, nothing casts a shadow. Depth comes from inversion: carbon plates hold the active tab, the selected seniority, the selected region row and the selected skill; white holds everything at rest.\n\nColour is a measuring device, not decoration. Grey offer dots carry the whole of Poland; international orange marks the visitor's answer (the readout field, Podkarpackie, the one primary action); seven darkened syntax-derived stage colours belong to the pipeline alone and appear only where a stage is named (ribbon, ETL Lab stage list, code drawer). One variable family, Archivo, carries every role by moving its width axis: condensed and huge for the readout, condensed for tables, wide for panel titles. Red Hat Mono appears only on code anchors and the drawer.\n\nLight only, by decision: the dashboard is presented on a lecture-room projector and read from a distance. Density sits around 6: one job per panel, one primary action per view, detail behind \"Kod\", \"Pokaż w ETL Lab\" and expanders.",
+    "keyCharacteristics": [
+      "Carbon 48px bar, white ground, 1px seams painted by the grid gap, never by panels.",
+      "Square corners everywhere (0px); no shadows, no cards, no gradients.",
+      "Selection by inversion to a carbon plate (or a white plate on carbon).",
+      "Orange is the answer and the action; stage colours are the pipeline; grey is everyone else.",
+      "One width-axis family for all text roles; mono only for code.",
+      "Motion runs only when data moves: a live pipeline run, a filter re-swarm, the drawer."
+    ],
+    "rules": [
+      {
+        "name": "The Answer Is Orange Rule",
+        "body": "Signal orange marks only what belongs to the visitor: their answer, their region, their one action. Anything else that turns orange dilutes the reading.",
+        "section": "colors"
+      },
+      {
+        "name": "The Stage Colour Rule",
+        "body": "Stage colours appear only where a pipeline stage is named. They never decorate a chart about the market.",
+        "section": "colors"
+      },
+      {
+        "name": "The Same-Hue Ink Rule",
+        "body": "Secondary text on a saturated field is a dark tint of that field's hue, not grey.",
+        "section": "colors"
+      },
+      {
+        "name": "The Role Not Size Rule",
+        "body": "Type is applied by role (readout, headline, panel, table, meta, code). Retune a role; never hand-set a new size for one screen.",
+        "section": "typography"
+      },
+      {
+        "name": "The Width Axis Rule",
+        "body": "Hierarchy moves on width as much as weight: numbers condense, titles widen. Do not add a second sans family.",
+        "section": "typography"
+      },
+      {
+        "name": "The Polish Numerals Rule",
+        "body": "Every number goes through the pl-PL formatters: always-on grouping with a narrow space (\"8 196\"), decimal comma, true minus \"−\", \"zł\" after the value, \"×\" for GUS multiples, \"brak danych\" for missing values. All numerals in tables and readouts are tabular.",
+        "section": "typography"
+      },
+      {
+        "name": "The Seam Grid Rule",
+        "body": "Panels sit in a grid with a 1px gap over a seam-coloured ground; the gap is the border. Panels themselves never draw borders.",
+        "section": "layout"
+      },
+      {
+        "name": "The No-Lift Rule",
+        "body": "Nothing rises off the page. If something needs emphasis, invert it or seam it off; never shadow it.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do tile panels in a seam grid with a 1px gap; let the grid draw every divider.",
+      "Do mark selection by inversion: a carbon plate on paper, a paper plate on carbon.",
+      "Do keep signal orange for the visitor's answer, region and single primary action, and set ink (not white) on it.",
+      "Do colour a stage only with its stage token, and only where the stage is named.",
+      "Do run every number through the pl-PL formatters with tabular figures, true minus and narrow-space grouping.",
+      "Do keep motion to data events: 150 to 250ms ease-out (0.23, 1, 0.32, 1) for UI, a spring (0.4s, no bounce) only for the estimator readout count, and respect reduced motion.",
+      "Do label synthetic or snapshot data wherever a figure could be taken for live market data: once in the bar and once per chart footer."
+    ],
+    "donts": [
+      "Don't add shadows, rounded corners, cards, or gradients.",
+      "Don't introduce a second sans family; move Archivo's width axis instead.",
+      "Don't use Red Hat Mono for anything but code, anchors and file paths.",
+      "Don't put grey text on the orange field; use signal-sub-ink.",
+      "Don't add page-load choreography; a resting dashboard never animates.",
+      "Don't add a dark theme; the system is light-only for the projector.",
+      "Don't build a KPI-tile row or a row of three equal cards; one answer readout per view carries the figure."
+    ]
+  }
+}
