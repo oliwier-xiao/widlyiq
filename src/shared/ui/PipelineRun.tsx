@@ -22,6 +22,8 @@ type RunState = {
 type RunContext = RunState & { start: (mode: RunMode) => void }
 
 const Ctx = createContext<RunContext | null>(null)
+// Kept apart from the run context: hover changes many times a second and must not re-render run consumers.
+const FocusCtx = createContext<{ focus: StageId | null; setFocus: (s: StageId | null) => void }>({ focus: null, setFocus: () => {} })
 const IDLE: RunState = { status: 'idle', mode: 'live', running: null, stages: {}, sources: [], error: null, durationMs: null }
 
 export function PipelineRunProvider({ children }: { children: ReactNode }) {
@@ -85,11 +87,20 @@ export function PipelineRunProvider({ children }: { children: ReactNode }) {
   }, [apply])
 
   const value = useMemo(() => ({ ...state, start }), [state, start])
+  const [focus, setFocus] = useState<StageId | null>(null)
+  const focusValue = useMemo(() => ({ focus, setFocus }), [focus])
   return (
     <Ctx.Provider value={value}>
-      <MotionConfig reducedMotion="user">{children}</MotionConfig>
+      <FocusCtx.Provider value={focusValue}>
+        <MotionConfig reducedMotion="user">{children}</MotionConfig>
+      </FocusCtx.Provider>
     </Ctx.Provider>
   )
+}
+
+/** The stage under the pointer anywhere on the page: the ribbon, the ETL Lab list and the diff notes all light up together. */
+export function useStageFocus() {
+  return useContext(FocusCtx)
 }
 
 export function usePipelineRun(): RunContext {

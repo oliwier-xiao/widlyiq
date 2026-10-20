@@ -6,6 +6,7 @@ import { CATEGORY_LABELS, CONTRACT_LABELS, PORTAL_LABELS, SENIORITY_LABELS, type
 import { formatMultiple, formatPLN, formatRegion } from '@/shared/lib/formatters'
 import { STAGE_META } from '@/shared/lib/stages'
 import { CodeButton } from '@/shared/ui/CodeDrawer'
+import { useStageFocus } from '@/shared/ui/PipelineRun'
 
 import { SAMPLE_KINDS, SAMPLE_LABELS, type RawSide, type Sample, type SampleKind } from './types'
 
@@ -68,6 +69,7 @@ export function DiffInspector({ samples }: { samples: Sample[] }) {
 }
 
 function Detail({ sample }: { sample: Sample }) {
+  const { focus, setFocus } = useStageFocus()
   const { raw, clean, rejection, notes } = sample
   return (
     <div className="px-5 py-4">
@@ -126,7 +128,12 @@ function Detail({ sample }: { sample: Sample }) {
           <h4 className="t-meta">Transformacje w kolejności etapów</h4>
           <ol className="mt-2 border-t border-seam">
             {notes.map((n, i) => (
-              <li key={i} className="flex items-center gap-3 border-b border-seam py-2">
+              <li
+                key={i}
+                onPointerEnter={() => setFocus(n.stage)}
+                onPointerLeave={() => setFocus(null)}
+                className={`flex items-center gap-3 border-b border-seam py-2 transition-colors duration-150 ${focus === n.stage ? 'bg-toolbar' : ''}`}
+              >
                 <span className="size-2.5 shrink-0" style={{ background: STAGE_META[n.stage].color }} aria-hidden />
                 <span className="w-24 shrink-0 text-[14px] font-semibold">{STAGE_META[n.stage].label}</span>
                 <span className="min-w-0 flex-1 text-[15px]">{n.text}</span>

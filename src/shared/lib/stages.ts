@@ -64,3 +64,18 @@ export function ribbonLabel(s: StageSnapshot): string {
     default: return STAGE_META[s.stage].label
   }
 }
+
+/** Phone-width ribbon: the counts alone, so all seven segments and the clean total fit in 390 px. */
+export function ribbonShort(s: StageSnapshot): string {
+  const n = (v: unknown) => new Intl.NumberFormat('pl-PL', { useGrouping: 'always' }).format(Number(v ?? 0))
+  switch (s.stage) {
+    case 'extract': return n(s.rows_out)
+    case 'verify-schema':
+    case 'dedupe':
+    case 'filter-iqr': return `−${n(s.removed)}`
+    case 'normalize-nbp': return n(s.detail.converted)
+    case 'impute-median': return `+${n(s.detail.imputed)}`
+    case 'classify-tier': return n(s.rows_out)
+    default: return ''
+  }
+}

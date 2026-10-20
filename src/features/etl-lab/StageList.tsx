@@ -5,7 +5,7 @@ import { motion } from 'motion/react'
 import { formatDuration, formatNumber } from '@/shared/lib/formatters'
 import { STAGE_META, STAGE_ORDER, type StageId, type StageSnapshot } from '@/shared/lib/stages'
 import { CodeButton } from '@/shared/ui/CodeDrawer'
-import { usePipelineRun } from '@/shared/ui/PipelineRun'
+import { usePipelineRun, useStageFocus } from '@/shared/ui/PipelineRun'
 
 import { stageDetail } from './stage-detail'
 
@@ -13,6 +13,7 @@ type Props = { stages: StageSnapshot[]; raw: number }
 
 export function StageList({ stages, raw }: Props) {
   const live = usePipelineRun()
+  const { focus, setFocus } = useStageFocus()
   const streaming = live.status === 'running' || live.status === 'error'
   const stored = Object.fromEntries(stages.map((s) => [s.stage, s])) as Partial<Record<StageId, StageSnapshot>>
   const source = streaming ? live.stages : stored
@@ -27,7 +28,12 @@ export function StageList({ stages, raw }: Props) {
         const kept = snap && total ? (snap.rows_out / total) * 100 : 0
         const lost = snap && total ? (snap.removed / total) * 100 : 0
         return (
-          <li key={id} className="grid grid-cols-[2rem_minmax(0,1fr)] gap-x-3 border-b border-seam px-5 py-3 md:grid-cols-[2rem_minmax(0,15rem)_minmax(0,1fr)_13.5rem]">
+          <li
+            key={id}
+            onPointerEnter={() => setFocus(id)}
+            onPointerLeave={() => setFocus(null)}
+            className={`grid grid-cols-[2rem_minmax(0,1fr)] gap-x-3 border-b border-seam px-5 py-3 transition-colors duration-150 md:grid-cols-[2rem_minmax(0,15rem)_minmax(0,1fr)_13.5rem] ${focus === id ? 'bg-toolbar' : ''}`}
+          >
             <span className="t-table pt-0.5 text-ink-2">{String(i + 1).padStart(2, '0')}</span>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
