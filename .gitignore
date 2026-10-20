@@ -25,3 +25,8 @@ AGENTS.md
 # os / editor
 .DS_Store
 *.log
+
+# design tooling scratch (decision sketches, review captures, build state)
+.impeccable/mocks/
+.impeccable/review/
+.impeccable/build/
