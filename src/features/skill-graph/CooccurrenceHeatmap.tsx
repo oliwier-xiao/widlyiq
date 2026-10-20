@@ -2,6 +2,7 @@
 
 import { memo, useMemo, useState } from 'react'
 
+import { CATEGORY_LABELS } from '@/shared/lib/filters'
 import { formatNumber, formatPLN, formatSignedPLN } from '@/shared/lib/formatters'
 
 import { usePairSelection, type Cell } from './PairSelection'
@@ -99,9 +100,14 @@ export function CooccurrenceHeatmap({ skills, pairs, minPairCount }: { skills: S
   const { n, lookup, max, maxDemand } = usePairIndex(skills, pairs, minPairCount)
   const size = n * CELL
   const seams = skills.flatMap((s, i) => (i > 0 && s.cluster !== skills[i - 1].cluster ? [i] : []))
+  const blocks = [0, ...seams].map((start, k) => {
+    const end = k < seams.length ? seams[k] : skills.length
+    const label = skills[start].clusterLabel
+    return { n: k + 1, start, end, name: label ? CATEGORY_LABELS[label] ?? label : 'Inne', members: skills.slice(start, end).map((x) => x.skill) }
+  })
   const grid = (compact: boolean) => (
     <svg
-      viewBox={compact ? `${LEFT - 1} ${TOP - 1} ${size + 2} ${size + 2}` : `0 0 ${LEFT + size + RIGHT} ${TOP + size + 4}`}
+      viewBox={compact ? `${LEFT - 1} ${TOP - 26} ${size + 2} ${size + 27}` : `0 0 ${LEFT + size + RIGHT} ${TOP + size + 4}`}
       className="block h-auto w-full"
       style={compact ? undefined : { maxWidth: LEFT + size + RIGHT }}
       role="img"
@@ -144,6 +150,14 @@ export function CooccurrenceHeatmap({ skills, pairs, minPairCount }: { skills: S
           </g>
         ))}
       </g>
+      {compact && (
+        // Without axis labels on a phone, each cluster block carries its number from the legend below the grid.
+        <g className="t-table" fontSize={20} fontWeight={700} fill="var(--color-ink)" pointerEvents="none">
+          {blocks.map((b) => (
+            <text key={b.n} x={LEFT + ((b.start + b.end) / 2) * CELL} y={TOP - 7} textAnchor="middle">{b.n}</text>
+          ))}
+        </g>
+      )}
       <rect x={LEFT} y={TOP} width={size} height={size} fill="none" stroke="var(--color-seam)" pointerEvents="none" />
       {active && (
         <g pointerEvents="none" fill="none">
@@ -170,6 +184,14 @@ export function CooccurrenceHeatmap({ skills, pairs, minPairCount }: { skills: S
       <div className="hidden md:block">{grid(false)}</div>
       <div className="md:hidden">{grid(true)}</div>
       <Legend metric={metric} max={max} />
+      <ol className="mt-3 grid gap-x-6 gap-y-1 border-t border-seam pt-3 t-meta md:grid-cols-2" aria-label="Klastry technologii">
+        {blocks.map((b) => (
+          <li key={b.n} className="flex gap-2">
+            <span className="w-4 shrink-0 font-bold text-ink tnum">{b.n}</span>
+            <span><span className="font-semibold text-ink">{b.name}</span>: {b.members.join(', ')}</span>
+          </li>
+        ))}
+      </ol>
     </div>
   )
 }
