@@ -14,8 +14,8 @@ type PanelProps = {
 export function Panel({ title, subtitle, actions, footer, children, className = '', bodyClassName = '' }: PanelProps) {
   return (
     <section className={`flex min-w-0 flex-col bg-paper ${className}`}>
-      <header className="flex items-start justify-between gap-4 px-5 pb-3 pt-4">
-        <div className="min-w-0">
+      <header className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 px-5 pb-3 pt-4">
+        <div className="min-w-[min(100%,16rem)] flex-1">
           <h2 className="t-panel text-ink">{title}</h2>
           {subtitle && <p className="t-meta mt-1">{subtitle}</p>}
         </div>

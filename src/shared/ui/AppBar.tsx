@@ -28,7 +28,8 @@ export function AppBar({ view, filters, provenance }: { view: View; filters: Fil
               {provenance.synthetic && ' · dane syntetyczne'}
             </span>
           )}
-          <RunPipelineButton />
+          {/* ETL Lab has its own run toolbar with a mode switch; a second primary button there would compete with it. */}
+          {view !== 'etl' && <RunPipelineButton />}
         </div>
       </div>
     </header>

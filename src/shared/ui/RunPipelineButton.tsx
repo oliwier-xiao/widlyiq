@@ -9,7 +9,8 @@ import { usePipelineRun, type RunMode } from './PipelineRun'
 export function RunPipelineButton({ mode = 'live', size = 'bar' }: { mode?: RunMode; size?: 'bar' | 'large' }) {
   const run = usePipelineRun()
   const busy = run.status === 'running'
-  const label = busy ? (run.running ? `${STAGE_META[run.running].label}…` : 'Start…') : 'Uruchom pipeline'
+  // The first second of a run is Python importing pandas and scikit-learn, before any stage event arrives.
+  const label = busy ? (run.running ? `${STAGE_META[run.running].label}…` : 'Uruchamianie…') : 'Uruchom pipeline'
   return (
     <button
       type="button"
