@@ -42,6 +42,8 @@ function pickLabelled(points: Point[], forced: string[], limit: number): Set<str
 
 function placeLabels(points: Point[], picked: Set<string>, { W, M, font }: Geo): Label[] {
   const placed: { x0: number; x1: number; y: number }[] = []
+  // One label line is the font size plus a little air; a fixed 13 let 14-unit labels touch once the chart scaled up.
+  const line = Math.ceil(font * 1.15)
   return points
     .filter((p) => picked.has(p.skill))
     .sort((a, b) => a.cy - b.cy)
@@ -59,7 +61,7 @@ function placeLabels(points: Point[], picked: Set<string>, { W, M, font }: Geo):
       const [x0, x1] = right ? [x, x + width] : [x - width, x]
       let y = p.cy + 4
       // Nudge downwards until the label clears every label already placed on overlapping columns.
-      while (placed.some((q) => Math.abs(q.y - y) < 13 && q.x0 < x1 && x0 < q.x1)) y += 13
+      while (placed.some((q) => Math.abs(q.y - y) < line && q.x0 < x1 && x0 < q.x1)) y += line
       placed.push({ x0, x1, y })
       return { skill: p.skill, x, y, anchor: right ? 'start' : 'end' }
     })
