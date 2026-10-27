@@ -10,19 +10,19 @@ type Provenance = { mode: 'live' | 'snapshot'; synthetic: boolean; fallbacks: nu
 export function AppBar({ view, filters, provenance }: { view: View; filters: Filters; provenance: Provenance }) {
   return (
     <header className="sticky top-0 z-40 bg-carbon text-paper">
-      <div className="flex flex-wrap items-center gap-x-5 px-4 md:h-12 md:flex-nowrap lg:px-6">
+      <div className="flex flex-wrap items-center gap-x-5 px-5 lg:h-12 lg:flex-nowrap">
         <Link href="/" className="flex h-12 shrink-0 items-center t-wordmark text-paper">
           WidlyIQ
         </Link>
-        {/* Phones get the tabs on their own scrolling row so all four views stay visible. */}
-        <div className="order-3 -mx-4 w-[calc(100%+2rem)] border-t border-carbon-2 px-2 py-1.5 md:order-none md:mx-0 md:w-auto md:border-0 md:p-0">
+        {/* Below lg the tabs get their own scrolling row, so all four views stay visible and the bar never overflows. */}
+        <div className="order-3 -mx-5 w-[calc(100%+2.5rem)] border-t border-carbon-2 px-3 py-1.5 lg:order-none lg:mx-0 lg:w-auto lg:border-0 lg:p-0">
           <ViewTabs view={view} filters={filters} />
         </div>
         <div className="ml-auto flex h-12 shrink-0 items-center gap-3">
           {provenance && (
             // Always visible: a synthetic figure must never appear without its label, phones included.
-            <span className="inline-flex items-center gap-2 border border-carbon-2 px-2 py-1 t-micro font-medium text-dot-soft md:px-2.5 md:text-[13px]">
-              <span className={`size-2 ${provenance.mode === 'live' && provenance.fallbacks === 0 ? 'bg-[#3ccf74]' : 'border-[1.5px] border-dot-soft'}`} aria-hidden />
+            <span className="inline-flex items-center gap-2 border border-carbon-2 px-2 py-1 t-micro font-medium text-dot-soft md:px-2.5">
+              <span className={`size-2 ${provenance.mode === 'live' && provenance.fallbacks === 0 ? 'bg-live' : 'border-[1.5px] border-dot-soft'}`} aria-hidden />
               <span className="hidden md:inline">
                 {provenance.mode === 'live'
                   ? provenance.fallbacks > 0 ? `Live · ${provenance.fallbacks} ze snapshotu` : 'Live'

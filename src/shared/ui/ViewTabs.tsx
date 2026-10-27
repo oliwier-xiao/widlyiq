@@ -16,7 +16,7 @@ export function ViewTabs({ view, filters }: { view: View; filters: Filters }) {
             scroll={false}
             aria-current={active ? 'page' : undefined}
             // Switching views happens dozens of times a session and triggers a server render, so the plate moves instantly.
-            className={`shrink-0 px-3 py-1.5 text-[15px] font-semibold transition-colors duration-150 ${active ? 'bg-paper text-ink' : 'text-dot-soft hover:text-paper'}`}
+            className={`shrink-0 px-3 py-1.5 t-control transition-colors duration-150 ${active ? 'bg-paper text-ink' : 'text-dot-soft hover:text-paper'}`}
           >
             {VIEW_LABELS[v]}
           </Link>

@@ -1,11 +1,10 @@
 import type { ReactNode } from 'react'
 
 import type { RunInfo } from '@/shared/db/run'
-import { toSearch, type Filters, type View } from '@/shared/lib/filters'
+import { VIEW_LABELS, toSearch, type Filters, type View } from '@/shared/lib/filters'
 import type { StageSnapshot } from '@/shared/lib/stages'
 
 import { AppBar } from './AppBar'
-import { CodeDrawerProvider } from './CodeDrawer'
 import { PipelineRibbon } from './PipelineRibbon'
 import { PipelineRunProvider } from './PipelineRun'
 
@@ -17,21 +16,22 @@ export function DashboardShell({ view, filters, run, children }: Props) {
     : null
   return (
     <PipelineRunProvider>
-      <CodeDrawerProvider>
-        <AppBar view={view} filters={filters} provenance={provenance} />
-        {run && (
-          <PipelineRibbon
-            run={{
-              stages: run.stages as unknown as StageSnapshot[],
-              finishedAt: run.finishedAt,
-              durationMs: run.durationMs,
-              mode: run.mode,
-              etlHref: toSearch('etl', filters),
-            }}
-          />
-        )}
-        <main className="min-w-0">{children}</main>
-      </CodeDrawerProvider>
+      <AppBar view={view} filters={filters} provenance={provenance} />
+      {run && (
+        <PipelineRibbon
+          run={{
+            stages: run.stages as unknown as StageSnapshot[],
+            finishedAt: run.finishedAt,
+            etlHref: toSearch('etl', filters),
+          }}
+          onEtl={view === 'etl'}
+        />
+      )}
+      <main className="min-w-0">
+        {/* The active tab names the view visually; screen readers get the same name as the page heading. */}
+        {run && <h1 className="sr-only">{VIEW_LABELS[view]}</h1>}
+        {children}
+      </main>
     </PipelineRunProvider>
   )
 }

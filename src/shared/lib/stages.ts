@@ -2,31 +2,22 @@ export type StageId =
   | 'extract' | 'verify-schema' | 'dedupe' | 'normalize-nbp' | 'impute-median' | 'filter-iqr'
   | 'classify-tier' | 'onehot-encode' | 'cooccur-matrix' | 'ml-ridge' | 'plot-mpl' | 'load-sqlite'
 
-export type Anchor =
-  | 'extract' | 'xml-nbp' | 'xlsx-gus' | 'verify-schema' | 'normalize-nbp' | 'impute-median' | 'filter-iqr'
-  | 'classify-tier' | 'onehot-encode' | 'cooccur-matrix' | 'ml-ridge' | 'plot-mpl' | 'sqlite-query'
+type StageMeta = { label: string; color: string; what: string }
 
-export const ANCHORS: readonly Anchor[] = [
-  'extract', 'xml-nbp', 'xlsx-gus', 'verify-schema', 'normalize-nbp', 'impute-median', 'filter-iqr',
-  'classify-tier', 'onehot-encode', 'cooccur-matrix', 'ml-ridge', 'plot-mpl', 'sqlite-query',
-]
-
-type StageMeta = { label: string; color: string; anchor: Anchor; what: string }
-
-// One colour per mechanism: the ribbon, the ETL Lab list and the code drawer all paint a stage the same way.
+// One colour per mechanism: the ribbon and the ETL Lab list paint a stage the same way.
 export const STAGE_META: Record<StageId, StageMeta> = {
-  extract: { label: 'Pobranie', color: 'var(--color-stage-extract)', anchor: 'extract', what: 'API portali, NBP XML, GUS XLSX, fallback do snapshotów' },
-  'verify-schema': { label: 'Schemat', color: 'var(--color-stage-schema)', anchor: 'verify-schema', what: 'typy, ujemne kwoty, nieznane waluty, kwoty w tysiącach' },
-  dedupe: { label: 'Duplikaty', color: 'var(--color-stage-schema)', anchor: 'verify-schema', what: 'ta sama oferta na kilku portalach lub w kilku miastach' },
-  'normalize-nbp': { label: 'Waluty NBP', color: 'var(--color-stage-nbp)', anchor: 'normalize-nbp', what: 'kurs średni NBP, stawki godzinowe × 168 h' },
-  'impute-median': { label: 'Imputacja', color: 'var(--color-stage-impute)', anchor: 'impute-median', what: 'brak widełek uzupełniony medianą grupy, is_imputed = 1' },
-  'filter-iqr': { label: 'Outliery', color: 'var(--color-stage-iqr)', anchor: 'filter-iqr', what: 'płotki IQR k = 1,5 na log(płacy) i Z-Score' },
-  'classify-tier': { label: 'Tier', color: 'var(--color-stage-tier)', anchor: 'classify-tier', what: 'kategoria z tytułu i stacku, koszyki S/A/B/C wg krotności GUS' },
-  'onehot-encode': { label: 'One-hot', color: 'var(--color-stage-model)', anchor: 'onehot-encode', what: 'skille, kategoria, umowa, poziom, StandardScaler' },
-  'cooccur-matrix': { label: 'X.T @ X', color: 'var(--color-stage-model)', anchor: 'cooccur-matrix', what: 'macierz współwystępowania na macierzy rzadkiej' },
-  'ml-ridge': { label: 'RidgeCV', color: 'var(--color-stage-model)', anchor: 'ml-ridge', what: 'regresja grzbietowa, alfa z walidacji krzyżowej' },
-  'plot-mpl': { label: 'Wykres', color: 'var(--color-stage-model)', anchor: 'plot-mpl', what: 'diagnostyka IQR w Matplotlib, zapis do SVG' },
-  'load-sqlite': { label: 'SQLite', color: 'var(--color-stage-model)', anchor: 'sqlite-query', what: 'jedna transakcja, tryb WAL, eksport CSV / JSON / XLSX' },
+  extract: { label: 'Pobranie', color: 'var(--color-stage-extract)', what: 'oferty z portali, kursy NBP, płace GUS' },
+  'verify-schema': { label: 'Schemat', color: 'var(--color-stage-schema)', what: 'błędne typy, ujemne kwoty, nieznane waluty' },
+  dedupe: { label: 'Duplikaty', color: 'var(--color-stage-schema)', what: 'ta sama oferta na kilku portalach lub w kilku miastach' },
+  'normalize-nbp': { label: 'Waluty NBP', color: 'var(--color-stage-nbp)', what: 'kurs średni NBP, stawki godzinowe × 168 h' },
+  'impute-median': { label: 'Imputacja', color: 'var(--color-stage-impute)', what: 'brak widełek uzupełniony medianą grupy' },
+  'filter-iqr': { label: 'Outliery', color: 'var(--color-stage-iqr)', what: 'płace poza płotkami IQR w swojej grupie' },
+  'classify-tier': { label: 'Tier', color: 'var(--color-stage-tier)', what: 'kategoria oferty i koszyk S/A/B/C wg krotności GUS' },
+  'onehot-encode': { label: 'Cechy', color: 'var(--color-stage-model)', what: 'technologie, poziom, kategoria i umowa jako kolumny 0/1' },
+  'cooccur-matrix': { label: 'Współwystępowanie', color: 'var(--color-stage-model)', what: 'które technologie pojawiają się razem' },
+  'ml-ridge': { label: 'Model Ridge', color: 'var(--color-stage-model)', what: 'regresja grzbietowa, alfa z walidacji krzyżowej' },
+  'plot-mpl': { label: 'Wykres', color: 'var(--color-stage-model)', what: 'wykres diagnostyczny IQR z Matplotlib' },
+  'load-sqlite': { label: 'Zapis', color: 'var(--color-stage-model)', what: 'jedna transakcja SQLite i eksport CSV, JSON, XLSX' },
 }
 
 export const STAGE_ORDER = Object.keys(STAGE_META) as StageId[]
@@ -46,7 +37,7 @@ export type StageSnapshot = {
 export type PipelineEvent =
   | { event: 'run'; status: 'started'; run_id: string; mode: string; stages: StageId[] }
   | ({ event: 'stage'; status: 'running'; stage: StageId; position: number; rows_in: number })
-  | ({ event: 'stage'; status: 'done'; position: number; anchor: string } & StageSnapshot)
+  | ({ event: 'stage'; status: 'done'; position: number } & StageSnapshot)
   | { event: 'source'; source: string; mode: 'live' | 'snapshot'; reason: string | null; records: number | null; duration_ms: number }
   | { event: 'summary'; run_id: string; duration_ms: number; mode: string }
   | { event: 'error'; message: string; after_stage?: string }
@@ -57,7 +48,7 @@ export function ribbonLabel(s: StageSnapshot): string {
     case 'extract': return `${n(s.rows_out)} surowych`
     case 'verify-schema': return `−${n(s.removed)} schemat`
     case 'dedupe': return `−${n(s.removed)} duplikaty`
-    case 'normalize-nbp': return `${n(s.detail.converted)} walut · ${n(s.detail.hourly)} × 168 h`
+    case 'normalize-nbp': return `${n(Number(s.detail.converted ?? 0) + Number(s.detail.hourly ?? 0))} przeliczeń`
     case 'impute-median': return `${n(s.detail.imputed)} imputacji`
     case 'filter-iqr': return `−${n(s.removed)} IQR`
     case 'classify-tier': return `${n(s.rows_out)} czystych`
@@ -73,7 +64,7 @@ export function ribbonShort(s: StageSnapshot): string {
     case 'verify-schema':
     case 'dedupe':
     case 'filter-iqr': return `−${n(s.removed)}`
-    case 'normalize-nbp': return n(s.detail.converted)
+    case 'normalize-nbp': return n(Number(s.detail.converted ?? 0) + Number(s.detail.hourly ?? 0))
     case 'impute-median': return `+${n(s.detail.imputed)}`
     case 'classify-tier': return n(s.rows_out)
     default: return ''

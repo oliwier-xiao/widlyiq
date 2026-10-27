@@ -5,7 +5,6 @@ import { all, get, json } from './sqlite'
 export type StageRow = {
   position: number
   stage: string
-  anchor: string
   rows_in: number
   rows_out: number
   removed: number

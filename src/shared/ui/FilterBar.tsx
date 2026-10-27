@@ -29,7 +29,7 @@ export function FilterBar({ view, filters, regions, fields, trailing }: Props) {
 
   return (
     <div className="relative border-b border-seam bg-toolbar">
-      <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 lg:px-6">
+      <div className="flex flex-wrap items-center gap-2 px-5 py-2.5">
         {fields.includes('seniority') && (
           <div role="radiogroup" aria-label="Poziom" className="flex h-9 border border-seam bg-paper p-[3px]">
             {SENIORITIES.map((s) => (
@@ -39,7 +39,7 @@ export function FilterBar({ view, filters, regions, fields, trailing }: Props) {
                 role="radio"
                 aria-checked={filters.seniority === s}
                 onClick={() => set({ seniority: s })}
-                className={`px-3 text-[15px] font-semibold transition-colors duration-150 ${filters.seniority === s ? 'bg-carbon text-paper' : 'text-ink-2 hover:text-ink'}`}
+                className={`px-3 t-control transition-colors duration-150 ${filters.seniority === s ? 'bg-carbon text-paper' : 'text-ink-2 hover:text-ink'}`}
               >
                 {SENIORITY_LABELS[s]}
               </button>
@@ -64,13 +64,17 @@ export function FilterBar({ view, filters, regions, fields, trailing }: Props) {
         )}
         {!isDefault && (
           <button type="button" onClick={() => set(Object.fromEntries(fields.map((f) => [f, DEFAULT_FILTERS[f]])))}
-            className="px-2 text-[14px] font-medium text-ink underline underline-offset-[3px]">
+            className="px-2 t-control font-medium text-ink underline underline-offset-[3px]">
             Przywróć domyślne
           </button>
         )}
         {trailing && <div className="ml-auto flex items-center gap-2">{trailing}</div>}
       </div>
-      {pending && <span className="filter-progress absolute inset-x-0 bottom-[-1px] h-[2px]" aria-hidden />}
+      {pending && (
+        <span className="absolute inset-x-0 bottom-[-1px] h-[2px] overflow-hidden" aria-hidden>
+          <span className="filter-progress block h-full" />
+        </span>
+      )}
     </div>
   )
 }
@@ -85,7 +89,7 @@ export function Select({ label, value, options, onChange, accent }: SelectProps)
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="min-w-0 cursor-pointer appearance-none bg-transparent text-[15px] font-semibold text-ink outline-none"
+        className="min-w-0 cursor-pointer appearance-none bg-transparent t-control text-ink outline-none"
       >
         {options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
       </select>
