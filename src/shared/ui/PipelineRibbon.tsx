@@ -77,10 +77,10 @@ export function PipelineRibbon({ run, onEtl }: { run: RibbonRun; onEtl: boolean 
       <div className="hidden shrink-0 items-center gap-4 px-5 t-meta lg:flex">
         <span className="tnum">
           {live.status === 'running'
-            ? `Pipeline działa (${live.mode === 'live' ? 'live z fallbackiem' : 'snapshot'})`
+            ? `Pipeline działa (${live.mode === 'live' ? 'live' : 'snapshot'})`
             : live.status === 'error'
               ? <span className="text-error">Przebieg przerwany: {live.error}</span>
-              : `Ostatni run ${formatDateTime(run.finishedAt)}`}
+              : `Ostatni przebieg ${formatDateTime(run.finishedAt)}`}
         </span>
         {!onEtl && <Link href={run.etlHref} className="font-semibold text-ink underline">Pokaż w ETL Lab</Link>}
       </div>

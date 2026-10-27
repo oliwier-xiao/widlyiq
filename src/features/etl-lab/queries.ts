@@ -12,7 +12,7 @@ const CLEAN_KINDS: [SampleKind, string][] = [
   ['currency', "c.currency <> 'PLN' AND c.transform_log LIKE '%normalize-nbp:%(%'"],
   ['hourly', "c.transform_log LIKE '%stawka godzinowa%'"],
   ['impute', 'c.is_imputed = 1'],
-  ['alias', "c.transform_log LIKE '%aliasy skilli%'"],
+  ['alias', "c.transform_log LIKE '%aliasy technologii%'"],
   ['schema', "c.transform_log LIKE '%verify-schema:%'"],
 ]
 const REJECTED_KINDS: [SampleKind, string][] = [
@@ -23,7 +23,10 @@ const REJECTED_KINDS: [SampleKind, string][] = [
 
 type RawRow = Omit<RawSide, 'skills_raw'> & { offer_id: string; skills_raw: string }
 type CleanRow = Omit<CleanSide, 'skills'> & { offer_id: string; source: string; title: string; transform_log: string; skills: string | null }
-type RejectedRow = Omit<Rejection, 'stage' | 'keptTitle'> & { offer_id: string; source: string; title: string | null; stage: StageId; kept_title: string | null }
+type RejectedRow = Omit<Rejection, 'stage' | 'kept'> & {
+  offer_id: string; source: string; title: string | null; stage: StageId
+  kept_source: string | null; kept_city: string | null; kept_salary: number | null
+}
 
 const NOTE_STAGE: Record<string, StageId> = {
   harmonize: 'verify-schema',
@@ -57,7 +60,7 @@ function rejectedSamples(stage: string): RejectedRow[] {
   return all<RejectedRow>(`
     SELECT * FROM (
       SELECT r.offer_id, r.source, r.title, r.stage, r.reason, r.salary_pln_month, r.lower_fence, r.upper_fence,
-             r.z_score, r.group_key, k.title AS kept_title,
+             r.z_score, r.group_key, k.source AS kept_source, k.city AS kept_city, k.salary_pln_month AS kept_salary,
              ROW_NUMBER() OVER (PARTITION BY r.source, r.reason ORDER BY r.offer_id) AS rn
       FROM rejected_outliers r
       LEFT JOIN offers_clean k ON r.stage = 'dedupe' AND k.offer_id = substr(r.reason, 10)
@@ -69,7 +72,7 @@ function rejectedSamples(stage: string): RejectedRow[] {
 function rawFor(ids: string[]): Map<string, RawSide> {
   if (ids.length === 0) return new Map()
   const rows = all<RawRow>(
-    `SELECT offer_id, title, seniority_raw, contract_raw, salary_from, salary_to, currency, period_raw, city, skills_raw
+    `SELECT offer_id, title, category_raw, seniority_raw, contract_raw, salary_from, salary_to, currency, period_raw, city, region_raw, skills_raw
      FROM offers_raw WHERE offer_id IN (${ids.map(() => '?').join(',')})`,
     ids,
   )
@@ -102,7 +105,7 @@ export function getSamples(): Sample[] {
         rejection: {
           stage: row.stage, reason: row.reason, salary_pln_month: row.salary_pln_month, lower_fence: row.lower_fence,
           upper_fence: row.upper_fence, z_score: row.z_score, group_key: row.group_key,
-          keptTitle: row.kept_title,
+          kept: row.kept_source ? { source: row.kept_source, city: row.kept_city, salary: row.kept_salary } : null,
         },
       })
     }

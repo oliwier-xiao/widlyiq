@@ -22,7 +22,8 @@ function where(region: string): string {
 function Headline({ answer, filters }: { answer: Answer; filters: Filters }) {
   const who = `${SENIORITY_LABELS[filters.seniority]}${filters.category === 'all' ? '' : ` ${CATEGORY_LABELS[filters.category]}`}`
   const unit = filters.contract === 'b2b' ? 'zł netto' : filters.contract === 'uop' ? 'zł brutto' : 'zł'
-  const n = (v: number) => <strong className="font-extrabold tnum">{formatNumber(Math.round(v / 100) * 100)}</strong>
+  // Exact, not rounded to hundreds: the same percentile appears in the field labels and must read the same there.
+  const n = (v: number) => <strong className="font-extrabold tnum">{formatNumber(v)}</strong>
   return (
     <p className="t-headline max-w-[72ch] text-ink">
       {answer.pct ? (
@@ -84,7 +85,7 @@ export function MarketView({ filters, regions, run }: ViewProps) {
         <div className="order-1 flex min-w-0 flex-col gap-px lg:order-2">
           <AnswerReadout answer={data.answer} filters={filters} />
           <RegionRanking regions={data.regions} polska={data.polska} filters={filters} gusYear={data.answer.gusYear} />
-          <PortalTable portals={data.portals} className="flex-1" />
+          <PortalTable portals={data.portals} filters={filters} className="flex-1" />
         </div>
       </SeamGrid>
     </>

@@ -39,7 +39,7 @@ export function EtlLabView({ run }: ViewProps) {
         <Panel
           className="lg:col-span-2"
           title="Diagnostyka IQR"
-          subtitle="Wykres z Matplotlib, odświeżany przy każdym przebiegu."
+          subtitle="Wykres z Matplotlib dla ofert z podanymi widełkami, odświeżany przy każdym przebiegu."
         >
           <div className="border-t border-seam px-5 py-4">
             <Image

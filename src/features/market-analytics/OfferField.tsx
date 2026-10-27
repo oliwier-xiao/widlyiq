@@ -10,10 +10,15 @@ import type { FieldLayout } from './field'
 
 type Hover = { kind: 'offer' | 'rejected'; i: number; cx: number; cy: number }
 
-const k = (v: number) => formatNumber(Math.round(v / 100) * 100)
+// Exact values, like the readout beside the field: a P50 of 17 675 rounded to 17 700 looks like a different number.
+const k = (v: number) => formatNumber(v)
 
 // Measured Archivo advance per character, as a share of the font size: 0.48 regular, 0.54 bold, rounded up for safety.
 const textWidth = (text: string, size: number, bold: boolean) => text.length * size * (bold ? 0.56 : 0.5)
+
+// The stored reason starts with the rule that fired ("IQR: poniżej dolnego płotka"); the tooltip turns it into a phrase.
+const rejectedWhy = (reason: string) =>
+  reason.startsWith('IQR: ') ? `odrzucona przez IQR, ${reason.slice(5)}` : `odrzucona: ${reason}`
 
 type BandText = { x: number; text: string }
 
@@ -47,6 +52,7 @@ export function OfferField({ layout, filters }: { layout: FieldLayout; filters: 
   const [hover, setHover] = useState<Hover | null>(null)
   const { g, width, height, lanes, ticks, radius } = layout
   const regionName = filters.region === 'polska' ? 'Polska' : formatRegion(filters.region)
+  const metaX = g.compact ? 6 : 10
   const plotBottom = lanes.length * g.laneHeight
   // Chart text sizes are in SVG units, so they scale with the chart's geometry like every other mark.
   const META = 12
@@ -107,12 +113,16 @@ export function OfferField({ layout, filters }: { layout: FieldLayout; filters: 
                   {SENIORITY_LABELS[l.seniority]}
                 </text>
               </g>
-              <text x={g.compact ? 6 : 10} y={box + 50} fontSize={META} className="fill-ink-2 tnum">
-                n {formatNumber(l.n)}
-                {filters.region !== 'polska' && (g.compact
-                  ? <tspan x={6} dy={14}>{regionName.slice(0, 4)}. {formatNumber(l.nRegion)}</tspan>
-                  : ` · ${regionName.slice(0, 4)}. ${formatNumber(l.nRegion)}`)}
-              </text>
+              <text x={metaX} y={box + 50} fontSize={META} className="fill-ink-2 tnum">{offersLabel(l.n)}</text>
+              {/* The orange dot is the legend's mark for the chosen region, so the count needs no truncated region name. */}
+              {filters.region !== 'polska' && (
+                <g>
+                  <circle cx={metaX + 3.5} cy={box + 60} r={3.5} className="fill-signal" />
+                  <text x={metaX + 11} y={box + 64} fontSize={META} className="fill-ink-2 tnum">
+                    {formatNumber(l.nRegion)}<title>{`${regionName}: ${offersLabel(l.nRegion)}`}</title>
+                  </text>
+                </g>
+              )}
 
               {l.national && (
                 <g>
@@ -178,7 +188,7 @@ export function OfferField({ layout, filters }: { layout: FieldLayout; filters: 
           <p className="t-control">{detail.title ?? 'Oferta bez tytułu'}</p>
           <p className="mt-1 t-meta text-dot-soft tnum">
             {formatPLN(detail.salary_pln_month)}
-            {'reason' in detail ? ` · odrzucona: ${detail.reason}` : ` · ${[detail.company, detail.city ?? 'zdalnie', PORTAL_LABELS[detail.source]].filter(Boolean).join(' · ')}`}
+            {'reason' in detail ? ` · ${rejectedWhy(detail.reason)}` : ` · ${[detail.company, detail.city ?? 'zdalnie', PORTAL_LABELS[detail.source]].filter(Boolean).join(' · ')}`}
           </p>
         </div>
       )}

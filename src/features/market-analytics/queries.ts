@@ -120,14 +120,23 @@ export function getMarketData(f: Filters): MarketData {
     .sort((a, b) => (b.multiple ?? -1) - (a.multiple ?? -1) || b.n - a.n)
   const polska = regionRow('polska', inLane.map((o) => o.salary_pln_month))
 
-  return { field, rejected, answer, regions, polska, portals: getPortals() }
+  return { field, rejected, answer, regions, polska, portals: getPortals(f) }
 }
 
-function getPortals(): PortalRow[] {
-  const bias = new Map(all<{ source: string; median_residual_pct: number }>('SELECT source, median_residual_pct FROM portal_bias')
-    .map((r) => [r.source, r.median_residual_pct]))
-  const counts = all<{ source: string; n: number; hourly: number }>(
-    "SELECT source, count(*) AS n, avg(period = 'hour') AS hourly FROM offers_clean GROUP BY source",
+/**
+ * Bias follows the page's profile, so its counts add up to the readout's. The portal filter is ignored on purpose:
+ * a bias table with one portal in it compares that portal with nothing.
+ */
+function getPortals(f: Filters): PortalRow[] {
+  const s = scope({ ...f, portal: 'all' }, { region: true, seniority: true })
+  const residuals = new Map<string, number[]>()
+  for (const r of all<{ source: string; cv_residual: number | null }>(`SELECT source, cv_residual FROM offers_clean WHERE ${s.sql}`, s.params)) {
+    if (r.cv_residual === null) continue
+    residuals.set(r.source, [...(residuals.get(r.source) ?? []), r.cv_residual])
+  }
+  // Rows keep the order of each portal's whole clean set, so switching filters never reshuffles the table.
+  const counts = all<{ source: string; total: number; hourly: number }>(
+    "SELECT source, count(*) AS total, avg(period = 'hour') AS hourly FROM offers_clean GROUP BY source ORDER BY total DESC",
   )
   const runId = get<{ run_id: string }>('SELECT run_id FROM pipeline_runs ORDER BY finished_at DESC LIMIT 1')?.run_id
   const logs = new Map(all<{ source: string; mode: 'live' | 'snapshot'; fallback_reason: string | null; meta: string }>(
@@ -135,14 +144,16 @@ function getPortals(): PortalRow[] {
   ).map((l) => [l.source, l]))
   return counts.map((c) => {
     const log = logs.get(c.source)
+    const values = residuals.get(c.source) ?? []
+    const m = values.length >= MIN_SAMPLE ? median(values) : null
     return {
       source: c.source,
-      n: c.n,
-      biasPct: bias.get(c.source) ?? null,
+      n: values.length,
+      biasPct: m === null ? null : Math.round(m * 1000) / 10,
       hourlyShare: c.hourly,
       mode: log?.mode ?? 'snapshot',
       reason: log?.mode === 'snapshot' ? log.fallback_reason : null,
       synthetic: Boolean(json<{ synthetic?: boolean }>(log?.meta, {}).synthetic),
     }
-  }).sort((a, b) => b.n - a.n)
+  })
 }

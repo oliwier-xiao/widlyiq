@@ -16,6 +16,7 @@ export const SAMPLE_LABELS: Record<SampleKind, string> = {
 
 export type RawSide = {
   title: string | null
+  category_raw: string | null
   seniority_raw: string | null
   contract_raw: string | null
   salary_from: number | null
@@ -23,6 +24,7 @@ export type RawSide = {
   currency: string | null
   period_raw: string | null
   city: string | null
+  region_raw: string | null
   skills_raw: string[]
 }
 
@@ -47,7 +49,8 @@ export type Rejection = {
   upper_fence: number | null
   z_score: number | null
   group_key: string | null
-  keptTitle: string | null
+  /** The copy dedupe kept; null when a later stage removed it too. */
+  kept: { source: string; city: string | null; salary: number | null } | null
 }
 
 export type Note = { stage: StageId; text: string }

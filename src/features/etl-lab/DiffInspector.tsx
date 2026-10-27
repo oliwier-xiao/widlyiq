@@ -13,6 +13,9 @@ const rawNumber = new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 2, use
 // The pipeline logs grouping keys by column name; the UI names them in Polish.
 const GROUP_WORDS: Record<string, string> = { category: 'kategoria', seniority: 'poziom', contract: 'umowa' }
 const groupLabel = (key: string | null) => (key ?? '').split(' × ').map((k) => GROUP_WORDS[k] ?? k).join(' × ')
+// IQR group keys hold values, not column names: "backend × senior × b2b", or "senior × b2b" for a small group.
+const VALUE_LABELS: Record<string, string> = { ...CATEGORY_LABELS, ...SENIORITY_LABELS, ...CONTRACT_LABELS, '?': 'brak danych' }
+const fenceGroupLabel = (key: string | null) => (key ?? '').split(' × ').map((v) => VALUE_LABELS[v] ?? v).join(' × ')
 
 export function DiffInspector({ samples }: { samples: Sample[] }) {
   const [kind, setKind] = useState<SampleKind>('all')
@@ -73,6 +76,8 @@ export function DiffInspector({ samples }: { samples: Sample[] }) {
 function Detail({ sample }: { sample: Sample }) {
   const { focus, setFocus } = useStageFocus()
   const { raw, clean, rejection, notes } = sample
+  // Without a raw record there is nothing to compare against, so nothing is marked as changed.
+  const differs = (before: string | null | undefined, after: string | null) => raw !== null && !sameText(before, after ?? '')
   return (
     <div className="px-5 py-4">
       <h3 className="t-headline">{sample.title}</h3>
@@ -83,11 +88,13 @@ function Detail({ sample }: { sample: Sample }) {
           <p className="min-w-0 flex-1 t-body">
             <strong className="font-semibold">Odrzucony: {STAGE_META[rejection.stage].label}.</strong>{' '}
             {rejection.stage === 'dedupe'
-              ? <>Zachowana kopia: {rejection.keptTitle ?? 'brak w czystym zbiorze'}</>
-              : rejection.reason}
+              ? (rejection.kept
+                ? <>Zostaje kopia z {PORTAL_LABELS[rejection.kept.source] ?? rejection.kept.source}, {rejection.kept.city ?? 'zdalnie'}, {formatPLN(rejection.kept.salary)} / mies.</>
+                : 'Zachowanej kopii nie ma w czystym zbiorze, odpadła na późniejszym etapie.')
+              : sentence(rejection.reason.replace(/^IQR:\s*/, ''))}
             {rejection.stage === 'filter-iqr' && rejection.lower_fence != null && (
               <span className="mt-1 block t-table text-ink-2">
-                {formatPLN(rejection.salary_pln_month)}, a płotki grupy {rejection.group_key} to {formatPLN(rejection.lower_fence)} do {formatPLN(rejection.upper_fence)}
+                {formatPLN(rejection.salary_pln_month)}, a płotki grupy {fenceGroupLabel(rejection.group_key)} to {formatPLN(rejection.lower_fence)} do {formatPLN(rejection.upper_fence)}
               </span>
             )}
           </p>
@@ -101,10 +108,10 @@ function Detail({ sample }: { sample: Sample }) {
         <Side title="Clean" note={clean ? 'po wszystkich etapach' : 'rekord nie przeszedł dalej'} className="pt-4 md:pl-5 md:pt-0">
           {clean ? (
             <>
-              <Field label="Kategoria" value={CATEGORY_LABELS[clean.category] ?? clean.category} />
-              <Field label="Poziom" value={SENIORITY_LABELS[clean.seniority as Seniority] ?? clean.seniority} changed={!sameText(raw?.seniority_raw, clean.seniority)} />
-              <Field label="Umowa" value={clean.contract ? CONTRACT_LABELS[clean.contract] ?? clean.contract : 'brak danych'} />
-              <Field label="Region" value={clean.region ? formatRegion(clean.region) : 'brak danych'} />
+              <Field label="Kategoria" value={CATEGORY_LABELS[clean.category] ?? clean.category} changed={differs(raw?.category_raw, clean.category)} />
+              <Field label="Poziom" value={SENIORITY_LABELS[clean.seniority as Seniority] ?? clean.seniority} changed={differs(raw?.seniority_raw, clean.seniority)} />
+              <Field label="Umowa" value={clean.contract ? CONTRACT_LABELS[clean.contract] ?? clean.contract : 'brak danych'} changed={differs(raw?.contract_raw, clean.contract)} />
+              <Field label="Region" value={clean.region ? formatRegion(clean.region) : 'brak danych'} changed={differs(raw?.region_raw, clean.region)} />
               <Field
                 label="Płaca"
                 value={<>{formatPLN(clean.salary_pln_month)} / mies.{clean.is_imputed ? <span className="text-ink-2"> · mediana grupy: {groupLabel(clean.imputation_group)}</span> : null}</>}
@@ -172,10 +179,12 @@ function RawFields({ raw }: { raw: RawSide }) {
   return (
     <>
       <Field label="Tytuł" value={raw.title || 'brak tytułu'} />
+      <Field label="Kategoria" value={raw.category_raw ?? 'brak'} />
       <Field label="Poziom" value={raw.seniority_raw ?? 'brak'} />
       <Field label="Umowa" value={raw.contract_raw ?? 'brak'} />
       <Field label="Widełki" value={range} />
       <Field label="Miasto" value={raw.city ?? 'brak (zdalnie lub nie podano)'} />
+      <Field label="Region" value={raw.region_raw ?? 'brak'} />
       <Field label="Technologie" value={raw.skills_raw.join(', ') || 'brak'} />
     </>
   )
@@ -183,6 +192,10 @@ function RawFields({ raw }: { raw: RawSide }) {
 
 function Empty({ text }: { text: string }) {
   return <p className="t-meta py-2">{text}</p>
+}
+
+function sentence(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1)
 }
 
 function sameText(a: string | null | undefined, b: string): boolean {

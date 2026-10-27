@@ -33,6 +33,8 @@ export function AnswerReadout({ answer, filters }: { answer: Answer; filters: Fi
           <p className={`mt-2 t-body ${SUB}`}>
             Mediana z {formatNumber(answer.n)} ofert z widełkami
             {answer.imputed > 0 && `, bez ${formatNumber(answer.imputed)} uzupełnionych medianą`}.
+            {/* B2B is quoted net and UoP gross, so a median over both mixes two different kinds of number. */}
+            {filters.contract === 'all' && ' B2B netto i UoP brutto razem: wartość orientacyjna.'}
           </p>
           <dl className="mt-5 grid grid-cols-2 border-t border-signal-rule">
             <div className="border-r border-signal-rule py-3 pr-4">

@@ -1,5 +1,3 @@
-import { plural } from './formatters'
-
 export type StageId =
   | 'extract' | 'verify-schema' | 'dedupe' | 'normalize-nbp' | 'impute-median' | 'filter-iqr'
   | 'classify-tier' | 'onehot-encode' | 'cooccur-matrix' | 'ml-ridge' | 'plot-mpl' | 'load-sqlite'
@@ -44,21 +42,18 @@ export type PipelineEvent =
   | { event: 'summary'; run_id: string; duration_ms: number; mode: string }
   | { event: 'error'; message: string; after_stage?: string }
 
-export function ribbonLabel(s: StageSnapshot): string {
-  const n = (v: unknown) => new Intl.NumberFormat('pl-PL', { useGrouping: 'always' }).format(Number(v ?? 0))
-  switch (s.stage) {
-    case 'extract': return `${n(s.rows_out)} surowych`
-    case 'verify-schema': return `−${n(s.removed)} schemat`
-    case 'dedupe': return `−${n(s.removed)} duplikaty`
-    case 'normalize-nbp': return plural(Number(s.detail.converted ?? 0) + Number(s.detail.hourly ?? 0), 'przeliczenie', 'przeliczenia', 'przeliczeń')
-    case 'impute-median': return plural(Number(s.detail.imputed ?? 0), 'imputacja', 'imputacje', 'imputacji')
-    case 'filter-iqr': return `−${n(s.removed)} IQR`
-    case 'classify-tier': return `${n(s.rows_out)} czystych`
-    default: return STAGE_META[s.stage].label
-  }
+// The wide ribbon names each count, so a bare "140" never has to be decoded from the cell's colour.
+const RIBBON_NAMES: Partial<Record<StageId, string>> = {
+  extract: 'Surowe', 'verify-schema': 'Schemat', dedupe: 'Duplikaty', 'normalize-nbp': 'Waluty',
+  'impute-median': 'Imputacja', 'filter-iqr': 'Outliery', 'classify-tier': 'Czyste',
 }
 
-/** Phone-width ribbon: the counts alone, so all seven segments and the clean total fit in 390 px. */
+export function ribbonLabel(s: StageSnapshot): string {
+  const name = RIBBON_NAMES[s.stage]
+  return name ? `${name} ${ribbonShort(s)}` : STAGE_META[s.stage].label
+}
+
+/** Phone-width ribbon: the counts alone, so all seven segments and the clean total fit in 390 px. Only removals carry a sign. */
 export function ribbonShort(s: StageSnapshot): string {
   const n = (v: unknown) => new Intl.NumberFormat('pl-PL', { useGrouping: 'always' }).format(Number(v ?? 0))
   switch (s.stage) {
@@ -67,7 +62,7 @@ export function ribbonShort(s: StageSnapshot): string {
     case 'dedupe':
     case 'filter-iqr': return `−${n(s.removed)}`
     case 'normalize-nbp': return n(Number(s.detail.converted ?? 0) + Number(s.detail.hourly ?? 0))
-    case 'impute-median': return `+${n(s.detail.imputed)}`
+    case 'impute-median': return n(s.detail.imputed)
     case 'classify-tier': return n(s.rows_out)
     default: return ''
   }

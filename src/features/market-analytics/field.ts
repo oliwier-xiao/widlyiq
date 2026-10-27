@@ -14,7 +14,8 @@ export const DESKTOP: Geometry = { width: 900, laneHeight: 214, labelWidth: 104,
 // The two-column layout from lg to 1359 px leaves the field about 610 to 820 px, too narrow for DESKTOP at full size.
 export const MEDIUM: Geometry = { width: 660, laneHeight: 196, labelWidth: 100, plotRight: 540, rejLeft: 566, rejRight: 652, axis: 42,
   dotCenter: 116, spread: 54, maxRadius: 3.1, tickStep: 10000, rejCols: 2, rejGap: 10, compact: false }
-export const MOBILE: Geometry = { width: 400, laneHeight: 150, labelWidth: 64, plotRight: 322, rejLeft: 342, rejRight: 396, axis: 42,
+// 72 units of label column fit "452 oferty" under the level name without touching the leftmost dots.
+export const MOBILE: Geometry = { width: 400, laneHeight: 150, labelWidth: 72, plotRight: 322, rejLeft: 342, rejRight: 396, axis: 42,
   dotCenter: 92, spread: 38, maxRadius: 2.6, tickStep: 10000, rejCols: 2, rejGap: 9, compact: true }
 const MAX_DOTS = 2400
 

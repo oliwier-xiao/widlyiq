@@ -44,7 +44,8 @@ export function SkillGraphView({ filters, regions, run }: ViewProps) {
             className="lg:col-start-1 lg:row-span-2 lg:row-start-1"
             title="Które technologie występują razem"
             subtitle={`${data.skills.length} najczęstszych technologii, pogrupowanych w klastry tych, które często idą w parze.`}
-            footer={`${offersLabel(data.offers)}${scope ? ` (${scope})` : ''} · ${provenance}`}
+            // Region filters only the demand rings; the matrix is the same national one, and the footer says so.
+            footer={`${offersLabel(data.offers)}${scope ? ` (${scope})` : ''} · ${provenance}${regionLabel ? ' · macierz dla całej Polski' : ''}`}
           >
             <CooccurrenceHeatmap skills={data.skills} pairs={data.pairs} minPairCount={minPairCount} />
           </Panel>
@@ -58,7 +59,7 @@ export function SkillGraphView({ filters, regions, run }: ViewProps) {
             footer={
               <div className="flex flex-col gap-1.5">
                 <ScatterLegend regionLabel={regionLabel} />
-                <span>Mediana bez ofert z imputacją.{hidden > 0 ? ` Pominięto ${plural(hidden, 'technologię', 'technologie', 'technologii')} z mniej niż ${MIN_SKILL_SAMPLE} ofertami z widełkami.` : ''}</span>
+                <span>Mediana bez ofert z imputacją{regionLabel ? `, liczona dla całej Polski. Wybór regionu zmienia tylko pierścienie popytu` : ''}.{hidden > 0 ? ` Pominięto ${plural(hidden, 'technologię', 'technologie', 'technologii')} z mniej niż ${MIN_SKILL_SAMPLE} ofertami z widełkami.` : ''}</span>
               </div>
             }
           >

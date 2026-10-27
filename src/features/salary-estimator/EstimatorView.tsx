@@ -36,13 +36,13 @@ export function EstimatorView({ filters, regions, run }: ViewProps) {
         initial={initialProfile(filters)}
         mae={run.metrics.mae_test}
       />
-      <ModelPanel metrics={run.metrics} />
+      <ModelPanel metrics={run.metrics} imputed={run.counts.imputed} />
       <ExportPanel matrix={data.matrix} files={data.exports} />
     </SeamGrid>
   )
 }
 
-function ModelPanel({ metrics }: { metrics: RunMetrics }) {
+function ModelPanel({ metrics, imputed }: { metrics: RunMetrics; imputed: number }) {
   const truth = metrics.ground_truth
   return (
     <Panel
@@ -58,6 +58,10 @@ function ModelPanel({ metrics }: { metrics: RunMetrics }) {
         <Metric term="Cechy wejściowe" value={formatNumber(metrics.n_features)} />
         {truth && <Metric term="Zgodność wag" value={`r = ${decimal(truth.pearson_r, 2)}`} />}
       </dl>
+      <p className="mt-4 max-w-[64ch] t-body text-ink-2">
+        Model uczył się na {formatNumber(metrics.n_train + metrics.n_test)} ofertach z widełkami, bez {formatNumber(imputed)} uzupełnionych
+        medianą: ich płaca to mediana grupy, a nie informacja o samej ofercie.
+      </p>
       {truth && (
         <p className="mt-4 max-w-[64ch] t-body text-ink-2">
           Dane portali są syntetyczne, więc prawdziwe premie {truth.skills_compared} technologii są znane i można sprawdzić, jak dobrze model je odtworzył.

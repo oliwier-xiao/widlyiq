@@ -7,7 +7,7 @@ import { STAGE_META, STAGE_ORDER } from '@/shared/lib/stages'
 import { usePipelineRun, type RunMode } from '@/shared/ui/PipelineRun'
 import { RunPipelineButton } from '@/shared/ui/RunPipelineButton'
 
-const MODES: [RunMode, string][] = [['live', 'Live z fallbackiem'], ['snapshot', 'Tylko snapshot']]
+const MODES: [RunMode, string][] = [['live', 'Live'], ['snapshot', 'Tylko snapshot']]
 
 type Props = { lastFinishedAt: string; lastMode: RunMode; lastDurationMs: number }
 

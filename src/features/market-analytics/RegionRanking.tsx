@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { toSearch, type Filters } from '@/shared/lib/filters'
 import { formatMultiple, formatNumber, formatRegion } from '@/shared/lib/formatters'
+import { MIN_SAMPLE } from '@/shared/lib/stats'
 import { Panel } from '@/shared/ui/Panel'
 
 import type { RegionRow } from './queries'
@@ -16,6 +17,8 @@ export function RegionRanking({ regions, polska, filters, gusYear, className }: 
   const selected = regions.find((r) => r.region === filters.region)
   const visible = selected && !top.includes(selected) ? [...top, selected] : top
   const rest = regions.filter((r) => !visible.includes(r))
+  // Sixteen rows of "za mało ofert" say less than one sentence does.
+  const allEmpty = regions.every((r) => r.multiple === null)
 
   return (
     <Panel
@@ -24,14 +27,24 @@ export function RegionRanking({ regions, polska, filters, gusYear, className }: 
       subtitle={`Ile razy mediana IT przekracza przeciętną płacę w regionie (GUS ${gusYear})`}
       footer={filters.contract === 'uop' ? undefined : 'B2B netto wobec brutto z GUS: krotność orientacyjna'}
     >
-      <div className={`${COLUMNS} border-b border-seam px-5 pb-1.5 t-meta`} aria-hidden>
-        <span>Województwo</span><span /><span className="text-right">Krotność</span><span className="text-right">Mediana IT</span>
-      </div>
-      <ol className="px-5">
-        {visible.map((r) => <Row key={r.region} row={r} max={max} filters={filters} />)}
-        <Row row={polska} max={max} filters={filters} reference />
-      </ol>
-      {rest.length > 0 && (
+      {allEmpty ? (
+        <p className="border-t border-seam px-5 py-3 t-body">
+          {polska.multiple
+            ? `Żadne województwo nie ma ${MIN_SAMPLE} ofert tego profilu z widełkami. Cała Polska: ${formatMultiple(polska.multiple)} płacy GUS, mediana ${formatNumber(polska.median)} zł.`
+            : `Ten profil ma za mało ofert z widełkami, żeby porównać województwa. Poszerz filtr.`}
+        </p>
+      ) : (
+        <>
+          <div className={`${COLUMNS} border-b border-seam px-5 pb-1.5 t-meta`} aria-hidden>
+            <span>Województwo</span><span /><span className="text-right">Krotność</span><span className="text-right">Mediana IT</span>
+          </div>
+          <ol className="px-5">
+            {visible.map((r) => <Row key={r.region} row={r} max={max} filters={filters} />)}
+            <Row row={polska} max={max} filters={filters} reference />
+          </ol>
+        </>
+      )}
+      {!allEmpty && rest.length > 0 && (
         <details className="group px-5">
           <summary className="cursor-pointer py-2 t-control text-ink underline underline-offset-[3px] marker:content-none">
             <span className="group-open:hidden">Pokaż pozostałe {rest.length}</span>
@@ -58,9 +71,9 @@ function Row({ row, max, filters, reference }: { row: RegionRow; max: number; fi
         <span className="relative h-2" aria-hidden>
           <span className={`absolute inset-y-0 left-0 ${active ? 'bg-signal' : reference ? 'border-t-2 border-dashed border-ink-2' : 'bg-dot-soft'}`} style={{ width }} />
         </span>
-        <span className="text-right font-semibold">{row.multiple ? formatMultiple(row.multiple) : `n ${row.n}`}</span>
+        <span className="text-right font-semibold">{row.multiple ? formatMultiple(row.multiple) : ''}</span>
         <span className={`text-right ${active ? 'text-dot-soft' : 'text-ink-2'}`}>
-          {row.median ? `${formatNumber(row.median)} zł` : 'za mało ofert'}
+          {row.median ? `${formatNumber(row.median)} zł` : row.n === 0 ? 'brak ofert' : 'za mało ofert'}
         </span>
       </Link>
     </li>

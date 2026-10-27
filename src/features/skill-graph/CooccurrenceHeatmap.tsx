@@ -11,10 +11,10 @@ import type { SkillNode, SkillPair } from './types'
 type Metric = 'count' | 'lift' | 'jaccard'
 type Max = Record<Metric, number>
 
-const METRICS: { id: Metric; label: string }[] = [
-  { id: 'count', label: 'Liczba ofert' },
-  { id: 'lift', label: 'Lift' },
-  { id: 'jaccard', label: 'Jaccard' },
+const METRICS: { id: Metric; label: string; hint: string }[] = [
+  { id: 'count', label: 'Liczba ofert', hint: 'Ile ofert wymaga obu technologii naraz.' },
+  { id: 'lift', label: 'Lift', hint: 'Ile razy częściej para występuje razem, niż gdyby technologie były od siebie niezależne.' },
+  { id: 'jaccard', label: 'Jaccard', hint: 'Jaka część ofert z którąkolwiek z dwóch technologii wymaga obu.' },
 ]
 const CELL = 15
 const LEFT = 104
@@ -183,13 +183,17 @@ export function CooccurrenceHeatmap({ skills, pairs, minPairCount }: { skills: S
 
   return (
     <div className="px-5 pb-2">
-      <div role="radiogroup" aria-label="Miara współwystępowania" className="mb-3 inline-flex h-9 border border-seam bg-paper p-[3px]">
-        {METRICS.map((m) => (
-          <button key={m.id} type="button" role="radio" aria-checked={metric === m.id} onClick={() => setMetric(m.id)}
-            className={`px-3 t-control transition-colors duration-150 ${metric === m.id ? 'bg-carbon text-paper' : 'text-ink-2 hover:text-ink'}`}>
-            {m.label}
-          </button>
-        ))}
+      <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+        <div role="radiogroup" aria-label="Miara współwystępowania" aria-describedby="metric-hint" className="inline-flex h-9 border border-seam bg-paper p-[3px]">
+          {METRICS.map((m) => (
+            <button key={m.id} type="button" role="radio" aria-checked={metric === m.id} onClick={() => setMetric(m.id)}
+              className={`px-3 t-control transition-colors duration-150 ${metric === m.id ? 'bg-carbon text-paper' : 'text-ink-2 hover:text-ink'}`}>
+              {m.label}
+            </button>
+          ))}
+        </div>
+        {/* Lift and Jaccard are terms of art; one line says what the shade means before anyone reads the legend. */}
+        <p id="metric-hint" className="min-w-0 flex-1 basis-56 t-meta">{METRICS.find((m) => m.id === metric)?.hint}</p>
       </div>
       {/* Desktop keeps 15 px cells with labels; a phone drops the labels so all 40 columns fit, and the pair panel names the tap. */}
       <div className="hidden md:block">{grid(false)}</div>
