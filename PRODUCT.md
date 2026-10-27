@@ -12,7 +12,7 @@ Pinned by the user: Python 3 ETL (pandas, NumPy, scikit-learn, Matplotlib/Seabor
 
 ## Users
 
-Primary: the course evaluator (lecturer or committee, Politechnika Rzeszowska, "Techniki analizy danych") assessing a data-analysis project. Their job is to verify that every ETL and statistical step is real, correct, and traceable to the code that does it, and to judge the depth of the analysis.
+Primary: the course evaluator (lecturer or committee, Politechnika Rzeszowska, "Techniki analizy danych") assessing a data-analysis project. Their job is to verify that every ETL and statistical step is real and correct, and to judge the depth of the analysis. The code itself is reviewed in the repository, not in the dashboard.
 
 Also primary, confirmed by the user: a typical IT specialist (for example a developer from Podkarpackie) who wants a plain answer to "how much is my stack worth here, and what would raise it". The dashboard must work for this person without any knowledge of ETL or statistics.
 
@@ -24,11 +24,11 @@ The user asked for a middle path: the project shows off engineering and data ski
 
 WidlyIQ (`widlyiq`) is a Polish tech compensation ETL and AI feature store. It ingests raw job-offer data from SOLID.Jobs, No Fluff Jobs and Just Join IT (JSON), NBP exchange-rate tables (XML) and GUS regional wage benchmarks (XLSX); validates, deduplicates, converts currencies, imputes gaps with group medians, rejects outliers (IQR / Z-Score), classifies offers into categories and income tiers S/A/B/C, builds a feature matrix (one-hot, ordinal, StandardScaler, co-occurrence X.T @ X), trains RidgeCV, and shows the results in four views: ETL Lab, Market Analytics, Skill Graph, Salary Estimator.
 
-Success: during the defense the evaluator runs the pipeline live, sees every stage's row counts and diffs, and can trace any number on screen back to its stage, table and code anchor.
+Success: during the defense the evaluator runs the pipeline live, sees every stage's row counts and diffs, and can trace any number on screen back to the pipeline stage and table that produced it.
 
 ## Positioning
 
-Not a salary listing site. A transparent pipeline where each transformation is inspectable: funnel counts per stage, raw versus clean diff, a rejected-outliers table, imputation flags, the diagnostic Matplotlib chart, and a code drawer that opens the exact source behind a stage. Market numbers are always read against GUS regional wages, with emphasis on Podkarpackie and Rzeszów.
+Not a salary listing site. A transparent pipeline where each transformation is inspectable: funnel counts per stage, raw versus clean diff, rejected records with their reason, imputation flags and the diagnostic Matplotlib chart. The dashboard is a practical tool: it shows no source code; the user decided (2026-10-27) to remove the code drawer and every "Kod" button. Market numbers are always read against GUS regional wages, with emphasis on Podkarpackie and Rzeszów.
 
 ## Operating Context
 
@@ -36,12 +36,12 @@ Built and worked on a laptop. Presented on a lecture-room projector during the p
 
 ## Capabilities and Constraints
 
-- Four views: ETL Lab (pipeline run, funnel, raw vs clean inspector, diagnostic SVG, code drawer), Market Analytics (global filters, P10 to P90 percentiles, GUS regional comparison, portal bias), Skill Graph (demand vs salary scatter, co-occurrence heatmap), Salary Estimator (stack-based ML premium in PLN, GUS multiple, export of the feature matrix to CSV, JSON, XLSX).
+- Four views: ETL Lab (pipeline run, funnel, raw vs clean inspector, diagnostic SVG), Market Analytics (global filters, P10 to P90 percentiles, GUS regional comparison, portal bias), Skill Graph (demand vs salary scatter, co-occurrence heatmap), Salary Estimator (stack-based ML premium in PLN, GUS multiple, export of the feature matrix to CSV, JSON, XLSX).
 - SQLite tables: `raw_ingestion_logs`, `offers_clean`, `offer_skills`, `ai_feature_matrix`, `rejected_outliers`, `skill_cooccurrence`, `gus_benchmarks`, `ml_feature_weights`.
 - Hourly rates normalize to monthly with 168 h. Imputed values carry `is_imputed = 1`.
 - UI copy: Polish, with technical terms left in English (pipeline, P90, IQR, one-hot, Ridge).
 - Architecture: thin routes in `src/app`, one feature slice per view in `src/features`, primitives in `src/shared`.
-- Code comments explain why, never what; Ctrl+F anchors such as `[filter-iqr]` mark key mechanisms.
+- Code comments explain why, never what; Ctrl+F anchors such as `[filter-iqr]` mark key mechanisms in the source only, never in the UI.
 
 ## Brand Commitments
 
@@ -59,7 +59,7 @@ None yet. Snapshot records (at least 1200, with deliberate anomalies and gaps) w
 ## Product Principles
 
 1. Useful first, impressive second: every screen answers a plain user question in plain words; the method, math and code sit one click deeper, never in the way.
-2. Every number is traceable to its stage, table and code anchor.
+2. Every number is traceable to the pipeline stage and table that produced it.
 3. Show the transformation, not only the result: removed, imputed and rejected rows are first-class data.
 4. Demo-proof: the pipeline runs offline from snapshots and says which source it used.
 5. Regional lens: national figures are read against GUS regional wages, Podkarpackie first.

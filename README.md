@@ -50,7 +50,7 @@ Snapshoty NBP (`nbp_table_a.xml`, tabela 204/A/NBP/2026) i GUS (`gus_bdl_wages.x
 
 ## Etapy pipeline i kotwice
 
-Każdy mechanizm ma jednoliniową kotwicę: Ctrl+Shift+F na nazwie w nawiasie kwadratowym prowadzi do kodu. Code Drawer w dashboardzie otwiera ten sam fragment.
+Każdy mechanizm ma jednoliniową kotwicę: Ctrl+Shift+F na nazwie w nawiasie kwadratowym prowadzi do kodu. Kotwice żyją tylko w kodzie źródłowym; dashboard nie pokazuje kodu.
 
 | Etap | Kotwica | Co robi |
 |---|---|---|
@@ -106,4 +106,4 @@ RidgeCV przewiduje miesięczną płacę w PLN. Cechy binarne nie są skalowane, 
 - **Skill Graph**: popyt a płaca dla każdego skilla oraz interaktywna heatmapa X.T @ X, ułożona grupowaniem hierarchicznym (average linkage na 1 − Jaccard) i podzielona szwami na 8 klastrów nazwanych od dominującej kategorii ofert.
 - **Estymator**: kalkulator Ridge dla wybranego stacku (premia techniczna w PLN, krotność GUS) i eksport macierzy cech do CSV, JSON i XLSX.
 
-Wstęga pipeline pod górnym paskiem pokazuje bilans rekordów z ostatniego przebiegu na każdym widoku; kliknięcie etapu otwiera jego kod.
+Wstęga pipeline pod górnym paskiem pokazuje bilans rekordów z ostatniego przebiegu na każdym widoku; kliknięcie etapu otwiera ETL Lab na tym etapie.
