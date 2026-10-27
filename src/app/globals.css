@@ -2,7 +2,8 @@
 
 @theme {
   --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-redhat-mono), ui-monospace, monospace;
+  /* Mono is only for the terminal commands on the empty state, so the system face is enough. */
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 
   --color-carbon: #0f1110;
   --color-carbon-2: #2a2d2b;
@@ -18,6 +19,11 @@
   --color-signal-ink: #b83a0b;
   --color-signal-wash: #fff1ea;
   --color-signal-tint: #ffd3bf;
+  --color-signal-hover: #ff6f36;
+  --color-signal-disabled: #ffb08c;
+  --color-signal-rule: #c2430f;
+  --color-signal-sub-ink: #4a1d07;
+  --color-live: #3ccf74;
   --color-pending: #e7e9e4;
   --color-pending-stripe: #d2d5ce;
 
@@ -79,7 +85,8 @@
   }
 }
 
-/* Type roles. Names describe the job, not the size, so a role can retune without renaming. */
+/* Type roles. Names describe the job, not the size, so a role can retune without renaming.
+   The floor is 13px and data-carrying text is 14px or more: the dashboard is read from the back of a lecture room. */
 @utility t-readout {
   font-size: 88px;
   line-height: 0.88;
@@ -90,10 +97,10 @@
 }
 /* Secondary numbers beside the readout and in model panels: big enough to read from a projector, never competing with it. */
 @utility t-figure {
-  font-size: 26px;
+  font-size: 24px;
   line-height: 1;
   font-weight: 800;
-  font-stretch: 90%;
+  font-stretch: 88%;
   font-variant-numeric: tabular-nums;
 }
 @utility t-figure-sm {
@@ -104,38 +111,54 @@
   font-variant-numeric: tabular-nums;
 }
 @utility t-headline {
-  font-size: 22px;
-  line-height: 1.25;
+  font-size: clamp(21px, 1.1rem + 0.5vw, 24px);
+  line-height: 1.3;
   font-weight: 650;
   font-stretch: 100%;
 }
 @utility t-panel {
-  font-size: 17px;
+  font-size: 19px;
   line-height: 1.2;
   font-weight: 700;
   font-stretch: 112%;
 }
+/* Headings inside a panel: one step under the panel title, carried by weight rather than size. */
+@utility t-subhead {
+  font-size: 16px;
+  line-height: 1.3;
+  font-weight: 700;
+}
+@utility t-body {
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+@utility t-control {
+  font-size: 15px;
+  line-height: 1.2;
+  font-weight: 600;
+}
 @utility t-table {
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.35;
   font-weight: 450;
-  font-stretch: 82%;
+  font-stretch: 84%;
   font-variant-numeric: tabular-nums;
 }
 @utility t-meta {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.4;
   font-weight: 500;
-  font-stretch: 90%;
+  font-stretch: 92%;
   color: var(--color-ink-2);
 }
 @utility t-code {
   font-family: var(--font-mono);
-  font-size: 13px;
-  line-height: 1.55;
+  font-size: 14px;
+  line-height: 1.5;
 }
 @utility t-micro {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.3;
   font-weight: 600;
   font-stretch: 90%;
@@ -166,8 +189,9 @@
 @utility ribbon-fill {
   animation: ribbon-fill 320ms var(--ease-out) both;
 }
+/* The stripes mark the stage that is running right now; they exist only during a run, never as decoration. */
 @utility ribbon-running {
-  background: repeating-linear-gradient(-45deg, var(--color-pending) 0 7px, var(--color-pending-stripe) 7px 14px);
+  background: repeating-linear-gradient(-45deg, var(--color-pending) 0 7px, var(--color-pending-stripe) 7px 14px); /* taste-skill-ignore: run-state indicator */
   background-size: 28px 100%;
   animation: ribbon-stripes 600ms linear infinite;
 }
@@ -192,12 +216,13 @@
   }
 }
 
+/* A flat ink block sweeping the bar: progress without a gradient. */
 @keyframes filter-progress {
   from { transform: translateX(-100%); }
-  to { transform: translateX(100%); }
+  to { transform: translateX(340%); }
 }
 @utility filter-progress {
-  overflow: hidden;
-  background: linear-gradient(90deg, transparent, var(--color-ink), transparent);
-  animation: filter-progress 900ms linear infinite;
+  width: 30%;
+  background: var(--color-ink);
+  animation: filter-progress 900ms var(--ease-in-out) infinite;
 }
