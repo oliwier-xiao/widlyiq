@@ -54,7 +54,8 @@ export function estimate(
   profile: Profile,
   labels: { seniority: string; category: string; contract: string; region: string },
 ): Estimate {
-  const base = index.get('__intercept__')?.weight ?? 0
+  // Every part is rounded to whole zł before summing, so the breakdown on screen adds up exactly to the shown estimate.
+  const base = Math.round(index.get('__intercept__')?.weight ?? 0)
   const gusWage = gusWages[profile.region] ?? gusWages.polska ?? 0
   const vocabulary = profile.skills.filter((s) => index.has(`skill__${s}`))
 
@@ -70,11 +71,12 @@ export function estimate(
   if (profile.region === 'zdalnie') {
     contributions.push({ key: 'remote', kind: 'profile', label: 'Praca zdalna', value: oneHot(index, 'remote') })
   }
-  const nSkillsTerm = numericTerm(index, 'n_skills', vocabulary.length)
-  contributions.push({ key: 'n_skills', kind: 'profile', label: `Liczba skilli w stacku: ${vocabulary.length}`, value: nSkillsTerm })
+  for (const c of contributions) c.value = Math.round(c.value)
+  const nSkillsTerm = Math.round(numericTerm(index, 'n_skills', vocabulary.length))
+  contributions.push({ key: 'n_skills', kind: 'profile', label: `Liczba technologii: ${vocabulary.length}`, value: nSkillsTerm })
 
   const skills = vocabulary
-    .map((s) => ({ key: `skill:${s}`, kind: 'skill' as const, label: s, value: oneHot(index, `skill__${s}`) }))
+    .map((s) => ({ key: `skill:${s}`, kind: 'skill' as const, label: s, value: Math.round(oneHot(index, `skill__${s}`)) }))
     .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
   const skillsSum = skills.reduce((acc, c) => acc + c.value, 0)
 
