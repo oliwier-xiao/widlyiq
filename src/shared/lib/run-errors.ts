@@ -1,6 +1,6 @@
 import { STAGE_META, type PipelineEvent, type StageId } from './stages'
 
-export type ErrorEvent = Extract<PipelineEvent, { event: 'error' }>
+export type RunErrorEvent = Extract<PipelineEvent, { event: 'error' }>
 
 /** Failures the browser sees before or around the stream, which never reach Python. */
 export type ClientFailure =
@@ -18,7 +18,11 @@ const SNAPSHOT_HINT = 'Uruchom „Tylko snapshot”: nie czeka na portale.'
  * Every failure gets a sentence that names what broke and one that says what to do next. The raw message stays
  * available as detail, for the person who has to fix it, but never stands in for the explanation.
  */
-export function describeRunError(e: ErrorEvent | ClientFailure, mode: 'live' | 'snapshot', running: StageId | null): RunError {
+export function describeRunError(e: RunErrorEvent | ClientFailure, mode: 'live' | 'snapshot', running: StageId | null): RunError {
+  // A missing library is the most common first-run failure and has one fix, whichever way Python reported it.
+  if ('message' in e && e.message.includes('ModuleNotFoundError')) {
+    return { title: 'Pythonowi brakuje bibliotek ETL.', action: 'Zainstaluj zależności ETL i spróbuj ponownie.', detail: e.message, unchanged: true }
+  }
   switch (e.kind) {
     case 'busy':
       return { title: 'Inny przebieg pipeline jeszcze trwa.', action: 'Poczekaj, aż się skończy, i odśwież stronę.', detail: null, unchanged: true }
