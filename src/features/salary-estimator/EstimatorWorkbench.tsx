@@ -190,8 +190,9 @@ export function EstimatorWorkbench(props: Props) {
             <h3 className="t-subhead">Co podniesie szacunek</h3>
             <p className="t-meta mt-0.5">Częste w kategorii {labels.category}, a brakuje ich w Twoim stacku.</p>
             <ul className="mt-3 grid gap-px bg-seam sm:max-lg:grid-cols-2 xl:grid-cols-2">
-              {suggestions.map((w) => (
-                <li key={w.feature} className="bg-paper">
+              {suggestions.map((w, i) => (
+                // An odd count would leave a bare seam-grey cell in the two-column grid, so the last one takes the row.
+                <li key={w.feature} className={`bg-paper ${i === suggestions.length - 1 && i % 2 === 0 ? 'sm:max-lg:col-span-2 xl:col-span-2' : ''}`}>
                   <button
                     type="button"
                     onClick={() => toggle(w.label)}

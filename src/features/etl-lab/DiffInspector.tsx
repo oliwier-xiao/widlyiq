@@ -47,7 +47,9 @@ export function DiffInspector({ samples }: { samples: Sample[] }) {
       </div>
 
       <div className="grid gap-px border-t border-seam bg-seam lg:grid-cols-[minmax(260px,320px)_minmax(0,1fr)]">
-        <ul className="max-h-[560px] overflow-y-auto bg-paper" aria-label="Rekordy">
+        {/* On desktop the list matches the detail's height and scrolls inside it, so no seam-grey band shows below a short list. */}
+        <div className="relative bg-paper lg:min-h-[560px]">
+        <ul className="max-h-[560px] overflow-y-auto bg-paper lg:absolute lg:inset-0 lg:max-h-none" aria-label="Rekordy">
           {visible.map((s) => {
             const active = s.id === selected?.id
             return (
@@ -67,6 +69,7 @@ export function DiffInspector({ samples }: { samples: Sample[] }) {
             )
           })}
         </ul>
+        </div>
         <div className="min-w-0 bg-paper">{selected ? <Detail sample={selected} /> : <p className="t-meta p-5">Brak rekordów tego typu w ostatnim przebiegu.</p>}</div>
       </div>
     </div>
@@ -80,7 +83,8 @@ function Detail({ sample }: { sample: Sample }) {
   const differs = (before: string | null | undefined, after: string | null) => raw !== null && !sameText(before, after ?? '')
   return (
     <div className="px-5 py-4">
-      <h3 className="t-headline">{sample.title}</h3>
+      {/* The record title sits one level under the panel title, so it takes the panel role, never a larger one. */}
+      <h3 className="t-panel">{sample.title}</h3>
 
       {rejection && (
         <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 bg-toolbar px-4 py-3">
@@ -155,7 +159,7 @@ function Side({ title, note, className = '', children }: { title: string; note: 
   return (
     <div className={className}>
       <p className="flex items-baseline gap-2 pb-2">
-        <span className="t-panel">{title}</span>
+        <span className="t-subhead">{title}</span>
         <span className="t-meta">{note}</span>
       </p>
       <dl className="border-t border-seam">{children}</dl>
