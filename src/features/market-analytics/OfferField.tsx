@@ -106,8 +106,10 @@ export function OfferField({ layout, filters }: { layout: FieldLayout; filters: 
             <g key={l.seniority}>
               <line x1={0} x2={width} y1={l.top + g.laneHeight} y2={l.top + g.laneHeight} className="stroke-seam" />
               <g role="button" tabIndex={0} aria-pressed={active} aria-label={`Pokaż poziom ${SENIORITY_LABELS[l.seniority]}`}
-                className="cursor-pointer outline-none" onClick={() => select(l.seniority)}
-                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && select(l.seniority)}>
+                className="group cursor-pointer outline-none" onClick={() => select(l.seniority)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(l.seniority) } }}>
+                {/* An SVG group draws no focus outline of its own, so keyboard focus gets a ring around the label plate. */}
+                <rect x={1} y={box - 3} width={g.labelWidth - 12} height={40} className="fill-none stroke-signal-ink opacity-0 group-focus-visible:opacity-100" strokeWidth={2} />
                 <rect x={0} y={box} width={g.labelWidth - 14} height={34} className={active ? 'fill-carbon' : 'fill-transparent'} />
                 <text x={g.compact ? 6 : 10} y={box + 23} fontSize={g.compact ? 15 : 17} className={`font-bold ${active ? 'fill-paper' : 'fill-ink'}`}>
                   {SENIORITY_LABELS[l.seniority]}

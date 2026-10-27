@@ -83,7 +83,8 @@ type SelectProps = { label: string; value: string; options: [string, string][]; 
 
 export function Select({ label, value, options, onChange, accent }: SelectProps) {
   return (
-    <label className="relative flex h-9 items-center gap-2 border border-seam bg-paper pl-3 pr-8 focus-within:border-ink">
+    // The select itself draws no outline (it would ring only the value), so keyboard focus rings the whole control.
+    <label className="relative flex h-9 items-center gap-2 border border-seam bg-paper pl-3 pr-8 focus-within:border-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-signal-ink">
       <span className="t-meta whitespace-nowrap">{label}</span>
       {accent && <span className="size-2 shrink-0 bg-signal" aria-hidden />}
       <select
