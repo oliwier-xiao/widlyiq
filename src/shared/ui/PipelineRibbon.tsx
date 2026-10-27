@@ -3,7 +3,7 @@
 import Link from 'next/link'
 
 import { formatDateTime, formatDuration, formatNumber } from '@/shared/lib/formatters'
-import { RIBBON_STAGES, STAGE_META, ribbonLabel, ribbonShort, type StageId, type StageSnapshot } from '@/shared/lib/stages'
+import { RIBBON_STAGES, STAGE_META, ribbonLabel, ribbonName, ribbonShort, type StageId, type StageSnapshot } from '@/shared/lib/stages'
 
 import { usePipelineRun, useStageFocus } from './PipelineRun'
 import { useViewHref } from './ViewTabs'
@@ -57,9 +57,15 @@ export function PipelineRibbon({ run, onEtl }: { run: RibbonRun; onEtl: boolean 
                 {snap && showingLive && (
                   <span key={`${snap.rows_out}-${snap.duration_ms}`} className="ribbon-fill absolute inset-0" style={{ background: meta.color }} aria-hidden />
                 )}
-                <span className={`relative truncate t-micro xl:t-table xl:font-semibold ${snap ? 'text-paper' : 'text-ink-2'}`}>
-                  <span className="xl:hidden">{snap ? ribbonShort(snap) : running ? '…' : ''}</span>
-                  <span className="hidden xl:inline">{snap ? ribbonLabel(snap) : running ? `${meta.label}…` : meta.label}</span>
+                {/* Three widths, three forms: a phone gets the count, a tablet or projector the name over the count, a wide
+                    screen both on one line. A bare "140" between 768 and 1279 px gave no clue which stage it was. */}
+                <span className={`relative min-w-0 ${snap ? 'text-paper' : 'text-ink-2'}`}>
+                  <span className="block truncate t-micro md:hidden">{snap ? ribbonShort(snap) : running ? '…' : ''}</span>
+                  <span className="hidden md:block xl:hidden">
+                    <span className="block truncate t-micro leading-[1.15]">{ribbonName(id)}</span>
+                    <span className="block truncate t-table font-semibold leading-[1.15]">{snap ? ribbonShort(snap) : running ? '…' : ''}</span>
+                  </span>
+                  <span className="hidden truncate t-table font-semibold xl:block">{snap ? ribbonLabel(snap) : running ? `${meta.label}…` : meta.label}</span>
                 </span>
               </Link>
               {snap && LOSS_STAGES.has(id) && snap.removed > 0 && (

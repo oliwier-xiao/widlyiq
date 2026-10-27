@@ -49,6 +49,10 @@ const RIBBON_NAMES: Partial<Record<StageId, string>> = {
   'impute-median': 'Imputacja', 'filter-iqr': 'Outliery', 'classify-tier': 'Czyste',
 }
 
+export function ribbonName(stage: StageId): string {
+  return RIBBON_NAMES[stage] ?? STAGE_META[stage].label
+}
+
 export function ribbonLabel(s: StageSnapshot): string {
   const name = RIBBON_NAMES[s.stage]
   return name ? `${name} ${ribbonShort(s)}` : STAGE_META[s.stage].label

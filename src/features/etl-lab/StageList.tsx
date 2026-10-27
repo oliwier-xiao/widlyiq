@@ -19,6 +19,9 @@ export function StageList({ stages, raw }: Props) {
   const total = source.extract?.rows_out ?? (streaming ? 0 : raw)
 
   return (
+    // The panel's width, not the viewport's, decides the row layout: at 1024 px the list shares the row with the
+    // sources panel and a third column would squeeze "1 307 → 1 289 −18" onto two lines.
+    <div className="@container">
     <ol className="border-t border-seam" aria-label="Etapy pipeline">
       {STAGE_ORDER.map((id, i) => {
         const snap = source[id]
@@ -32,7 +35,7 @@ export function StageList({ stages, raw }: Props) {
             id={`etap-${id}`}
             onPointerEnter={() => setFocus(id)}
             onPointerLeave={() => setFocus(null)}
-            className={`grid scroll-mt-16 grid-cols-[2rem_minmax(0,1fr)] gap-x-3 border-b border-seam px-5 py-3 transition-colors duration-150 md:grid-cols-[2rem_minmax(0,24rem)_minmax(0,1fr)] md:gap-x-5 ${focus === id ? 'bg-toolbar' : ''}`}
+            className={`grid scroll-mt-16 grid-cols-[2rem_minmax(0,1fr)] gap-x-3 border-b border-seam px-5 py-3 transition-colors duration-150 @min-[760px]:grid-cols-[2rem_minmax(0,24rem)_minmax(0,1fr)] @min-[760px]:gap-x-5 ${focus === id ? 'bg-toolbar' : ''}`}
           >
             <span className="t-table pt-0.5 text-ink-2">{String(i + 1).padStart(2, '0')}</span>
             <div className="min-w-0">
@@ -51,8 +54,8 @@ export function StageList({ stages, raw }: Props) {
                 {state === 'done' ? stageDetail(id, snap!.detail) : state === 'running' ? 'w toku…' : state === 'pending' ? 'oczekuje' : meta.what}
               </motion.p>
             </div>
-            <div className="col-start-2 mt-2 min-w-0 md:col-start-3 md:mt-0">
-              <div className="flex items-baseline justify-between gap-3 t-table">
+            <div className="col-start-2 mt-2 min-w-0 @min-[760px]:col-start-3 @min-[760px]:mt-0">
+              <div className="flex items-baseline justify-between gap-3 t-table whitespace-nowrap">
                 <span className="tnum">
                   {snap && id === 'extract' ? (
                     <>pobrano <strong className="font-semibold">{formatNumber(snap.rows_out)}</strong></>
@@ -82,5 +85,6 @@ export function StageList({ stages, raw }: Props) {
         )
       })}
     </ol>
+    </div>
   )
 }
