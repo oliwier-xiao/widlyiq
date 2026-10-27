@@ -5,9 +5,10 @@ import { motion, useReducedMotion, useSpring, useTransform } from 'motion/react'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 
 import {
-  CATEGORIES, CATEGORY_LABELS, CONTRACT_LABELS, CONTRACT_UNITS, SENIORITIES, SENIORITY_LABELS, type Seniority,
+  CATEGORIES, CATEGORY_LABELS, CONTRACT_LABELS, CONTRACT_UNITS, SENIORITIES, SENIORITY_LABELS, toSearch, type Filters, type Seniority,
 } from '@/shared/lib/filters'
-import { formatMultiple, formatNumber, formatPLN, formatRegion, formatSignedPLN } from '@/shared/lib/formatters'
+import { formatMultiple, formatNumber, formatPLN, formatRegion, formatSignedPLN, inRegion, plural } from '@/shared/lib/formatters'
+import { MIN_SAMPLE } from '@/shared/lib/stats'
 import { Select } from '@/shared/ui/FilterBar'
 import { Panel } from '@/shared/ui/Panel'
 
@@ -21,18 +22,45 @@ type Props = {
   categorySkills: Record<string, string[]>
   regions: string[]
   initial: Omit<Profile, 'skills'>
+  /** The stack from the URL, or null to start from the category's example stack. */
+  initialSkills: string[] | null
+  filters: Filters
+  support: Record<string, number>
   mae: number
 }
 
-export function EstimatorWorkbench({ weights, gusWages, gusYear, defaultStacks, categorySkills, regions, initial, mae }: Props) {
+type Support = { national: number; regional: number }
+
+function supportFor(support: Record<string, number>, p: Omit<Profile, 'skills'>): Support {
+  const prefix = `${p.category}|${p.seniority}|${p.contract}|`
+  let national = 0
+  for (const [key, n] of Object.entries(support)) if (key.startsWith(prefix)) national += n
+  return { national, regional: p.region === 'polska' ? national : support[prefix + p.region] ?? 0 }
+}
+
+const urlFor = (filters: Filters, { skills, ...rest }: Profile) => toSearch('estimator', { ...filters, ...rest, skills: skills.join(',') })
+
+export function EstimatorWorkbench(props: Props) {
+  const { weights, gusWages, gusYear, defaultStacks, categorySkills, regions, initial, initialSkills, filters, support, mae } = props
   const index = useMemo(() => indexWeights(weights), [weights])
   const vocabulary = useMemo(
     () => weights.filter((w) => w.group === 'skill').sort((a, b) => b.weight - a.weight),
     [weights],
   )
-  const [profile, setProfile] = useState<Profile>({ ...initial, skills: defaultStacks[initial.category] ?? [] })
+  const [profile, setProfile] = useState<Profile>({ ...initial, skills: initialSkills ?? defaultStacks[initial.category] ?? [] })
   // Until the user picks a skill, changing category swaps in that category's typical stack.
-  const [touched, setTouched] = useState(false)
+  const [touched, setTouched] = useState(initialSkills !== null)
+
+  // The profile lives in the URL, so a reload, the back button or a trip to another view brings the same stack back.
+  // replaceState keeps it out of history and skips a server render; the ref skips the write when nothing changed.
+  const written = useRef(urlFor(filters, profile))
+  useEffect(() => {
+    const url = urlFor(filters, profile)
+    if (url === written.current) return
+    written.current = url
+    window.history.replaceState(null, '', url)
+  }, [filters, profile])
+  const backing = supportFor(support, profile)
   const [query, setQuery] = useState('')
   const [hint, setHint] = useState<Weight | null>(null)
 
@@ -113,7 +141,7 @@ export function EstimatorWorkbench({ weights, gusWages, gusYear, defaultStacks, 
             )}
           </div>
         </div>
-        <label className="mt-2 flex h-10 items-center gap-2 border border-seam bg-paper px-3 focus-within:border-ink">
+        <label className="mt-2 flex h-10 items-center gap-2 border border-seam bg-paper px-3 focus-within:border-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-signal-ink">
           <MagnifyingGlassIcon size={16} weight="bold" className="text-ink-2" aria-hidden />
           <span className="sr-only">Szukaj technologii</span>
           <input
@@ -179,7 +207,7 @@ export function EstimatorWorkbench({ weights, gusWages, gusYear, defaultStacks, 
         )}
       </Panel>
 
-      <Readout profile={profile} labels={labels} result={result} mae={mae} gusYear={gusYear} />
+      <Readout profile={profile} labels={labels} result={result} mae={mae} gusYear={gusYear} backing={backing} />
       <Breakdown base={result.base} total={result.total} contributions={result.contributions} />
     </>
   )
@@ -199,7 +227,8 @@ function AnimatedNumber({ value }: { value: number }) {
     if (reduce) spring.jump(value)
     else spring.set(value)
   }, [value, reduce, spring])
-  return <motion.span>{text}</motion.span>
+  // The counting digits are hidden from screen readers; the readout announces the settled value once instead.
+  return <motion.span aria-hidden>{text}</motion.span>
 }
 
 type ReadoutProps = {
@@ -208,11 +237,14 @@ type ReadoutProps = {
   result: ReturnType<typeof estimate>
   mae: number
   gusYear: number
+  backing: Support
 }
 
-function Readout({ profile, labels, result, mae, gusYear }: ReadoutProps) {
+function Readout({ profile, labels, result, mae, gusYear, backing }: ReadoutProps) {
+  const unit = `zł ${CONTRACT_UNITS[profile.contract] ?? '/ mies.'}`
+  const thin = backing.national < MIN_SAMPLE
   return (
-    <section className="bg-signal px-5 pb-5 pt-4 text-ink" aria-live="polite">
+    <section className="bg-signal px-5 pb-5 pt-4 text-ink">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <h2 className="t-panel">Szacunek dla Twojego profilu</h2>
         <p className="t-table font-semibold">
@@ -223,10 +255,26 @@ function Readout({ profile, labels, result, mae, gusYear }: ReadoutProps) {
         <span className="t-readout">
           <AnimatedNumber value={result.total} />
         </span>
-        <span className="t-figure-sm font-semibold">zł {CONTRACT_UNITS[profile.contract] ?? '/ mies.'}</span>
+        <span className="t-figure-sm font-semibold">{unit}</span>
       </p>
+      <p className="sr-only" aria-live="polite" aria-atomic>
+        Szacunek {formatNumber(result.total)} {unit}{thin ? ', mało danych dla tego profilu' : ''}.
+      </p>
+      <p className="mt-2 t-body text-signal-sub-ink">
+        Podobnych ofert w danych: {formatNumber(backing.national)}
+        {profile.region !== 'polska' && `, w tym ${formatNumber(backing.regional)} ${inRegion(profile.region)}`}.
+      </p>
+      {/* A linear model answers for any profile; below the sample floor that answer is extrapolation and must say so. */}
+      {thin && (
+        <p className="mt-3 bg-carbon px-3 py-2 t-body text-paper">
+          {backing.national === 0
+            ? 'Model nie widział żadnej oferty z tym profilem'
+            : `Model widział tylko ${plural(backing.national, 'ofertę', 'oferty', 'ofert')} z tym profilem`}
+          , więc szacunek to ekstrapolacja z innych profili. Traktuj go orientacyjnie.
+        </p>
+      )}
       <dl className="mt-5 grid grid-cols-1 border-t border-signal-rule sm:max-lg:grid-cols-3 xl:grid-cols-3">
-        <Fact term="Typowy zakres" detail={`± ${formatPLN(mae)}, średni błąd modelu`}>
+        <Fact term={`Błąd modelu ± ${formatPLN(mae)}`} detail="średnia pomyłka na ofertach, których model nie widział">
           {formatNumber(result.total - mae)} do {formatNumber(result.total + mae)} zł
         </Fact>
         <Fact term="Premia techniczna" detail={`technologie ${formatSignedPLN(result.skillsSum)}, ich liczba ${formatSignedPLN(result.nSkillsTerm)}`}>

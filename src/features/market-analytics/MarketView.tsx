@@ -1,5 +1,5 @@
 import { CATEGORY_LABELS, CONTRACT_UNITS, SENIORITY_LABELS, type Filters } from '@/shared/lib/filters'
-import { formatNumber, formatRegion, offersLabel } from '@/shared/lib/formatters'
+import { formatNumber, formatRegion, inRegion, offersLabel } from '@/shared/lib/formatters'
 import { MIN_SAMPLE } from '@/shared/lib/stats'
 import { FilterBar } from '@/shared/ui/FilterBar'
 import { Panel, SeamGrid } from '@/shared/ui/Panel'
@@ -12,12 +12,6 @@ import { PortalTable } from './PortalTable'
 import { getMarketData, type Answer } from './queries'
 import { RegionRanking } from './RegionRanking'
 
-function where(region: string): string {
-  if (region === 'polska') return 'w całej Polsce'
-  if (region === 'zdalnie') return 'w ofertach zdalnych'
-  return `w województwie ${region.replace(/ie$/, 'im')}`
-}
-
 /** The readout gives the median; this sentence gives what a single number cannot: where most offers actually fall. */
 function Headline({ answer, filters }: { answer: Answer; filters: Filters }) {
   const who = `${SENIORITY_LABELS[filters.seniority]}${filters.category === 'all' ? '' : ` ${CATEGORY_LABELS[filters.category]}`}`
@@ -27,11 +21,11 @@ function Headline({ answer, filters }: { answer: Answer; filters: Filters }) {
   return (
     <p className="t-headline max-w-[72ch] text-ink">
       {answer.pct ? (
-        <>Połowa ofert dla {who} {where(filters.region)} mieści się między {n(answer.pct.p25)} a {n(answer.pct.p75)} {unit}, a co dziesiąta przekracza {n(answer.pct.p90)} {unit}.</>
+        <>Połowa ofert dla {who} {inRegion(filters.region)} mieści się między {n(answer.pct.p25)} a {n(answer.pct.p75)} {unit}, a co dziesiąta przekracza {n(answer.pct.p90)} {unit}.</>
       ) : (
         answer.n === 0
-          ? <>Dla {who} {where(filters.region)} nie ma ofert z widełkami. Poszerz filtr.</>
-          : <>Dla {who} {where(filters.region)} znaleźliśmy {offersLabel(answer.n)} z widełkami, mniej niż {MIN_SAMPLE}, więc rozkładu nie opisujemy. Poszerz filtr.</>
+          ? <>Dla {who} {inRegion(filters.region)} nie ma ofert z widełkami. Poszerz filtr.</>
+          : <>Dla {who} {inRegion(filters.region)} znaleźliśmy {offersLabel(answer.n)} z widełkami, mniej niż {MIN_SAMPLE}, więc rozkładu nie opisujemy. Poszerz filtr.</>
       )}
     </p>
   )

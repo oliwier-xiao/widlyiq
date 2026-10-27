@@ -33,9 +33,21 @@ export type Filters = {
   contract: string
   region: string
   portal: string
+  /** The estimator's stack, comma separated. It rides along on every link so leaving the estimator does not lose it. */
+  skills: string
 }
 
-export const DEFAULT_FILTERS: Filters = { category: 'all', seniority: 'mid', contract: 'b2b', region: 'podkarpackie', portal: 'all' }
+export const DEFAULT_FILTERS: Filters = {
+  category: 'all', seniority: 'mid', contract: 'b2b', region: 'podkarpackie', portal: 'all', skills: '',
+}
+// Skill names are letters, digits and the few marks real names use (C#, C++, Node.js, Testing / QA).
+const SKILL_NAME = /^[\p{L}\p{N} .#+/-]{1,40}$/u
+const MAX_SKILLS = 40
+
+function parseSkills(value: string | undefined): string {
+  const names = (value ?? '').split(',').map((s) => s.trim()).filter((s) => SKILL_NAME.test(s))
+  return [...new Set(names)].slice(0, MAX_SKILLS).join(',')
+}
 
 type RawParams = Record<string, string | string[] | undefined>
 
@@ -58,6 +70,7 @@ export function parseParams(params: RawParams, regions: readonly string[]): { vi
       contract: oneOf(pick(params, 'contract'), ['all', ...CONTRACTS], DEFAULT_FILTERS.contract),
       region: oneOf(pick(params, 'region'), ['polska', ...regions], DEFAULT_FILTERS.region),
       portal: oneOf(pick(params, 'portal'), ['all', ...PORTALS], DEFAULT_FILTERS.portal),
+      skills: parseSkills(pick(params, 'skills')),
     },
   }
 }

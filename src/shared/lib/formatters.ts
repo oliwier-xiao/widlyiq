@@ -51,6 +51,13 @@ export function formatRegion(region: string): string {
   return region.charAt(0).toUpperCase() + region.slice(1)
 }
 
+/** "w województwie podkarpackim": the locative a sentence needs after a region filter. */
+export function inRegion(region: string): string {
+  if (region === 'polska') return 'w całej Polsce'
+  if (region === 'zdalnie') return 'w ofertach zdalnych'
+  return `w województwie ${region.replace(/ie$/, 'im')}`
+}
+
 /** Polish counts take three forms: 1 oferta, 2 do 4 oferty (but 12 do 14 ofert), everything else ofert. */
 export function plural(n: number, one: string, few: string, many: string): string {
   const m10 = n % 10

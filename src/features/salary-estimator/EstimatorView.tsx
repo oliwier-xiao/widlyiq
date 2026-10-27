@@ -24,6 +24,9 @@ function initialProfile(filters: Filters): Omit<Profile, 'skills'> {
 
 export function EstimatorView({ filters, regions, run }: ViewProps) {
   const data = getEstimatorData()
+  // A stack from the URL survives only for skills the current model still knows.
+  const known = new Set(data.weights.filter((w) => w.group === 'skill').map((w) => w.label))
+  const fromUrl = filters.skills ? filters.skills.split(',').filter((s) => known.has(s)) : []
   return (
     <SeamGrid className="lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
       <EstimatorWorkbench
@@ -34,6 +37,9 @@ export function EstimatorView({ filters, regions, run }: ViewProps) {
         categorySkills={data.categorySkills}
         regions={regions}
         initial={initialProfile(filters)}
+        initialSkills={fromUrl.length ? fromUrl : null}
+        filters={filters}
+        support={data.support}
         mae={run.metrics.mae_test}
       />
       <ModelPanel metrics={run.metrics} imputed={run.counts.imputed} />

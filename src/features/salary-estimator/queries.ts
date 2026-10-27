@@ -17,6 +17,8 @@ export type EstimatorData = {
   categorySkills: Record<string, string[]>
   matrix: { rows: number; columns: number; modelColumns: number }
   exports: ExportFile[]
+  /** Offers with a salary range per "category|seniority|contract|region", so the estimate can say how much data stands behind it. */
+  support: Record<string, number>
 }
 
 type WeightRow = {
@@ -83,6 +85,13 @@ export function getEstimatorData(): EstimatorData {
     defaultStacks[category] = stack
   }
 
+  // [sqlite-query] one grouped count covers every profile the four controls can form, so the client never asks again
+  const support = Object.fromEntries(all<{ key: string; n: number }>(
+    `SELECT coalesce(category, '') || '|' || seniority || '|' || coalesce(contract, '') || '|' || coalesce(region, '') AS key,
+            count(*) AS n
+       FROM offers_clean WHERE is_imputed = 0 GROUP BY key`,
+  ).map((r) => [r.key, r.n]))
+
   const rows = get<{ n: number }>('SELECT count(*) AS n FROM ai_feature_matrix')?.n ?? 0
   const columns = all<{ name: string }>('PRAGMA table_info(ai_feature_matrix)')
   const exportDir = path.join(process.cwd(), 'data', 'exports')
@@ -99,5 +108,6 @@ export function getEstimatorData(): EstimatorData {
     categorySkills,
     matrix: { rows, columns: columns.length, modelColumns: columns.filter((c) => !NON_FEATURE_COLUMNS.has(c.name)).length },
     exports,
+    support,
   }
 }
