@@ -39,9 +39,12 @@ export function SkillGraphView({ filters, regions, run }: ViewProps) {
       <FilterBar view="skills" filters={filters} regions={regions} fields={['category', 'contract', 'region']} />
       <PairSelectionProvider names={data.skills.map((s) => s.skill)}>
         {/* DOM order is heatmap, pair, scatter so phones read the pair right under the grid; lg places them by grid lines. */}
-        <SeamGrid className="border-b border-seam lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+        {/* Side by side the matrix gets half a 1024 px projector and its labels drop to 10 px, so until 1340 px it takes
+            a full row at its natural 760 px and the pair and the scatter share the row below. The breakpoint is in rem
+            (83.75rem = 1340 px) because Tailwind orders px breakpoints before rem ones, and lg: would win over it. */}
+        <SeamGrid className="border-b border-seam lg:grid-cols-2 min-[83.75rem]:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
           <Panel
-            className="lg:col-start-1 lg:row-span-2 lg:row-start-1"
+            className="lg:col-span-2 min-[83.75rem]:col-span-1 min-[83.75rem]:col-start-1 min-[83.75rem]:row-span-2 min-[83.75rem]:row-start-1"
             title="Które technologie występują razem"
             subtitle={`${data.skills.length} najczęstszych technologii, pogrupowanych w klastry tych, które często idą w parze.`}
             // Region filters only the demand rings; the matrix is the same national one, and the footer says so.
@@ -49,11 +52,11 @@ export function SkillGraphView({ filters, regions, run }: ViewProps) {
           >
             <CooccurrenceHeatmap skills={data.skills} pairs={data.pairs} minPairCount={minPairCount} />
           </Panel>
-          <Panel className="lg:col-start-2 lg:row-start-2" title="Para technologii">
+          <Panel className="lg:col-start-1 lg:row-start-2 min-[83.75rem]:col-start-2" title="Para technologii">
             <PairPanel skills={data.skills} pairs={data.pairs} minPairCount={minPairCount} />
           </Panel>
           <Panel
-            className="lg:col-start-2 lg:row-start-1"
+            className="lg:col-start-2 lg:row-start-2 min-[83.75rem]:row-start-1"
             title="Popyt a płaca"
             subtitle="Ile ofert wymaga technologii i ile w nich płacą."
             footer={
@@ -63,8 +66,12 @@ export function SkillGraphView({ filters, regions, run }: ViewProps) {
               </div>
             }
           >
-            <div className="hidden md:block"><SkillScatter skills={plotted} regionLabel={regionLabel} /></div>
-            <div className="md:hidden"><SkillScatter skills={plotted} regionLabel={regionLabel} compact /></div>
+            {/* The panel's width picks the geometry: it is a full row on a tablet but half a row on a projector. */}
+            <div className="@container">
+              <div className="@min-[488px]:hidden"><SkillScatter skills={plotted} regionLabel={regionLabel} size="compact" /></div>
+              <div className="hidden @min-[488px]:block @min-[618px]:hidden"><SkillScatter skills={plotted} regionLabel={regionLabel} size="medium" /></div>
+              <div className="hidden @min-[618px]:block"><SkillScatter skills={plotted} regionLabel={regionLabel} size="full" /></div>
+            </div>
           </Panel>
         </SeamGrid>
       </PairSelectionProvider>

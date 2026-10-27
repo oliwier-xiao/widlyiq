@@ -182,9 +182,9 @@ export function CooccurrenceHeatmap({ skills, pairs, minPairCount }: { skills: S
   )
 
   return (
-    <div className="px-5 pb-2">
+    <div className="@container px-5 pb-2">
       <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-2">
-        <div role="radiogroup" aria-label="Miara współwystępowania" aria-describedby="metric-hint" className="inline-flex h-9 border border-seam bg-paper p-[3px]">
+        <div role="radiogroup" aria-label="Miara współwystępowania" aria-describedby="metric-hint" className="inline-flex h-9 pointer-coarse:h-11 border border-seam bg-paper p-[3px]">
           {METRICS.map((m) => (
             <button key={m.id} type="button" role="radio" aria-checked={metric === m.id} onClick={() => setMetric(m.id)}
               className={`px-3 t-control transition-colors duration-150 ${metric === m.id ? 'bg-carbon text-paper' : 'text-ink-2 hover:text-ink'}`}>
@@ -195,11 +195,16 @@ export function CooccurrenceHeatmap({ skills, pairs, minPairCount }: { skills: S
         {/* Lift and Jaccard are terms of art; one line says what the shade means before anyone reads the legend. */}
         <p id="metric-hint" className="min-w-0 flex-1 basis-56 t-meta">{METRICS.find((m) => m.id === metric)?.hint}</p>
       </div>
-      {/* Desktop keeps 15 px cells with labels; a phone drops the labels so all 40 columns fit, and the pair panel names the tap. */}
-      <div className="hidden md:block">{grid(false)}</div>
-      <div className="md:hidden">{grid(true)}</div>
+      {/* A full-width row (lg to 1340 px) leaves room beside the 760-unit matrix, so the legend and clusters move there. */}
+      <div className="@min-[960px]:grid @min-[960px]:grid-cols-[minmax(0,760px)_minmax(0,1fr)] @min-[960px]:items-start @min-[960px]:gap-x-8">
+      <div>
+        {/* Desktop keeps 15 px cells with labels; a phone drops the labels so all 40 columns fit, and the pair panel names the tap. */}
+        <div className="hidden md:block">{grid(false)}</div>
+        <div className="md:hidden">{grid(true)}</div>
+      </div>
+      <div className="@min-[960px]:pt-[104px]">
       <Legend metric={metric} max={max} />
-      <ol className="mt-3 grid gap-y-1 border-t border-seam pt-3 t-meta md:flex md:flex-wrap md:gap-x-5" aria-label="Klastry technologii">
+      <ol className="mt-3 grid gap-y-1 border-t border-seam pt-3 t-meta md:flex md:flex-wrap md:gap-x-5 @min-[960px]:grid @min-[960px]:gap-y-1.5" aria-label="Klastry technologii">
         {blocks.map((b) => (
           <li key={b.n} className="flex gap-2">
             <span className="w-4 shrink-0 font-bold text-ink tnum md:w-auto">{b.n}</span>
@@ -208,6 +213,8 @@ export function CooccurrenceHeatmap({ skills, pairs, minPairCount }: { skills: S
           </li>
         ))}
       </ol>
+      </div>
+      </div>
     </div>
   )
 }
@@ -251,7 +258,7 @@ export function PairPanel({ skills, pairs, minPairCount }: { skills: SkillNode[]
             return (
               <li key={`${p.a}-${p.b}`}>
                 <button type="button" onClick={() => setPinned(on ? null : [p.a, p.b])} aria-pressed={on}
-                  className={`flex w-full items-baseline justify-between gap-3 px-2 py-1.5 text-left t-table hover:bg-toolbar ${on ? 'bg-toolbar font-bold' : ''}`}>
+                  className={`flex w-full items-baseline justify-between gap-3 px-2 py-1.5 pointer-coarse:py-3 text-left t-table hover:bg-toolbar ${on ? 'bg-toolbar font-bold' : ''}`}>
                   <span className="truncate">{skills[p.a].skill} + {skills[p.b].skill}</span>
                   <span className="shrink-0 text-ink-2">{dec1.format(p.lift)}× · {formatNumber(p.count)}</span>
                 </button>

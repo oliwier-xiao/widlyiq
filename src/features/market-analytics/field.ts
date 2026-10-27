@@ -7,16 +7,21 @@ import type { OfferRow, RejectedRow } from './queries'
 export type Geometry = {
   width: number; laneHeight: number; labelWidth: number; plotRight: number; rejLeft: number; rejRight: number
   axis: number; dotCenter: number; spread: number; maxRadius: number; tickStep: number; rejCols: number; rejGap: number; compact: boolean
+  /** Text sizes in chart units: meta labels, axis ticks, lane names and the selected lane's P50. */
+  meta: number; tick: number; name: number; p50: number
 }
-// Two geometries instead of one scaled SVG: a 900-unit chart shrunk to a phone turns 13 px labels into 5 px ones.
-export const DESKTOP: Geometry = { width: 900, laneHeight: 214, labelWidth: 104, plotRight: 752, rejLeft: 784, rejRight: 888, axis: 42,
-  dotCenter: 124, spread: 60, maxRadius: 3.4, tickStep: 5000, rejCols: 3, rejGap: 11, compact: false }
-// The two-column layout from lg to 1359 px leaves the field about 610 to 820 px, too narrow for DESKTOP at full size.
-export const MEDIUM: Geometry = { width: 660, laneHeight: 196, labelWidth: 100, plotRight: 540, rejLeft: 566, rejRight: 652, axis: 42,
-  dotCenter: 116, spread: 54, maxRadius: 3.1, tickStep: 10000, rejCols: 2, rejGap: 10, compact: false }
-// 72 units of label column fit "452 oferty" under the level name without touching the leftmost dots.
-export const MOBILE: Geometry = { width: 400, laneHeight: 150, labelWidth: 72, plotRight: 322, rejLeft: 342, rejRight: 396, axis: 42,
-  dotCenter: 92, spread: 38, maxRadius: 2.6, tickStep: 10000, rejCols: 2, rejGap: 9, compact: true }
+/**
+ * Three geometries instead of one scaled SVG: a 900-unit chart shrunk to a phone turns 13 px labels into 5 px ones.
+ * The page picks one by the width of the field's own container (MarketView switches at 600 and 830 px), each band
+ * starting where its meta text reaches 13 px, so labels stay readable from a 390 px phone to a 1920 px projector.
+ */
+export const DESKTOP: Geometry = { width: 900, laneHeight: 214, labelWidth: 104, plotRight: 752, rejLeft: 784, rejRight: 888, axis: 46,
+  dotCenter: 124, spread: 60, maxRadius: 3.4, tickStep: 5000, rejCols: 3, rejGap: 11, compact: false, meta: 14.5, tick: 14.5, name: 18, p50: 15.5 }
+export const MEDIUM: Geometry = { width: 620, laneHeight: 196, labelWidth: 100, plotRight: 506, rejLeft: 530, rejRight: 612, axis: 46,
+  dotCenter: 116, spread: 54, maxRadius: 3.1, tickStep: 10000, rejCols: 2, rejGap: 10, compact: false, meta: 14, tick: 14, name: 17, p50: 15 }
+// 80 units of label column fit "452 oferty" at 14 under the level name without touching the leftmost dots.
+export const MOBILE: Geometry = { width: 400, laneHeight: 150, labelWidth: 80, plotRight: 322, rejLeft: 342, rejRight: 396, axis: 46,
+  dotCenter: 92, spread: 38, maxRadius: 2.6, tickStep: 10000, rejCols: 2, rejGap: 9, compact: true, meta: 14, tick: 14, name: 16, p50: 15 }
 const MAX_DOTS = 2400
 
 export type Dot = { cx: number; cy: number; hi: boolean; i: number; id: string }

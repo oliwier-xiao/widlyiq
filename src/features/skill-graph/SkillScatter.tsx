@@ -12,9 +12,14 @@ type Point = SkillNode & { median: number; cx: number; cy: number; r: number; ri
 type Label = { skill: string; x: number; y: number; anchor: 'start' | 'end' }
 
 type Geo = { W: number; H: number; M: { l: number; r: number; t: number; b: number }; font: number; labels: number }
-// A phone gets its own coordinate system rather than a shrunken desktop chart, so labels stay at a readable size.
-const FULL: Geo = { W: 640, H: 460, M: { l: 66, r: 20, t: 26, b: 46 }, font: 14, labels: 10 }
-const COMPACT: Geo = { W: 380, H: 400, M: { l: 64, r: 10, t: 26, b: 46 }, font: 13, labels: 6 }
+// Each width gets its own coordinate system rather than a shrunken desktop chart, so labels stay at a readable size.
+// SkillGraphView picks one by the panel's width (488 and 618 px), where each starts rendering 14-unit text at 13 px.
+const GEOMETRIES = {
+  full: { W: 640, H: 460, M: { l: 66, r: 20, t: 26, b: 46 }, font: 14, labels: 10 },
+  medium: { W: 500, H: 420, M: { l: 64, r: 14, t: 26, b: 46 }, font: 14, labels: 8 },
+  compact: { W: 380, H: 400, M: { l: 64, r: 10, t: 26, b: 46 }, font: 14, labels: 6 },
+} satisfies Record<string, Geo>
+export type ScatterSize = keyof typeof GEOMETRIES
 const thousands = new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 1 })
 const LOG_TICKS = [5, 10, 15, 20, 30, 50, 75, 100, 150, 200, 300, 500, 750, 1000, 1500, 2000, 3000, 5000, 10000]
 
@@ -60,8 +65,8 @@ function placeLabels(points: Point[], picked: Set<string>, { W, M, font }: Geo):
     })
 }
 
-export function SkillScatter({ skills, regionLabel, compact = false }: { skills: SkillNode[]; regionLabel: string | null; compact?: boolean }) {
-  const geo = compact ? COMPACT : FULL
+export function SkillScatter({ skills, regionLabel, size }: { skills: SkillNode[]; regionLabel: string | null; size: ScatterSize }) {
+  const geo: Geo = GEOMETRIES[size]
   const { W, H, M } = geo
   const [active, setActive] = useState<string | null>(null)
   const { activeSkills } = usePairSelection()
@@ -125,7 +130,8 @@ export function SkillScatter({ skills, regionLabel, compact = false }: { skills:
           <line x1={model.guide.x} x2={model.guide.x} y1={M.t} y2={plotBottom} />
           <line x1={M.l} x2={plotRight} y1={model.guide.y} y2={model.guide.y} />
         </g>
-        <g fontSize={geo.font - 1} fill="var(--color-ink-2)" className="t-chart" aria-hidden>
+        {/* Two corner captions side by side need about 330 units; only the phone geometry is narrower than that. */}
+        <g fontSize={size === 'compact' ? geo.font - 1 : geo.font} fill="var(--color-ink-2)" className="t-chart" aria-hidden>
           <text x={M.l + 6} y={M.t + 12}>rzadkie, lepiej płatne</text>
           <text x={plotRight - 6} y={M.t + 12} textAnchor="end">popularne, lepiej płatne</text>
           <text x={M.l + 6} y={plotBottom - 8}>rzadkie, słabiej płatne</text>
@@ -141,7 +147,9 @@ export function SkillScatter({ skills, regionLabel, compact = false }: { skills:
               role="img"
               aria-label={`${p.skill}: ${offersLabel(p.demand)}, mediana ${formatPLN(p.median)}, premia Ridge ${formatSignedPLN(p.weight ?? 0)}`}
               onPointerEnter={() => setActive(p.skill)}
-              onPointerLeave={() => setActive((a) => (a === p.skill ? null : a))}
+              // Touch has no hover: a tap opens the tooltip, and lifting the finger must not close it straight away.
+              onPointerDown={() => setActive(p.skill)}
+              onPointerLeave={(e) => e.pointerType !== 'touch' && setActive((a) => (a === p.skill ? null : a))}
               onFocus={() => setActive(p.skill)}
               onBlur={() => setActive((a) => (a === p.skill ? null : a))}
               className="cursor-default outline-none"

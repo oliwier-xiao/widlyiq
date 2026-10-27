@@ -72,9 +72,12 @@ export function MarketView({ filters, regions, run }: ViewProps) {
             </div>
           }
         >
-          <div className="hidden md:block lg:max-[1359px]:hidden"><OfferField layout={desktop} filters={filters} /></div>
-          <div className="hidden lg:max-[1359px]:block"><OfferField layout={medium} filters={filters} /></div>
-          <div className="md:hidden"><OfferField layout={mobile} filters={filters} /></div>
+          {/* The panel's own width picks the geometry, not the viewport: see the bands in field.ts. */}
+          <div className="@container">
+            <div className="@min-[600px]:hidden"><OfferField layout={mobile} filters={filters} /></div>
+            <div className="hidden @min-[600px]:block @min-[830px]:hidden"><OfferField layout={medium} filters={filters} /></div>
+            <div className="hidden @min-[830px]:block"><OfferField layout={desktop} filters={filters} /></div>
+          </div>
         </Panel>
         <div className="order-1 flex min-w-0 flex-col gap-px lg:order-2">
           <AnswerReadout answer={data.answer} filters={filters} />
