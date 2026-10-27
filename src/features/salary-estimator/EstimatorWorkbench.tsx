@@ -1,6 +1,6 @@
 'use client'
 
-import { MagnifyingGlassIcon } from '@phosphor-icons/react'
+import { MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react'
 import { motion, useReducedMotion, useSpring, useTransform } from 'motion/react'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 
@@ -62,6 +62,7 @@ export function EstimatorWorkbench(props: Props) {
   }, [filters, profile])
   const backing = supportFor(support, profile)
   const [query, setQuery] = useState('')
+  const search = useRef<HTMLInputElement>(null)
   const [hint, setHint] = useState<Weight | null>(null)
 
   const labels = {
@@ -141,17 +142,31 @@ export function EstimatorWorkbench(props: Props) {
             )}
           </div>
         </div>
-        <label className="mt-2 flex h-10 pointer-coarse:h-11 items-center gap-2 border border-seam bg-paper px-3 focus-within:border-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-signal-ink">
+        <div className="mt-2 flex h-10 pointer-coarse:h-11 items-center gap-2 border border-seam bg-paper px-3 focus-within:border-ink has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-signal-ink">
           <MagnifyingGlassIcon size={16} weight="bold" className="text-ink-2" aria-hidden />
-          <span className="sr-only">Szukaj technologii</span>
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Szukaj technologii, np. Kubernetes"
-            className="min-w-0 flex-1 bg-transparent t-body outline-none placeholder:text-ink-2"
-          />
-        </label>
+          <label className="flex min-w-0 flex-1 items-center">
+            <span className="sr-only">Szukaj technologii</span>
+            <input
+              ref={search}
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Escape' && setQuery('')}
+              placeholder="Szukaj technologii, np. Kubernetes"
+              className="min-w-0 flex-1 bg-transparent t-body outline-none placeholder:text-ink-2"
+            />
+          </label>
+          {query && (
+            <button
+              type="button"
+              aria-label="Wyczyść wyszukiwanie"
+              onClick={() => { setQuery(''); search.current?.focus() }}
+              className="-mr-1.5 grid size-7 shrink-0 place-items-center text-ink-2 transition-colors duration-150 hover:text-ink pointer-coarse:size-10"
+            >
+              <XIcon size={14} weight="bold" aria-hidden />
+            </button>
+          )}
+        </div>
         <ul className="mt-3 flex flex-wrap gap-1.5" aria-describedby="skill-hint">
           {shown.map((w) => {
             const on = profile.skills.includes(w.label)

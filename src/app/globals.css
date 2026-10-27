@@ -83,6 +83,13 @@
     scrollbar-width: thin;
     scrollbar-color: var(--color-dot-soft) transparent;
   }
+  input, textarea {
+    caret-color: var(--color-signal-ink);
+  }
+  /* The browser's grey clear cross belongs to no palette; the estimator draws its own with the same icon set. */
+  input[type='search']::-webkit-search-cancel-button {
+    appearance: none;
+  }
 }
 
 /* Type roles. Names describe the job, not the size, so a role can retune without renaming.
