@@ -163,7 +163,8 @@ export function CooccurrenceHeatmap({ skills, pairs, minPairCount }: { skills: S
       )}
       {compact && (
         // Without axis labels on a phone, each cluster block carries its number from the legend below the grid.
-        <g className="t-chart" fontSize={20} fontWeight={700} fill="var(--color-ink)" pointerEvents="none">
+        // 24 units render at about 14 px in a 390 px phone's 602-unit grid; 20 gave 11.6 px.
+        <g className="t-chart" fontSize={24} fontWeight={700} fill="var(--color-ink)" pointerEvents="none">
           {blocks.map((b) => (
             <text key={b.n} x={LEFT + ((b.start + b.end) / 2) * CELL} y={TOP - 7} textAnchor="middle">{b.n}</text>
           ))}
