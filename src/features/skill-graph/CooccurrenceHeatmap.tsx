@@ -3,10 +3,9 @@
 import { memo, useMemo, useState } from 'react'
 
 import { CATEGORY_LABELS } from '@/shared/lib/filters'
-import { formatNumber, formatPLN, formatSignedPLN } from '@/shared/lib/formatters'
+import { formatNumber, formatPLN, formatSignedPLN, inOffers, offersLabel } from '@/shared/lib/formatters'
 
 import { usePairSelection, type Cell } from './PairSelection'
-import { inOffers, offersLabel } from './plural'
 import type { SkillNode, SkillPair } from './types'
 
 type Metric = 'count' | 'lift' | 'jaccard'
@@ -118,7 +117,7 @@ export function CooccurrenceHeatmap({ skills, pairs, minPairCount }: { skills: S
       aria-label={`Macierz współwystępowania ${n} technologii, miara: ${METRICS.find((m) => m.id === metric)?.label}. Lista najsilniejszych par jest obok.`}
     >
       {!compact && (
-        <g className="t-table" fontSize={12}>
+        <g className="t-chart" fontSize={14}>
           {skills.map((s, i) => {
             const on = active !== null && (active[0] === i || active[1] === i)
             const fill = on ? 'var(--color-ink)' : 'var(--color-ink-2)'
@@ -156,7 +155,7 @@ export function CooccurrenceHeatmap({ skills, pairs, minPairCount }: { skills: S
       </g>
       {!compact && (
         // Numbers in the right margin tie each block to its name in the legend, so the legend never repeats the axis labels.
-        <g className="t-table" fontSize={13} fontWeight={700} fill="var(--color-ink)" pointerEvents="none">
+        <g className="t-chart" fontSize={14} fontWeight={700} fill="var(--color-ink)" pointerEvents="none">
           {blocks.map((b) => (
             <text key={b.n} x={LEFT + size + 10} y={TOP + ((b.start + b.end) / 2) * CELL + 5}>{b.n}</text>
           ))}
@@ -164,7 +163,7 @@ export function CooccurrenceHeatmap({ skills, pairs, minPairCount }: { skills: S
       )}
       {compact && (
         // Without axis labels on a phone, each cluster block carries its number from the legend below the grid.
-        <g className="t-table" fontSize={20} fontWeight={700} fill="var(--color-ink)" pointerEvents="none">
+        <g className="t-chart" fontSize={20} fontWeight={700} fill="var(--color-ink)" pointerEvents="none">
           {blocks.map((b) => (
             <text key={b.n} x={LEFT + ((b.start + b.end) / 2) * CELL} y={TOP - 7} textAnchor="middle">{b.n}</text>
           ))}
@@ -239,7 +238,10 @@ export function PairPanel({ skills, pairs, minPairCount }: { skills: SkillNode[]
       <div>
         <h3 className="t-subhead">Najsilniejsze pary (lift)</h3>
         <p className="t-meta">Pary z co najmniej {minPairCount} wspólnymi ofertami.</p>
-        <ol className="mt-2 divide-y divide-seam border-y border-seam">
+        {topPairs.length === 0 && (
+          <p className="t-body mt-2 text-ink-2">W tym filtrze żadna para nie ma tylu wspólnych ofert. Poszerz filtr.</p>
+        )}
+        <ol className="mt-2 divide-y divide-seam border-y border-seam empty:hidden">
           {topPairs.map((p) => {
             const on = pinned?.[0] === p.a && pinned?.[1] === p.b
             return (

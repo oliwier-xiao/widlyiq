@@ -7,6 +7,8 @@ import { Panel } from '@/shared/ui/Panel'
 import type { RegionRow } from './queries'
 
 const TOP = 5
+// The name column gives way before the bar does, so the bar keeps a readable length in a 400 px column.
+const COLUMNS = 'grid grid-cols-[minmax(0,1.6fr)_minmax(3rem,1fr)_4rem_5.75rem] gap-3'
 
 export function RegionRanking({ regions, polska, filters, gusYear, className }: { regions: RegionRow[]; polska: RegionRow; filters: Filters; gusYear: number; className?: string }) {
   const max = Math.max(...regions.map((r) => r.multiple ?? 0), polska.multiple ?? 0, 1)
@@ -22,7 +24,7 @@ export function RegionRanking({ regions, polska, filters, gusYear, className }: 
       subtitle={`Ile razy mediana IT przekracza przeciętną płacę w regionie (GUS ${gusYear})`}
       footer={filters.contract === 'uop' ? undefined : 'B2B netto wobec brutto z GUS: krotność orientacyjna'}
     >
-      <div className="grid grid-cols-[minmax(0,9.5rem)_minmax(0,1fr)_4.2rem_6.5rem] gap-3 border-b border-seam px-5 pb-1.5 t-meta" aria-hidden>
+      <div className={`${COLUMNS} border-b border-seam px-5 pb-1.5 t-meta`} aria-hidden>
         <span>Województwo</span><span /><span className="text-right">Krotność</span><span className="text-right">Mediana IT</span>
       </div>
       <ol className="px-5">
@@ -50,9 +52,9 @@ function Row({ row, max, filters, reference }: { row: RegionRow; max: number; fi
       <Link
         href={toSearch('market', filters, { region: row.region })}
         scroll={false}
-        className={`grid grid-cols-[minmax(0,9.5rem)_minmax(0,1fr)_4.2rem_6.5rem] items-center gap-3 border-b border-seam py-[7px] t-table transition-colors duration-150 ${active ? '-mx-5 bg-carbon px-5 text-paper' : 'hover:bg-toolbar'}`}
+        className={`${COLUMNS} items-center border-b border-seam py-[7px] t-table transition-colors duration-150 ${active ? '-mx-5 bg-carbon px-5 text-paper' : 'hover:bg-toolbar'}`}
       >
-        <span className={`truncate ${active ? 'font-bold' : reference ? 'font-semibold' : ''}`}>{formatRegion(row.region)}</span>
+        <span className={`truncate ${active ? 'font-bold' : reference ? 'font-semibold' : ''}`} title={formatRegion(row.region)}>{formatRegion(row.region)}</span>
         <span className="relative h-2" aria-hidden>
           <span className={`absolute inset-y-0 left-0 ${active ? 'bg-signal' : reference ? 'border-t-2 border-dashed border-ink-2' : 'bg-dot-soft'}`} style={{ width }} />
         </span>

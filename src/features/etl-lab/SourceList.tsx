@@ -1,15 +1,18 @@
 'use client'
 
 import type { SourceLog } from '@/shared/db/run'
-import { formatDuration, formatNumber } from '@/shared/lib/formatters'
+import { formatDuration, plural } from '@/shared/lib/formatters'
 import { usePipelineRun } from '@/shared/ui/PipelineRun'
 
-const SOURCES: { id: string; label: string; format: string; unit: string }[] = [
-  { id: 'nofluffjobs', label: 'No Fluff Jobs', format: 'JSON', unit: 'ofert' },
-  { id: 'justjoinit', label: 'Just Join IT', format: 'JSON', unit: 'ofert' },
-  { id: 'solidjobs', label: 'SOLID.Jobs', format: 'JSON', unit: 'ofert' },
-  { id: 'nbp', label: 'NBP tabela A', format: 'XML', unit: 'kursów' },
-  { id: 'gus', label: 'GUS BDL', format: 'XLSX', unit: 'wierszy' },
+type Unit = [one: string, few: string, many: string]
+const OFFERS: Unit = ['oferta', 'oferty', 'ofert']
+
+const SOURCES: { id: string; label: string; format: string; unit: Unit }[] = [
+  { id: 'nofluffjobs', label: 'No Fluff Jobs', format: 'JSON', unit: OFFERS },
+  { id: 'justjoinit', label: 'Just Join IT', format: 'JSON', unit: OFFERS },
+  { id: 'solidjobs', label: 'SOLID.Jobs', format: 'JSON', unit: OFFERS },
+  { id: 'nbp', label: 'NBP tabela A', format: 'XML', unit: ['kurs', 'kursy', 'kursów'] },
+  { id: 'gus', label: 'GUS BDL', format: 'XLSX', unit: ['wiersz', 'wiersze', 'wierszy'] },
 ]
 const PORTALS = new Set(['nofluffjobs', 'justjoinit', 'solidjobs'])
 
@@ -62,7 +65,7 @@ export function SourceList({ sources }: { sources: SourceLog[] }) {
             </div>
             {row && (
               <p className="mt-1 t-table">
-                {row.records != null ? `${formatNumber(row.records)} ${src.unit}` : ''}
+                {row.records != null ? plural(row.records, ...src.unit) : ''}
                 <span className="text-ink-2"> · {formatDuration(row.duration_ms)}</span>
                 {row.synthetic && <span className="ml-2 font-semibold text-signal-ink">dane syntetyczne</span>}
               </p>

@@ -1,4 +1,4 @@
-import { formatNumber, formatPLN } from '@/shared/lib/formatters'
+import { formatNumber, formatPLN, offersLabel, plural } from '@/shared/lib/formatters'
 import { STAGE_META, type StageId } from '@/shared/lib/stages'
 
 const decimal = (v: unknown, digits: number) =>
@@ -23,9 +23,9 @@ export function stageDetail(stage: StageId, detail: Record<string, unknown>): st
     case 'verify-schema':
       return counts(detail.reasons) || 'wszystkie rekordy poprawne'
     case 'normalize-nbp':
-      return `${formatNumber(Number(detail.converted ?? 0))} przeliczeń walut · ${formatNumber(Number(detail.hourly ?? 0))} stawek × 168 h · tabela ${detail.table ?? 'brak danych'}`
+      return `${plural(Number(detail.converted ?? 0), 'przeliczenie', 'przeliczenia', 'przeliczeń')} walut · ${plural(Number(detail.hourly ?? 0), 'stawka', 'stawki', 'stawek')} × 168 h · tabela ${detail.table ?? 'brak danych'}`
     case 'impute-median':
-      return `${formatNumber(Number(detail.imputed ?? 0))} ofert uzupełnionych medianą grupy`
+      return `${offersLabel(Number(detail.imputed ?? 0))} z płacą uzupełnioną medianą grupy`
     case 'filter-iqr':
       return counts(detail.reasons, 'IQR: ') || 'brak wartości poza płotkami'
     case 'classify-tier': {
@@ -33,10 +33,10 @@ export function stageDetail(stage: StageId, detail: Record<string, unknown>): st
       return ['S', 'A', 'B', 'C'].map((t) => `${t} ${formatNumber(tiers[t] ?? 0)}`).join(' · ')
     }
     case 'onehot-encode':
-      return `${formatNumber(Number(detail.columns ?? 0))} kolumn, w tym ${formatNumber(Number(detail.skills ?? 0))} technologii`
+      return `${plural(Number(detail.columns ?? 0), 'kolumna', 'kolumny', 'kolumn')}, w tym ${plural(Number(detail.skills ?? 0), 'technologia', 'technologie', 'technologii')}`
     case 'cooccur-matrix': {
       const shape = (detail.shape ?? []) as number[]
-      return `${shape[0] ?? 0} technologii, ${formatNumber(Number(detail.pairs ?? 0))} par występujących razem`
+      return `${plural(shape[0] ?? 0, 'technologia', 'technologie', 'technologii')}, ${plural(Number(detail.pairs ?? 0), 'para', 'pary', 'par')} występujących razem`
     }
     case 'ml-ridge': {
       const truth = detail.ground_truth as { pearson_r?: number } | undefined
@@ -46,7 +46,7 @@ export function stageDetail(stage: StageId, detail: Record<string, unknown>): st
     case 'plot-mpl':
       return 'wykres zapisany jako SVG, widoczny niżej'
     case 'load-sqlite':
-      return `${formatNumber(Number(detail.tables ?? 0))} tabel w jednej transakcji`
+      return `${plural(Number(detail.tables ?? 0), 'tabela', 'tabele', 'tabel')} w jednej transakcji`
     default:
       return STAGE_META[stage].what
   }

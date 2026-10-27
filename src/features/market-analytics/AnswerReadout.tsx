@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import { CATEGORY_LABELS, CONTRACT_LABELS, CONTRACT_UNITS, SENIORITY_LABELS, toSearch, type Filters } from '@/shared/lib/filters'
-import { formatMultiple, formatNumber, formatPLN, formatRegion, formatSignedPct } from '@/shared/lib/formatters'
+import { formatMultiple, formatNumber, formatPLN, formatRegion, formatSignedPct, offersLabel } from '@/shared/lib/formatters'
 import { MIN_SAMPLE } from '@/shared/lib/stats'
 
 import type { Answer } from './queries'
@@ -53,7 +53,7 @@ export function AnswerReadout({ answer, filters }: { answer: Answer; filters: Fi
         <div className="mt-5">
           <p className="t-figure leading-tight">Za mało ofert na pewną medianę</p>
           <p className={`mt-2 t-body ${SUB}`}>
-            Ten profil ma {formatNumber(answer.n)} ofert z widełkami, a próg to {MIN_SAMPLE}. Poszerz filtr:
+            {answer.n === 0 ? 'Ten profil nie ma ofert z widełkami.' : `Ten profil ma ${offersLabel(answer.n)} z widełkami, a próg to ${MIN_SAMPLE}.`} Poszerz filtr:
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             {filters.category !== 'all' && <Widen href={toSearch('market', filters, { category: 'all' })}>Wszystkie kategorie</Widen>}

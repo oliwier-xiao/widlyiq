@@ -161,7 +161,7 @@ export function EstimatorWorkbench({ weights, gusWages, gusYear, defaultStacks, 
           <div className="mt-6 border-t border-seam pt-4">
             <h3 className="t-subhead">Co podniesie szacunek</h3>
             <p className="t-meta mt-0.5">Częste w kategorii {labels.category}, a brakuje ich w Twoim stacku.</p>
-            <ul className="mt-3 grid gap-px bg-seam sm:grid-cols-2">
+            <ul className="mt-3 grid gap-px bg-seam sm:max-lg:grid-cols-2 xl:grid-cols-2">
               {suggestions.map((w) => (
                 <li key={w.feature} className="bg-paper">
                   <button
@@ -170,7 +170,7 @@ export function EstimatorWorkbench({ weights, gusWages, gusYear, defaultStacks, 
                     className="flex w-full items-baseline justify-between gap-3 px-3 py-2.5 text-left transition-[background-color,transform] duration-150 ease-[var(--ease-out)] hover:bg-toolbar active:scale-[0.98]"
                   >
                     <span className="t-control">Dodaj {w.label}</span>
-                    <span className="t-table font-semibold">{formatSignedPLN(w.weight)}</span>
+                    <span className="t-table whitespace-nowrap font-semibold">{formatSignedPLN(w.weight)}</span>
                   </button>
                 </li>
               ))}
@@ -225,7 +225,7 @@ function Readout({ profile, labels, result, mae, gusYear }: ReadoutProps) {
         </span>
         <span className="t-figure-sm font-semibold">zł {CONTRACT_UNITS[profile.contract] ?? '/ mies.'}</span>
       </p>
-      <dl className="mt-5 grid grid-cols-1 border-t border-ink sm:grid-cols-3">
+      <dl className="mt-5 grid grid-cols-1 border-t border-signal-rule sm:max-lg:grid-cols-3 xl:grid-cols-3">
         <Fact term="Typowy zakres" detail={`± ${formatPLN(mae)}, średni błąd modelu`}>
           {formatNumber(result.total - mae)} do {formatNumber(result.total + mae)} zł
         </Fact>
@@ -237,18 +237,25 @@ function Readout({ profile, labels, result, mae, gusYear }: ReadoutProps) {
         </Fact>
       </dl>
       {profile.contract === 'b2b' && (
-        <p className="mt-3 t-micro font-medium">B2B netto wobec przeciętnej brutto GUS: krotność orientacyjna.</p>
+        <p className="mt-3 t-micro font-medium text-signal-sub-ink">B2B netto wobec przeciętnej brutto GUS: krotność orientacyjna.</p>
       )}
     </section>
   )
 }
 
+const THREE_UP = [
+  'sm:max-lg:not-first:border-t-0 sm:max-lg:border-l sm:max-lg:px-4 sm:max-lg:first:border-l-0 sm:max-lg:first:pl-0 sm:max-lg:last:pr-0',
+  'xl:not-first:border-t-0 xl:border-l xl:px-4 xl:first:border-l-0 xl:first:pl-0 xl:last:pr-0',
+].join(' ')
+
 function Fact({ term, detail, children }: { term: string; detail: string; children: ReactNode }) {
   return (
-    <div className="border-ink py-3 sm:border-l sm:px-4 sm:first:border-l-0 sm:first:pl-0 sm:last:pr-0">
-      <dt className="t-micro">{term}</dt>
+    // One column between lg and xl: the readout is half the page there and three figures side by side wrapped mid-number.
+    // Rules and secondary text take the orange's own dark tints, as in the market readout.
+    <div className={`border-signal-rule py-3 not-first:border-t ${THREE_UP}`}>
+      <dt className="t-micro text-signal-sub-ink">{term}</dt>
       <dd className="mt-1 t-figure-sm">{children}</dd>
-      <dd className="mt-1 t-micro font-medium">{detail}</dd>
+      <dd className="mt-1 t-micro font-medium text-signal-sub-ink">{detail}</dd>
     </div>
   )
 }
@@ -290,7 +297,7 @@ function BarList({ rows, max }: { rows: Contribution[]; max: number }) {
         const ratio = Math.abs(c.value) / max
         const positive = c.value >= 0
         return (
-          <li key={c.key} className="t-table grid grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)_6.5rem] items-center gap-3 py-[5px]">
+          <li key={c.key} className="t-table grid grid-cols-[minmax(0,1.7fr)_minmax(0,0.8fr)_5.5rem] items-center gap-3 py-[5px] sm:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)_6.5rem]">
             <span className="truncate" title={c.label}>{c.label}</span>
             <span className="relative h-3" aria-hidden>
               <span className="absolute inset-y-[-3px] left-1/2 w-px bg-ink-3" />

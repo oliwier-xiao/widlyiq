@@ -171,6 +171,12 @@
   font-stretch: 125%;
   letter-spacing: -0.01em;
 }
+/* Text inside SVG charts: the table's width and figures, but no font-size, so each chart's own size attribute applies. */
+@utility t-chart {
+  font-weight: 450;
+  font-stretch: 84%;
+  font-variant-numeric: tabular-nums;
+}
 @utility tnum {
   font-variant-numeric: tabular-nums;
 }

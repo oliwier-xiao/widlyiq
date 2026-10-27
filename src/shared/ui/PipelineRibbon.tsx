@@ -34,7 +34,8 @@ export function PipelineRibbon({ run, onEtl }: { run: RibbonRun; onEtl: boolean 
           // The notch grows with the share of records the stage dropped, so a heavy dedupe reads heavier than 18 schema errors.
           const notch = snap && raw ? Math.min(44, Math.max(10, (snap.removed / raw) * 400)) : 0
           return (
-            <li key={id} className="relative min-w-0 flex-1 pb-[6px]">
+            // The first cell carries the page gutter as its inset, so it gets that much extra width to keep its label whole.
+            <li key={id} className={`relative min-w-0 flex-1 pb-[6px] ${i === 0 ? 'md:flex-[1.08]' : ''}`}>
               <Link
                 // The hash scrolls ETL Lab to this stage's row, from any view.
                 href={`${run.etlHref}#etap-${id}`}

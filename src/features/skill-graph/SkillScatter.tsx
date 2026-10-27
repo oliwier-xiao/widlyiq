@@ -2,10 +2,9 @@
 
 import { useMemo, useState } from 'react'
 
-import { formatNumber, formatPLN, formatSignedPLN } from '@/shared/lib/formatters'
+import { formatNumber, formatPLN, formatSignedPLN, offersLabel } from '@/shared/lib/formatters'
 
 import { usePairSelection } from './PairSelection'
-import { offersLabel } from './plural'
 
 import type { SkillNode } from './types'
 
@@ -14,8 +13,8 @@ type Label = { skill: string; x: number; y: number; anchor: 'start' | 'end' }
 
 type Geo = { W: number; H: number; M: { l: number; r: number; t: number; b: number }; font: number; labels: number }
 // A phone gets its own coordinate system rather than a shrunken desktop chart, so labels stay at a readable size.
-const FULL: Geo = { W: 640, H: 460, M: { l: 62, r: 20, t: 26, b: 46 }, font: 12, labels: 10 }
-const COMPACT: Geo = { W: 380, H: 400, M: { l: 52, r: 10, t: 26, b: 46 }, font: 11, labels: 6 }
+const FULL: Geo = { W: 640, H: 460, M: { l: 66, r: 20, t: 26, b: 46 }, font: 14, labels: 10 }
+const COMPACT: Geo = { W: 380, H: 400, M: { l: 64, r: 10, t: 26, b: 46 }, font: 13, labels: 6 }
 const thousands = new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 1 })
 const LOG_TICKS = [5, 10, 15, 20, 30, 50, 75, 100, 150, 200, 300, 500, 750, 1000, 1500, 2000, 3000, 5000, 10000]
 
@@ -107,7 +106,7 @@ export function SkillScatter({ skills, regionLabel, compact = false }: { skills:
     <div className="px-3 pb-2">
     <div className="relative">
       <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full" role="group" aria-label="Popyt na technologie a mediana płacy">
-        <g className="t-table" fontSize={geo.font} fill="var(--color-ink-2)">
+        <g className="t-chart" fontSize={geo.font} fill="var(--color-ink-2)">
           {model.yTicks.map((t) => (
             <g key={t}>
               <line x1={M.l} x2={plotRight} y1={model.y(t)} y2={model.y(t)} stroke="var(--color-seam)" />
@@ -126,7 +125,7 @@ export function SkillScatter({ skills, regionLabel, compact = false }: { skills:
           <line x1={model.guide.x} x2={model.guide.x} y1={M.t} y2={plotBottom} />
           <line x1={M.l} x2={plotRight} y1={model.guide.y} y2={model.guide.y} />
         </g>
-        <g fontSize={11.5} fill="var(--color-ink-2)" className="t-table" aria-hidden>
+        <g fontSize={geo.font - 1} fill="var(--color-ink-2)" className="t-chart" aria-hidden>
           <text x={M.l + 6} y={M.t + 12}>rzadkie, lepiej płatne</text>
           <text x={plotRight - 6} y={M.t + 12} textAnchor="end">popularne, lepiej płatne</text>
           <text x={M.l + 6} y={plotBottom - 8}>rzadkie, słabiej płatne</text>
@@ -161,7 +160,7 @@ export function SkillScatter({ skills, regionLabel, compact = false }: { skills:
             </g>
           )
         })}
-        <g className="t-table" fontSize={12.5} fontWeight={600} fill="var(--color-ink)" pointerEvents="none">
+        <g className="t-chart" fontSize={geo.font} fontWeight={600} fill="var(--color-ink)" pointerEvents="none">
           {labels.map((l) => (
             <text key={l.skill} x={l.x} y={l.y} textAnchor={l.anchor} paintOrder="stroke" stroke="var(--color-paper)" strokeWidth={3}>
               {l.skill}

@@ -2,7 +2,7 @@ import { DownloadSimpleIcon } from '@phosphor-icons/react/dist/ssr'
 
 import type { RunMetrics } from '@/shared/db/run'
 import { CATEGORIES, CONTRACTS, type Filters } from '@/shared/lib/filters'
-import { formatNumber, formatPLN } from '@/shared/lib/formatters'
+import { formatNumber, formatPLN, plural } from '@/shared/lib/formatters'
 import { Panel, SeamGrid } from '@/shared/ui/Panel'
 import type { ViewProps } from '@/shared/ui/types'
 
@@ -69,9 +69,10 @@ function ModelPanel({ metrics }: { metrics: RunMetrics }) {
 
 function Metric({ term, value }: { term: string; value: string }) {
   return (
-    <div>
+    // Labels wrap to two lines on narrow columns; pinning the value to the bottom keeps a row of figures on one baseline.
+    <div className="flex flex-col justify-between">
       <dt className="t-meta">{term}</dt>
-      <dd className="mt-0.5 t-figure-sm">{value}</dd>
+      <dd className="mt-1 t-figure-sm">{value}</dd>
     </div>
   )
 }
@@ -86,7 +87,7 @@ function ExportPanel({ matrix, files }: { matrix: EstimatorData['matrix']; files
   return (
     <Panel
       title="Eksport macierzy cech"
-      subtitle={`${formatNumber(matrix.rows)} wierszy × ${formatNumber(matrix.columns)} kolumn, w tym ${formatNumber(matrix.modelColumns)} cech modelu.`}
+      subtitle={`${plural(matrix.rows, 'wiersz', 'wiersze', 'wierszy')} × ${plural(matrix.columns, 'kolumna', 'kolumny', 'kolumn')}, w tym ${plural(matrix.modelColumns, 'cecha', 'cechy', 'cech')} modelu.`}
       bodyClassName="px-5 pb-5"
     >
       <ul className="flex flex-wrap gap-2">

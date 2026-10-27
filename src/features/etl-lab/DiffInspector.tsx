@@ -110,7 +110,7 @@ function Detail({ sample }: { sample: Sample }) {
                 value={<>{formatPLN(clean.salary_pln_month)} / mies.{clean.is_imputed ? <span className="text-ink-2"> · mediana grupy: {groupLabel(clean.imputation_group)}</span> : null}</>}
                 changed
               />
-              <Field label="Skille" value={clean.skills.join(', ') || 'brak'} changed={!sameSet(raw?.skills_raw ?? [], clean.skills)} />
+              <Field label="Technologie" value={clean.skills.join(', ') || 'brak'} changed={!sameSet(raw?.skills_raw ?? [], clean.skills)} />
               <Field label="Tier" value={`${clean.tier} · ${formatMultiple(clean.gus_multiple)} GUS`} />
             </>
           ) : rejection?.salary_pln_month != null ? (
@@ -176,7 +176,7 @@ function RawFields({ raw }: { raw: RawSide }) {
       <Field label="Umowa" value={raw.contract_raw ?? 'brak'} />
       <Field label="Widełki" value={range} />
       <Field label="Miasto" value={raw.city ?? 'brak (zdalnie lub nie podano)'} />
-      <Field label="Skille" value={raw.skills_raw.join(', ') || 'brak'} />
+      <Field label="Technologie" value={raw.skills_raw.join(', ') || 'brak'} />
     </>
   )
 }

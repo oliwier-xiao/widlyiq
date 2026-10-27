@@ -1,3 +1,5 @@
+import { plural } from './formatters'
+
 export type StageId =
   | 'extract' | 'verify-schema' | 'dedupe' | 'normalize-nbp' | 'impute-median' | 'filter-iqr'
   | 'classify-tier' | 'onehot-encode' | 'cooccur-matrix' | 'ml-ridge' | 'plot-mpl' | 'load-sqlite'
@@ -48,8 +50,8 @@ export function ribbonLabel(s: StageSnapshot): string {
     case 'extract': return `${n(s.rows_out)} surowych`
     case 'verify-schema': return `−${n(s.removed)} schemat`
     case 'dedupe': return `−${n(s.removed)} duplikaty`
-    case 'normalize-nbp': return `${n(Number(s.detail.converted ?? 0) + Number(s.detail.hourly ?? 0))} przeliczeń`
-    case 'impute-median': return `${n(s.detail.imputed)} imputacji`
+    case 'normalize-nbp': return plural(Number(s.detail.converted ?? 0) + Number(s.detail.hourly ?? 0), 'przeliczenie', 'przeliczenia', 'przeliczeń')
+    case 'impute-median': return plural(Number(s.detail.imputed ?? 0), 'imputacja', 'imputacje', 'imputacji')
     case 'filter-iqr': return `−${n(s.removed)} IQR`
     case 'classify-tier': return `${n(s.rows_out)} czystych`
     default: return STAGE_META[s.stage].label

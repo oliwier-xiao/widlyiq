@@ -1,5 +1,5 @@
 import { CATEGORY_LABELS, CONTRACT_LABELS } from '@/shared/lib/filters'
-import { formatNumber, formatRegion } from '@/shared/lib/formatters'
+import { formatRegion, offersLabel, plural } from '@/shared/lib/formatters'
 import { FilterBar } from '@/shared/ui/FilterBar'
 import { Panel, SeamGrid } from '@/shared/ui/Panel'
 import type { ViewProps } from '@/shared/ui/types'
@@ -44,7 +44,7 @@ export function SkillGraphView({ filters, regions, run }: ViewProps) {
             className="lg:col-start-1 lg:row-span-2 lg:row-start-1"
             title="Które technologie występują razem"
             subtitle={`${data.skills.length} najczęstszych technologii, pogrupowanych w klastry tych, które często idą w parze.`}
-            footer={`${formatNumber(data.offers)} ofert${scope ? ` (${scope})` : ''} · ${provenance}`}
+            footer={`${offersLabel(data.offers)}${scope ? ` (${scope})` : ''} · ${provenance}`}
           >
             <CooccurrenceHeatmap skills={data.skills} pairs={data.pairs} minPairCount={minPairCount} />
           </Panel>
@@ -58,7 +58,7 @@ export function SkillGraphView({ filters, regions, run }: ViewProps) {
             footer={
               <div className="flex flex-col gap-1.5">
                 <ScatterLegend regionLabel={regionLabel} />
-                <span>Mediana bez ofert z imputacją.{hidden > 0 ? ` Pominięto ${hidden} technologii z mniej niż ${MIN_SKILL_SAMPLE} ofertami z widełkami.` : ''}</span>
+                <span>Mediana bez ofert z imputacją.{hidden > 0 ? ` Pominięto ${plural(hidden, 'technologię', 'technologie', 'technologii')} z mniej niż ${MIN_SKILL_SAMPLE} ofertami z widełkami.` : ''}</span>
               </div>
             }
           >

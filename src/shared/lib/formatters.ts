@@ -50,3 +50,17 @@ export function formatRegion(region: string): string {
   if (region === 'polska') return 'Polska'
   return region.charAt(0).toUpperCase() + region.slice(1)
 }
+
+/** Polish counts take three forms: 1 oferta, 2 do 4 oferty (but 12 do 14 ofert), everything else ofert. */
+export function plural(n: number, one: string, few: string, many: string): string {
+  const m10 = n % 10
+  const m100 = n % 100
+  const word = n === 1 ? one : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? few : many
+  return `${formatNumber(n)} ${word}`
+}
+
+export const offersLabel = (n: number) => plural(n, 'oferta', 'oferty', 'ofert')
+
+export function inOffers(n: number): string {
+  return n === 1 ? 'w 1 ofercie' : `w ${formatNumber(n)} ofertach`
+}

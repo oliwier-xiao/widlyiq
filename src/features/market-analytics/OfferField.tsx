@@ -4,13 +4,42 @@ import { useRouter } from 'next/navigation'
 import { useState, useTransition, type PointerEvent } from 'react'
 
 import { PORTAL_LABELS, SENIORITY_LABELS, toSearch, type Filters, type Seniority } from '@/shared/lib/filters'
-import { formatNumber, formatPLN, formatRegion } from '@/shared/lib/formatters'
+import { formatNumber, formatPLN, formatRegion, offersLabel } from '@/shared/lib/formatters'
 
 import type { FieldLayout } from './field'
 
 type Hover = { kind: 'offer' | 'rejected'; i: number; cx: number; cy: number }
 
 const k = (v: number) => formatNumber(Math.round(v / 100) * 100)
+
+// Measured Archivo advance per character, as a share of the font size: 0.48 regular, 0.54 bold, rounded up for safety.
+const textWidth = (text: string, size: number, bold: boolean) => text.length * size * (bold ? 0.56 : 0.5)
+
+type BandText = { x: number; text: string }
+
+/**
+ * Each percentile label starts beside its own tick. A narrow band would stack P50 on top of P10 or P90,
+ * so P50 stays centred on its marker and the outer labels step outward until they clear it.
+ */
+function bandLabels(region: NonNullable<FieldLayout['lanes'][number]['region']>, p50Size: number, bold: boolean, minX: number, maxX: number) {
+  const p50Text = `P50 ${k(region.p50.value)}`
+  const w50 = textWidth(p50Text, p50Size, bold)
+  const x50 = Math.min(Math.max(region.p50.x, minX + w50 / 2), maxX - w50 / 2)
+  const p50: BandText = { x: x50, text: p50Text }
+  let p10: BandText | null = null
+  let p90: BandText | null = null
+  if (region.p10) {
+    const text = `P10 ${k(region.p10.value)}`
+    const end = Math.min(region.p10.x - 6, x50 - w50 / 2 - 6)
+    p10 = { x: Math.max(end, minX + textWidth(text, 12, false)), text }
+  }
+  if (region.p90) {
+    const text = `P90 ${k(region.p90.value)}`
+    const start = Math.max(region.p90.x + 6, x50 + w50 / 2 + 6)
+    p90 = { x: Math.min(start, maxX - textWidth(text, 12, false)), text }
+  }
+  return { p10, p50, p90 }
+}
 
 export function OfferField({ layout, filters }: { layout: FieldLayout; filters: Filters }) {
   const router = useRouter()
@@ -19,7 +48,8 @@ export function OfferField({ layout, filters }: { layout: FieldLayout; filters: 
   const { g, width, height, lanes, ticks, radius } = layout
   const regionName = filters.region === 'polska' ? 'Polska' : formatRegion(filters.region)
   const plotBottom = lanes.length * g.laneHeight
-  const meta = 'text-[12px]'
+  // Chart text sizes are in SVG units, so they scale with the chart's geometry like every other mark.
+  const META = 12
 
   const select = (s: Seniority) =>
     startTransition(() => router.push(toSearch('market', filters, { seniority: s }), { scroll: false }))
@@ -40,24 +70,24 @@ export function OfferField({ layout, filters }: { layout: FieldLayout; filters: 
   return (
     <div className="relative px-2 pb-1">
       <svg viewBox={`0 0 ${width} ${height}`} className="block w-full" onPointerMove={onMove} onPointerLeave={() => setHover(null)}
-        role="group" aria-label={`Pole ofert: ${layout.total} ofert na osi płac w czterech poziomach seniority`}>
+        role="group" aria-label={`Pole ofert: ${offersLabel(layout.total)} na osi płac w czterech poziomach seniority`}>
         {ticks.map((t) => (
           <g key={t.value}>
             <line x1={t.x} x2={t.x} y1={0} y2={plotBottom} className="stroke-seam" strokeWidth={1} />
-            <text x={t.x} y={plotBottom + 22} textAnchor="middle" className={`fill-ink-2 tnum ${g.compact ? 'text-[12px]' : 'text-[13px]'}`}>
+            <text x={t.x} y={plotBottom + 22} textAnchor="middle" fontSize={g.compact ? 12 : 13} className="fill-ink-2 tnum">
               {formatNumber(t.value / 1000)} tys.
             </text>
           </g>
         ))}
-        <text x={g.plotRight} y={plotBottom + 38} textAnchor="end" className={`fill-ink-2 ${meta}`}>zł / mies.</text>
+        <text x={g.plotRight} y={plotBottom + 38} textAnchor="end" fontSize={META} className="fill-ink-2">zł / mies.</text>
         <line x1={g.rejLeft - 12} x2={g.rejLeft - 12} y1={0} y2={plotBottom} className="stroke-seam" strokeWidth={1} />
-        <text x={(g.rejLeft + g.rejRight) / 2} y={plotBottom + 38} textAnchor="middle" className={`fill-stage-iqr font-semibold ${meta}`}>
+        <text x={(g.rejLeft + g.rejRight) / 2} y={plotBottom + 38} textAnchor="middle" fontSize={META} className="fill-stage-iqr font-semibold">
           {g.compact ? 'Odrz. IQR' : 'Odrzucone IQR'}
         </text>
         {!g.compact && (
           <>
-            <text x={g.rejLeft} y={plotBottom + 22} className="fill-ink-2 text-[12px]">nisko</text>
-            <text x={g.rejRight} y={plotBottom + 22} textAnchor="end" className="fill-ink-2 text-[12px]">wysoko</text>
+            <text x={g.rejLeft} y={plotBottom + 22} fontSize={META} className="fill-ink-2">nisko</text>
+            <text x={g.rejRight} y={plotBottom + 22} textAnchor="end" fontSize={META} className="fill-ink-2">wysoko</text>
           </>
         )}
 
@@ -65,6 +95,7 @@ export function OfferField({ layout, filters }: { layout: FieldLayout; filters: 
           const active = l.seniority === filters.seniority
           const bandY = l.top + 28
           const box = l.top + g.dotCenter - 17
+          const labels = l.region ? bandLabels(l.region, active ? 13 : META, active, 2, g.rejLeft - 16) : null
           return (
             <g key={l.seniority}>
               <line x1={0} x2={width} y1={l.top + g.laneHeight} y2={l.top + g.laneHeight} className="stroke-seam" />
@@ -72,11 +103,11 @@ export function OfferField({ layout, filters }: { layout: FieldLayout; filters: 
                 className="cursor-pointer outline-none" onClick={() => select(l.seniority)}
                 onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && select(l.seniority)}>
                 <rect x={0} y={box} width={g.labelWidth - 14} height={34} className={active ? 'fill-carbon' : 'fill-transparent'} />
-                <text x={g.compact ? 6 : 10} y={box + 23} className={`font-bold ${g.compact ? 'text-[15px]' : 'text-[17px]'} ${active ? 'fill-paper' : 'fill-ink'}`}>
+                <text x={g.compact ? 6 : 10} y={box + 23} fontSize={g.compact ? 15 : 17} className={`font-bold ${active ? 'fill-paper' : 'fill-ink'}`}>
                   {SENIORITY_LABELS[l.seniority]}
                 </text>
               </g>
-              <text x={g.compact ? 6 : 10} y={box + 50} className={`fill-ink-2 tnum ${meta}`}>
+              <text x={g.compact ? 6 : 10} y={box + 50} fontSize={META} className="fill-ink-2 tnum">
                 n {formatNumber(l.n)}
                 {filters.region !== 'polska' && (g.compact
                   ? <tspan x={6} dy={14}>{regionName.slice(0, 4)}. {formatNumber(l.nRegion)}</tspan>
@@ -86,10 +117,10 @@ export function OfferField({ layout, filters }: { layout: FieldLayout; filters: 
               {l.national && (
                 <g>
                   <line x1={l.national.x} x2={l.national.x} y1={bandY + 13} y2={bandY + 23} className="stroke-ink-2" strokeWidth={2} />
-                  {active && !g.compact && <text x={l.national.x + 6} y={bandY + 23} className="fill-ink-2 text-[12px] tnum">Polska {k(l.national.value)}</text>}
+                  {active && !g.compact && <text x={l.national.x + 6} y={bandY + 23} fontSize={META} className="fill-ink-2 tnum">Polska {k(l.national.value)}</text>}
                 </g>
               )}
-              {l.region ? (
+              {l.region && labels ? (
                 <g>
                   {l.region.p10 && l.region.p90 && (
                     <>
@@ -98,21 +129,21 @@ export function OfferField({ layout, filters }: { layout: FieldLayout; filters: 
                       <line x1={l.region.p90.x} x2={l.region.p90.x} y1={bandY - 6} y2={bandY + 6} className="stroke-signal" strokeWidth={2} />
                       {!g.compact && (
                         <>
-                          <text x={l.region.p10.x - 6} y={bandY - 8} textAnchor="end" className="fill-ink text-[12px] tnum">P10 {k(l.region.p10.value)}</text>
-                          <text x={l.region.p90.x + 6} y={bandY - 8} className="fill-ink text-[12px] tnum">P90 {k(l.region.p90.value)}</text>
+                          {labels.p10 && <text x={labels.p10.x} y={bandY - 8} textAnchor="end" fontSize={META} className="fill-ink tnum">{labels.p10.text}</text>}
+                          {labels.p90 && <text x={labels.p90.x} y={bandY - 8} fontSize={META} className="fill-ink tnum">{labels.p90.text}</text>}
                         </>
                       )}
                     </>
                   )}
                   <rect x={l.region.p50.x - 2.5} y={bandY - 9} width={5} height={18} className="fill-signal stroke-carbon" strokeWidth={1} />
-                  <text x={l.region.p50.x} y={bandY - 13} textAnchor="middle" className={`fill-ink tnum ${active ? 'text-[13px] font-bold' : meta}`}>
-                    P50 {k(l.region.p50.value)}
+                  <text x={labels.p50.x} y={bandY - 13} textAnchor="middle" fontSize={active ? 13 : META} className={`fill-ink tnum ${active ? 'font-bold' : ''}`}>
+                    {labels.p50.text}
                   </text>
                 </g>
               ) : (
                 filters.region !== 'polska' && (
-                  <text x={g.labelWidth} y={bandY + 4} className={`fill-ink-2 ${meta}`}>
-                    {g.compact ? `${l.nRegion} ofert, za mało na percentyle` : `${regionName}: ${l.nRegion} ofert, za mało na percentyle`}
+                  <text x={g.labelWidth} y={bandY + 4} fontSize={META} className="fill-ink-2">
+                    {`${g.compact ? '' : `${regionName}: `}${l.nRegion === 0 ? 'brak ofert' : `${offersLabel(l.nRegion)}, za mało na percentyle`}`}
                   </text>
                 )
               )}

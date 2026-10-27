@@ -1,12 +1,12 @@
 import { CATEGORY_LABELS, CONTRACT_UNITS, SENIORITY_LABELS, type Filters } from '@/shared/lib/filters'
-import { formatNumber, formatRegion } from '@/shared/lib/formatters'
+import { formatNumber, formatRegion, offersLabel } from '@/shared/lib/formatters'
 import { MIN_SAMPLE } from '@/shared/lib/stats'
 import { FilterBar } from '@/shared/ui/FilterBar'
 import { Panel, SeamGrid } from '@/shared/ui/Panel'
 import type { ViewProps } from '@/shared/ui/types'
 
 import { AnswerReadout } from './AnswerReadout'
-import { DESKTOP, layoutField, MOBILE } from './field'
+import { DESKTOP, layoutField, MEDIUM, MOBILE } from './field'
 import { OfferField } from './OfferField'
 import { PortalTable } from './PortalTable'
 import { getMarketData, type Answer } from './queries'
@@ -28,7 +28,9 @@ function Headline({ answer, filters }: { answer: Answer; filters: Filters }) {
       {answer.pct ? (
         <>Połowa ofert dla {who} {where(filters.region)} mieści się między {n(answer.pct.p25)} a {n(answer.pct.p75)} {unit}, a co dziesiąta przekracza {n(answer.pct.p90)} {unit}.</>
       ) : (
-        <>Dla {who} {where(filters.region)} jest {formatNumber(answer.n)} ofert z widełkami, mniej niż {MIN_SAMPLE}, więc rozkładu nie opisujemy. Poszerz filtr.</>
+        answer.n === 0
+          ? <>Dla {who} {where(filters.region)} nie ma ofert z widełkami. Poszerz filtr.</>
+          : <>Dla {who} {where(filters.region)} znaleźliśmy {offersLabel(answer.n)} z widełkami, mniej niż {MIN_SAMPLE}, więc rozkładu nie opisujemy. Poszerz filtr.</>
       )}
     </p>
   )
@@ -48,6 +50,7 @@ function FieldLegend({ regionLabel }: { regionLabel: string | null }) {
 export function MarketView({ filters, regions, run }: ViewProps) {
   const data = getMarketData(filters)
   const desktop = layoutField(data.field, data.rejected, filters, DESKTOP)
+  const medium = layoutField(data.field, data.rejected, filters, MEDIUM)
   const mobile = layoutField(data.field, data.rejected, filters, MOBILE)
   const regionLabel = filters.region === 'polska' ? null : formatRegion(filters.region)
 
@@ -74,7 +77,8 @@ export function MarketView({ filters, regions, run }: ViewProps) {
             </div>
           }
         >
-          <div className="hidden md:block"><OfferField layout={desktop} filters={filters} /></div>
+          <div className="hidden md:block lg:max-[1359px]:hidden"><OfferField layout={desktop} filters={filters} /></div>
+          <div className="hidden lg:max-[1359px]:block"><OfferField layout={medium} filters={filters} /></div>
           <div className="md:hidden"><OfferField layout={mobile} filters={filters} /></div>
         </Panel>
         <div className="order-1 flex min-w-0 flex-col gap-px lg:order-2">

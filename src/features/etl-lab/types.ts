@@ -8,7 +8,7 @@ export const SAMPLE_LABELS: Record<SampleKind, string> = {
   currency: 'Waluta NBP',
   hourly: 'Stawka godzinowa',
   impute: 'Imputacja',
-  alias: 'Aliasy skilli',
+  alias: 'Aliasy technologii',
   schema: 'Schemat',
   dedupe: 'Duplikaty',
   iqr: 'Outliery IQR',
