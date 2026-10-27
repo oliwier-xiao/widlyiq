@@ -39,7 +39,7 @@ export function DiffInspector({ samples }: { samples: Sample[] }) {
             aria-pressed={kind === k}
             disabled={counts[k] === 0}
             onClick={() => setKind(k)}
-            className={`h-8 border px-3 t-control transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 ${kind === k ? 'border-carbon bg-carbon text-paper' : 'border-seam bg-paper text-ink hover:bg-toolbar'}`}
+            className={`h-8 pointer-coarse:h-11 border px-3 t-control transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 ${kind === k ? 'border-carbon bg-carbon text-paper' : 'border-seam bg-paper text-ink hover:bg-toolbar'}`}
           >
             {SAMPLE_LABELS[k]} <span className={`tnum ${kind === k ? 'text-dot-soft' : 'text-ink-2'}`}>{counts[k]}</span>
           </button>

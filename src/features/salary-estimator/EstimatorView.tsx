@@ -104,14 +104,14 @@ function ExportPanel({ matrix, files }: { matrix: EstimatorData['matrix']; files
         {files.map((f) => (
           <li key={f.format}>
             {f.bytes === null ? (
-              <span className="inline-flex h-10 items-center gap-2 border border-seam px-4 t-control font-medium text-ink-2">
+              <span className="inline-flex h-10 pointer-coarse:h-11 items-center gap-2 border border-seam px-4 t-control font-medium text-ink-2">
                 {FORMAT_LABELS[f.format]} · brak pliku
               </span>
             ) : (
               <a
                 href={`/api/export?format=${f.format}`}
                 download
-                className="inline-flex h-10 items-center gap-2 bg-carbon px-4 t-control text-paper transition-[background-color,transform] duration-150 ease-[var(--ease-out)] hover:bg-carbon-2 active:scale-[0.97]"
+                className="inline-flex h-10 pointer-coarse:h-11 items-center gap-2 bg-carbon px-4 t-control text-paper transition-[background-color,transform] duration-150 ease-[var(--ease-out)] hover:bg-carbon-2 active:scale-[0.97]"
               >
                 <DownloadSimpleIcon size={16} weight="bold" aria-hidden />
                 {FORMAT_LABELS[f.format]}

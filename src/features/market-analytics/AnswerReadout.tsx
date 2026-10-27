@@ -70,7 +70,7 @@ export function AnswerReadout({ answer, filters }: { answer: Answer; filters: Fi
 
 function Widen({ href, children }: { href: string; children: string }) {
   return (
-    <Link href={href} scroll={false} className="bg-carbon px-3 py-1.5 t-control text-paper hover:bg-carbon-2">
+    <Link href={href} scroll={false} className="inline-flex items-center bg-carbon px-3 py-1.5 pointer-coarse:min-h-11 t-control text-paper hover:bg-carbon-2">
       {children}
     </Link>
   )

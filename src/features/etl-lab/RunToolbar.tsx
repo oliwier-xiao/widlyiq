@@ -45,7 +45,7 @@ export function RunToolbar({ lastFinishedAt, lastMode, lastDurationMs }: Props) 
   return (
     <div className="border-b border-seam bg-toolbar">
       <div className="flex min-h-[54px] flex-wrap items-center gap-3 px-5 py-2.5">
-        <div role="radiogroup" aria-label="Tryb przebiegu" className="flex h-9 border border-seam bg-paper p-[3px]">
+        <div role="radiogroup" aria-label="Tryb przebiegu" className="flex h-9 pointer-coarse:h-11 border border-seam bg-paper p-[3px]">
           {MODES.map(([value, label]) => (
             <button
               key={value}

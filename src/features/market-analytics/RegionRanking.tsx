@@ -46,7 +46,7 @@ export function RegionRanking({ regions, polska, filters, gusYear, className }: 
       )}
       {!allEmpty && rest.length > 0 && (
         <details className="group px-5">
-          <summary className="cursor-pointer py-2 t-control text-ink underline underline-offset-[3px] marker:content-none">
+          <summary className="cursor-pointer py-2 pointer-coarse:py-3 t-control text-ink underline underline-offset-[3px] marker:content-none">
             <span className="group-open:hidden">Pokaż pozostałe {rest.length}</span>
             <span className="hidden group-open:inline">Zwiń</span>
           </summary>
@@ -65,7 +65,7 @@ function Row({ row, max, filters, reference }: { row: RegionRow; max: number; fi
       <Link
         href={toSearch('market', filters, { region: row.region })}
         scroll={false}
-        className={`${COLUMNS} items-center border-b border-seam py-[7px] t-table transition-colors duration-150 ${active ? '-mx-5 bg-carbon px-5 text-paper' : 'hover:bg-toolbar'}`}
+        className={`${COLUMNS} items-center border-b border-seam py-[7px] pointer-coarse:py-3 t-table transition-colors duration-150 ${active ? '-mx-5 bg-carbon px-5 text-paper' : 'hover:bg-toolbar'}`}
       >
         <span className={`truncate ${active ? 'font-bold' : reference ? 'font-semibold' : ''}`} title={formatRegion(row.region)}>{formatRegion(row.region)}</span>
         <span className="relative h-2" aria-hidden>

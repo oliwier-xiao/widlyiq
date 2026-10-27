@@ -31,7 +31,7 @@ export function FilterBar({ view, filters, regions, fields, trailing }: Props) {
     <div className="relative border-b border-seam bg-toolbar">
       <div className="flex flex-wrap items-center gap-2 px-5 py-2.5">
         {fields.includes('seniority') && (
-          <div role="radiogroup" aria-label="Poziom" className="flex h-9 border border-seam bg-paper p-[3px]">
+          <div role="radiogroup" aria-label="Poziom" className="flex h-9 pointer-coarse:h-11 border border-seam bg-paper p-[3px]">
             {SENIORITIES.map((s) => (
               <button
                 key={s}
@@ -64,7 +64,7 @@ export function FilterBar({ view, filters, regions, fields, trailing }: Props) {
         )}
         {!isDefault && (
           <button type="button" onClick={() => set(Object.fromEntries(fields.map((f) => [f, DEFAULT_FILTERS[f]])))}
-            className="px-2 t-control font-medium text-ink underline underline-offset-[3px]">
+            className="px-2 pointer-coarse:min-h-11 t-control font-medium text-ink underline underline-offset-[3px]">
             Przywróć domyślne
           </button>
         )}
@@ -84,7 +84,7 @@ type SelectProps = { label: string; value: string; options: [string, string][]; 
 export function Select({ label, value, options, onChange, accent }: SelectProps) {
   return (
     // The select itself draws no outline (it would ring only the value), so keyboard focus rings the whole control.
-    <label className="relative flex h-9 items-center gap-2 border border-seam bg-paper pl-3 pr-8 focus-within:border-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-signal-ink">
+    <label className="relative flex h-9 pointer-coarse:h-11 items-center gap-2 border border-seam bg-paper pl-3 pr-8 focus-within:border-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-signal-ink">
       <span className="t-meta whitespace-nowrap">{label}</span>
       {accent && <span className="size-2 shrink-0 bg-signal" aria-hidden />}
       <select

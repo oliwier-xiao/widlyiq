@@ -98,7 +98,7 @@ export function EstimatorWorkbench(props: Props) {
         bodyClassName="px-5 pb-5"
       >
         <div className="flex flex-col gap-3">
-          <div role="radiogroup" aria-label="Poziom" className="flex h-10 w-fit border border-seam bg-paper p-[3px]">
+          <div role="radiogroup" aria-label="Poziom" className="flex h-10 pointer-coarse:h-11 w-fit border border-seam bg-paper p-[3px]">
             {SENIORITIES.map((s) => (
               <button
                 key={s}
@@ -128,20 +128,20 @@ export function EstimatorWorkbench(props: Props) {
           </h3>
           <div className="flex gap-3 t-control font-medium">
             {!isDefaultStack && defaults.length > 0 && (
-              <button type="button" className="font-medium underline underline-offset-[3px]"
+              <button type="button" className="font-medium underline underline-offset-[3px] pointer-coarse:py-3"
                 onClick={() => setProfile((p) => ({ ...p, skills: defaults }))}>
                 Przykładowy stack
               </button>
             )}
             {profile.skills.length > 0 && (
-              <button type="button" className="font-medium underline underline-offset-[3px]"
+              <button type="button" className="font-medium underline underline-offset-[3px] pointer-coarse:py-3"
                 onClick={() => { setTouched(true); setProfile((p) => ({ ...p, skills: [] })) }}>
                 Wyczyść
               </button>
             )}
           </div>
         </div>
-        <label className="mt-2 flex h-10 items-center gap-2 border border-seam bg-paper px-3 focus-within:border-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-signal-ink">
+        <label className="mt-2 flex h-10 pointer-coarse:h-11 items-center gap-2 border border-seam bg-paper px-3 focus-within:border-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-signal-ink">
           <MagnifyingGlassIcon size={16} weight="bold" className="text-ink-2" aria-hidden />
           <span className="sr-only">Szukaj technologii</span>
           <input
@@ -165,7 +165,7 @@ export function EstimatorWorkbench(props: Props) {
                   onPointerLeave={() => setHint(null)}
                   onFocus={() => setHint(w)}
                   onBlur={() => setHint(null)}
-                  className={`flex h-8 items-center gap-2 border px-2.5 t-control transition-[background-color,color,transform] duration-150 ease-[var(--ease-out)] active:scale-[0.97] ${on ? 'border-carbon bg-carbon text-paper' : 'border-seam bg-paper text-ink hover:border-ink'}`}
+                  className={`flex h-8 pointer-coarse:h-11 items-center gap-2 border px-2.5 t-control transition-[background-color,color,transform] duration-150 ease-[var(--ease-out)] active:scale-[0.97] ${on ? 'border-carbon bg-carbon text-paper' : 'border-seam bg-paper text-ink hover:border-ink'}`}
                 >
                   {w.label}
                   <span className={`t-micro font-medium ${on ? 'text-dot-soft' : 'text-ink-2'}`}>{formatSignedPLN(w.weight)}</span>
