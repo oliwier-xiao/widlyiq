@@ -36,7 +36,7 @@ INDEXES = [
 CLEAN_COLUMNS = ["offer_id", "source", "source_mode", "is_synthetic", "title", "company", "category", "seniority",
                  "seniority_rank", "contract", "city", "region", "currency", "period", "fx_rate", "fx_table",
                  "salary_from_pln", "salary_to_pln", "salary_pln_month", "is_imputed", "imputation_group",
-                 "lower_fence", "upper_fence", "z_score", "gus_year", "gus_wage", "gus_multiple", "tier",
+                 "lower_fence", "upper_fence", "z_score", "gus_year", "gus_wage", "gus_multiple", "tier", "cv_residual",
                  "published_at", "transform_log"]
 RAW_COLUMNS = ["offer_id", "source", "source_mode", "title", "company", "category_raw", "seniority_raw",
                "contract_raw", "salary_from", "salary_to", "currency", "period_raw", "city", "region_raw",
