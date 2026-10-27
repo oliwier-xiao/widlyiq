@@ -1,7 +1,6 @@
 import { CATEGORY_LABELS, CONTRACT_UNITS, SENIORITY_LABELS, type Filters } from '@/shared/lib/filters'
 import { formatNumber, formatRegion } from '@/shared/lib/formatters'
 import { MIN_SAMPLE } from '@/shared/lib/stats'
-import { CodeButton } from '@/shared/ui/CodeDrawer'
 import { FilterBar } from '@/shared/ui/FilterBar'
 import { Panel, SeamGrid } from '@/shared/ui/Panel'
 import type { ViewProps } from '@/shared/ui/types'
@@ -25,7 +24,7 @@ function Headline({ answer, filters }: { answer: Answer; filters: Filters }) {
   const unit = filters.contract === 'b2b' ? 'zł netto' : filters.contract === 'uop' ? 'zł brutto' : 'zł'
   const n = (v: number) => <strong className="font-extrabold tnum">{formatNumber(Math.round(v / 100) * 100)}</strong>
   return (
-    <p className="t-headline max-w-[78ch] text-ink">
+    <p className="t-headline max-w-[72ch] text-ink">
       {answer.pct ? (
         <>Połowa ofert dla {who} {where(filters.region)} mieści się między {n(answer.pct.p25)} a {n(answer.pct.p75)} {unit}, a co dziesiąta przekracza {n(answer.pct.p90)} {unit}.</>
       ) : (
@@ -35,17 +34,27 @@ function Headline({ answer, filters }: { answer: Answer; filters: Filters }) {
   )
 }
 
+/** The legend replaces a sentence of explanation: three marks, each named once. */
+function FieldLegend({ regionLabel }: { regionLabel: string | null }) {
+  return (
+    <ul className="flex flex-wrap items-center gap-x-4 gap-y-1">
+      <li className="flex items-center gap-1.5"><span className="size-2.5 rounded-full bg-dot" aria-hidden />Polska</li>
+      {regionLabel && <li className="flex items-center gap-1.5"><span className="size-2.5 rounded-full bg-signal" aria-hidden />{regionLabel}</li>}
+      <li className="flex items-center gap-1.5"><span className="size-2.5 rounded-full border-[1.5px] border-stage-iqr" aria-hidden />odrzucone przez IQR</li>
+    </ul>
+  )
+}
+
 export function MarketView({ filters, regions, run }: ViewProps) {
   const data = getMarketData(filters)
   const desktop = layoutField(data.field, data.rejected, filters, DESKTOP)
   const mobile = layoutField(data.field, data.rejected, filters, MOBILE)
-  const scopeLabel = filters.category === 'all' ? 'wszystkie kategorie' : CATEGORY_LABELS[filters.category]
-  const regionLabel = filters.region === 'polska' ? 'cała Polska' : formatRegion(filters.region)
+  const regionLabel = filters.region === 'polska' ? null : formatRegion(filters.region)
 
   return (
     <>
       <FilterBar view="market" filters={filters} regions={regions} fields={['seniority', 'category', 'contract', 'region', 'portal']} />
-      <div className="border-b border-seam px-4 py-4 lg:px-6">
+      <div className="border-b border-seam px-5 py-4">
         <Headline answer={data.answer} filters={filters} />
       </div>
       <SeamGrid className="border-b border-seam lg:grid-cols-[minmax(0,1.6fr)_minmax(400px,1fr)]">
@@ -54,13 +63,15 @@ export function MarketView({ filters, regions, run }: ViewProps) {
           className="order-2 lg:order-1"
           stretch={false}
           title="Pole ofert"
-          subtitle={`Każda kropka to jedna oferta (${scopeLabel}, zł ${CONTRACT_UNITS[filters.contract]}). Pomarańczowe: ${regionLabel}. Kliknij poziom, żeby go wybrać.`}
-          actions={<CodeButton anchor="normalize-nbp" />}
+          subtitle={`Jedna kropka to jedna oferta, zł ${CONTRACT_UNITS[filters.contract]} Kliknij poziom, żeby go wybrać.`}
           footer={
-            <span className="tnum">
-              Pokazano {formatNumber(desktop.shown)} z {formatNumber(desktop.total)} ofert z widełkami · puste kółka: odrzucone przez IQR ·
-              NBP {run.metrics.nbp_table} · GUS BDL {run.metrics.gus_year}{run.synthetic ? ' · dane syntetyczne' : ''}
-            </span>
+            <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+              <FieldLegend regionLabel={regionLabel} />
+              <span className="tnum">
+                {desktop.shown < desktop.total && `Pokazano ${formatNumber(desktop.shown)} z ${formatNumber(desktop.total)} ofert · `}
+                NBP {run.metrics.nbp_table} · GUS {run.metrics.gus_year}{run.synthetic ? ' · dane syntetyczne' : ''}
+              </span>
+            </div>
           }
         >
           <div className="hidden md:block"><OfferField layout={desktop} filters={filters} /></div>

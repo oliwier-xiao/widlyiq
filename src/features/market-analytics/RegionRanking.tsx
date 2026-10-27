@@ -2,7 +2,6 @@ import Link from 'next/link'
 
 import { toSearch, type Filters } from '@/shared/lib/filters'
 import { formatMultiple, formatNumber, formatRegion } from '@/shared/lib/formatters'
-import { CodeButton } from '@/shared/ui/CodeDrawer'
 import { Panel } from '@/shared/ui/Panel'
 
 import type { RegionRow } from './queries'
@@ -20,13 +19,8 @@ export function RegionRanking({ regions, polska, filters, gusYear, className }: 
     <Panel
       className={className}
       title="Krotność GUS według województw"
-      subtitle={`Mediana IT podzielona przez przeciętną płacę brutto GUS ${gusYear}, ten sam poziom i filtry`}
-      footer={
-        <span className="flex items-center justify-between gap-3">
-          <span>B2B netto wobec brutto UoP: krotność orientacyjna</span>
-          <CodeButton anchor="xlsx-gus" />
-        </span>
-      }
+      subtitle={`Ile razy mediana IT przekracza przeciętną płacę w regionie (GUS ${gusYear})`}
+      footer={filters.contract === 'uop' ? undefined : 'B2B netto wobec brutto z GUS: krotność orientacyjna'}
     >
       <div className="grid grid-cols-[minmax(0,9.5rem)_minmax(0,1fr)_4.2rem_6.5rem] gap-3 border-b border-seam px-5 pb-1.5 t-meta" aria-hidden>
         <span>Województwo</span><span /><span className="text-right">Krotność</span><span className="text-right">Mediana IT</span>
@@ -37,7 +31,7 @@ export function RegionRanking({ regions, polska, filters, gusYear, className }: 
       </ol>
       {rest.length > 0 && (
         <details className="group px-5">
-          <summary className="cursor-pointer py-2 text-[14px] font-semibold text-ink underline underline-offset-[3px] marker:content-none">
+          <summary className="cursor-pointer py-2 t-control text-ink underline underline-offset-[3px] marker:content-none">
             <span className="group-open:hidden">Pokaż pozostałe {rest.length}</span>
             <span className="hidden group-open:inline">Zwiń</span>
           </summary>

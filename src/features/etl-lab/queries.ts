@@ -23,7 +23,7 @@ const REJECTED_KINDS: [SampleKind, string][] = [
 
 type RawRow = Omit<RawSide, 'skills_raw'> & { offer_id: string; skills_raw: string }
 type CleanRow = Omit<CleanSide, 'skills'> & { offer_id: string; source: string; title: string; transform_log: string; skills: string | null }
-type RejectedRow = Omit<Rejection, 'stage' | 'keptId' | 'keptTitle'> & { offer_id: string; source: string; title: string | null; stage: StageId; kept_title: string | null }
+type RejectedRow = Omit<Rejection, 'stage' | 'keptTitle'> & { offer_id: string; source: string; title: string | null; stage: StageId; kept_title: string | null }
 
 const NOTE_STAGE: Record<string, StageId> = {
   harmonize: 'verify-schema',
@@ -69,7 +69,7 @@ function rejectedSamples(stage: string): RejectedRow[] {
 function rawFor(ids: string[]): Map<string, RawSide> {
   if (ids.length === 0) return new Map()
   const rows = all<RawRow>(
-    `SELECT offer_id, title, seniority_raw, contract_raw, salary_from, salary_to, currency, period_raw, city, skills_raw, raw_json
+    `SELECT offer_id, title, seniority_raw, contract_raw, salary_from, salary_to, currency, period_raw, city, skills_raw
      FROM offers_raw WHERE offer_id IN (${ids.map(() => '?').join(',')})`,
     ids,
   )
@@ -102,7 +102,7 @@ export function getSamples(): Sample[] {
         rejection: {
           stage: row.stage, reason: row.reason, salary_pln_month: row.salary_pln_month, lower_fence: row.lower_fence,
           upper_fence: row.upper_fence, z_score: row.z_score, group_key: row.group_key,
-          keptId: row.stage === 'dedupe' ? row.reason.slice(9) : null, keptTitle: row.kept_title,
+          keptTitle: row.kept_title,
         },
       })
     }

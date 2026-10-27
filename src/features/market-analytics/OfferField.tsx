@@ -40,7 +40,7 @@ export function OfferField({ layout, filters }: { layout: FieldLayout; filters: 
   return (
     <div className="relative px-2 pb-1">
       <svg viewBox={`0 0 ${width} ${height}`} className="block w-full" onPointerMove={onMove} onPointerLeave={() => setHover(null)}
-        role="img" aria-label={`Pole ofert: ${layout.total} ofert na osi płac w czterech poziomach seniority`}>
+        role="group" aria-label={`Pole ofert: ${layout.total} ofert na osi płac w czterech poziomach seniority`}>
         {ticks.map((t) => (
           <g key={t.value}>
             <line x1={t.x} x2={t.x} y1={0} y2={plotBottom} className="stroke-seam" strokeWidth={1} />
@@ -112,9 +112,7 @@ export function OfferField({ layout, filters }: { layout: FieldLayout; filters: 
               ) : (
                 filters.region !== 'polska' && (
                   <text x={g.labelWidth} y={bandY + 4} className={`fill-ink-2 ${meta}`}>
-                    {g.compact
-                      ? `n = ${l.nRegion}, za mało na percentyle`
-                      : `${regionName}: n = ${l.nRegion}, poniżej progu 10, więc percentyle ukryte; kropki zostają`}
+                    {g.compact ? `${l.nRegion} ofert, za mało na percentyle` : `${regionName}: ${l.nRegion} ofert, za mało na percentyle`}
                   </text>
                 )
               )}
@@ -146,8 +144,8 @@ export function OfferField({ layout, filters }: { layout: FieldLayout; filters: 
           }}
           role="status"
         >
-          <p className="text-[14px] font-semibold leading-tight">{detail.title ?? 'Oferta bez tytułu'}</p>
-          <p className="mt-1 text-[13px] text-dot-soft tnum">
+          <p className="t-control">{detail.title ?? 'Oferta bez tytułu'}</p>
+          <p className="mt-1 t-meta text-dot-soft tnum">
             {formatPLN(detail.salary_pln_month)}
             {'reason' in detail ? ` · odrzucona: ${detail.reason}` : ` · ${[detail.company, detail.city ?? 'zdalnie', PORTAL_LABELS[detail.source]].filter(Boolean).join(' · ')}`}
           </p>

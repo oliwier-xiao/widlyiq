@@ -154,6 +154,14 @@ export function CooccurrenceHeatmap({ skills, pairs, minPairCount }: { skills: S
           </g>
         ))}
       </g>
+      {!compact && (
+        // Numbers in the right margin tie each block to its name in the legend, so the legend never repeats the axis labels.
+        <g className="t-table" fontSize={13} fontWeight={700} fill="var(--color-ink)" pointerEvents="none">
+          {blocks.map((b) => (
+            <text key={b.n} x={LEFT + size + 10} y={TOP + ((b.start + b.end) / 2) * CELL + 5}>{b.n}</text>
+          ))}
+        </g>
+      )}
       {compact && (
         // Without axis labels on a phone, each cluster block carries its number from the legend below the grid.
         <g className="t-table" fontSize={20} fontWeight={700} fill="var(--color-ink)" pointerEvents="none">
@@ -179,7 +187,7 @@ export function CooccurrenceHeatmap({ skills, pairs, minPairCount }: { skills: S
       <div role="radiogroup" aria-label="Miara współwystępowania" className="mb-3 inline-flex h-9 border border-seam bg-paper p-[3px]">
         {METRICS.map((m) => (
           <button key={m.id} type="button" role="radio" aria-checked={metric === m.id} onClick={() => setMetric(m.id)}
-            className={`px-3 text-[14px] font-semibold transition-colors duration-150 ${metric === m.id ? 'bg-carbon text-paper' : 'text-ink-2 hover:text-ink'}`}>
+            className={`px-3 t-control transition-colors duration-150 ${metric === m.id ? 'bg-carbon text-paper' : 'text-ink-2 hover:text-ink'}`}>
             {m.label}
           </button>
         ))}
@@ -188,11 +196,12 @@ export function CooccurrenceHeatmap({ skills, pairs, minPairCount }: { skills: S
       <div className="hidden md:block">{grid(false)}</div>
       <div className="md:hidden">{grid(true)}</div>
       <Legend metric={metric} max={max} />
-      <ol className="mt-3 grid gap-x-6 gap-y-1 border-t border-seam pt-3 t-meta md:grid-cols-2" aria-label="Klastry technologii">
+      <ol className="mt-3 grid gap-y-1 border-t border-seam pt-3 t-meta md:flex md:flex-wrap md:gap-x-5" aria-label="Klastry technologii">
         {blocks.map((b) => (
           <li key={b.n} className="flex gap-2">
-            <span className="w-4 shrink-0 font-bold text-ink tnum">{b.n}</span>
-            <span><span className="font-semibold text-ink">{b.name}</span>: {b.members.join(', ')}</span>
+            <span className="w-4 shrink-0 font-bold text-ink tnum md:w-auto">{b.n}</span>
+            {/* Desktop shows every name on the axes; a phone has no axis labels, so the members are listed here. */}
+            <span><span className="font-semibold text-ink">{b.name}</span><span className="md:hidden">: {b.members.join(', ')}</span></span>
           </li>
         ))}
       </ol>
@@ -228,7 +237,7 @@ export function PairPanel({ skills, pairs, minPairCount }: { skills: SkillNode[]
     <div className="grid gap-6 px-5 pb-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
       <Readout skills={skills} lookup={lookup} n={n} cell={active} pinned={pinned !== null} onUnpin={() => setPinned(null)} />
       <div>
-        <h3 className="text-[15px] font-bold">Najsilniejsze pary (lift)</h3>
+        <h3 className="t-subhead">Najsilniejsze pary (lift)</h3>
         <p className="t-meta">Pary z co najmniej {minPairCount} wspólnymi ofertami.</p>
         <ol className="mt-2 divide-y divide-seam border-y border-seam">
           {topPairs.map((p) => {
@@ -255,7 +264,7 @@ function Readout({ skills, lookup, n, cell, pinned, onUnpin }: {
   if (!cell) {
     return (
       <div className="border-t border-seam pt-3">
-        <p className="text-[16px] text-ink-2">Najedź na komórkę heatmapy albo wybierz parę z listy. Kliknięcie przypina parę, Esc odpina.</p>
+        <p className="t-body text-ink-2">Najedź na komórkę albo wybierz parę z listy. Kliknięcie przypina parę.</p>
       </div>
     )
   }
@@ -278,7 +287,7 @@ function Readout({ skills, lookup, n, cell, pinned, onUnpin }: {
   }
   return (
     <div className="border-t border-ink pt-3" aria-live="polite">
-      <p className="text-[16px] leading-snug text-ink">{sentence}</p>
+      <p className="t-body text-ink">{sentence}</p>
       {i !== j && pair && (
         <dl className="t-table mt-3 grid grid-cols-[1fr_auto] gap-x-3 gap-y-0.5 text-ink-2">
           <dt>Jaccard</dt><dd className="text-right text-ink">{dec2.format(pair.jaccard)}</dd>
@@ -287,7 +296,7 @@ function Readout({ skills, lookup, n, cell, pinned, onUnpin }: {
         </dl>
       )}
       {pinned && (
-        <button type="button" onClick={onUnpin} className="mt-3 text-[14px] font-semibold text-ink underline underline-offset-[3px]">
+        <button type="button" onClick={onUnpin} className="mt-3 t-control text-ink underline underline-offset-[3px]">
           Odepnij (Esc)
         </button>
       )}

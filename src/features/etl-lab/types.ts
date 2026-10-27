@@ -24,7 +24,6 @@ export type RawSide = {
   period_raw: string | null
   city: string | null
   skills_raw: string[]
-  raw_json: string
 }
 
 export type CleanSide = {
@@ -48,7 +47,6 @@ export type Rejection = {
   upper_fence: number | null
   z_score: number | null
   group_key: string | null
-  keptId: string | null
   keptTitle: string | null
 }
 

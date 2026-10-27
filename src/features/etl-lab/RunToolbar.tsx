@@ -28,7 +28,7 @@ export function RunToolbar({ lastFinishedAt, lastMode, lastDurationMs }: Props) 
 
   return (
     <div className="border-b border-seam bg-toolbar">
-      <div className="flex min-h-[54px] flex-wrap items-center gap-3 px-4 py-2.5 lg:px-6">
+      <div className="flex min-h-[54px] flex-wrap items-center gap-3 px-5 py-2.5">
         <div role="radiogroup" aria-label="Tryb przebiegu" className="flex h-9 border border-seam bg-paper p-[3px]">
           {MODES.map(([value, label]) => (
             <button
@@ -38,7 +38,7 @@ export function RunToolbar({ lastFinishedAt, lastMode, lastDurationMs }: Props) 
               aria-checked={mode === value}
               disabled={busy}
               onClick={() => setMode(value)}
-              className={`px-3 text-[15px] font-semibold transition-colors duration-150 disabled:cursor-not-allowed ${mode === value ? 'bg-carbon text-paper' : 'text-ink-2 hover:text-ink'}`}
+              className={`px-3 t-control transition-colors duration-150 disabled:cursor-not-allowed ${mode === value ? 'bg-carbon text-paper' : 'text-ink-2 hover:text-ink'}`}
             >
               {label}
             </button>
@@ -46,7 +46,7 @@ export function RunToolbar({ lastFinishedAt, lastMode, lastDurationMs }: Props) 
         </div>
         <RunPipelineButton mode={mode} />
         <p
-          className={`min-w-0 flex-1 basis-64 ${live.status === 'error' ? 'text-[13px] font-medium text-error' : 't-meta'}`}
+          className={`min-w-0 flex-1 basis-64 ${live.status === 'error' ? 't-meta text-error' : 't-meta'}`}
           aria-live="polite"
         >
           {status}

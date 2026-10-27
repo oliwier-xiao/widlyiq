@@ -65,7 +65,7 @@ export function EstimatorWorkbench({ weights, gusWages, gusYear, defaultStacks, 
     <>
       <Panel
         title="Twój profil"
-        subtitle="Wybierz poziom, kategorię, umowę, region i technologie. Szacunek liczy się od razu."
+        subtitle="Każda zmiana od razu przelicza szacunek."
         className="lg:row-span-2"
         bodyClassName="px-5 pb-5"
       >
@@ -78,7 +78,7 @@ export function EstimatorWorkbench({ weights, gusWages, gusYear, defaultStacks, 
                 role="radio"
                 aria-checked={profile.seniority === s}
                 onClick={() => setProfile((p) => ({ ...p, seniority: s as Seniority }))}
-                className={`px-3.5 text-[15px] font-semibold transition-colors duration-150 ${profile.seniority === s ? 'bg-carbon text-paper' : 'text-ink-2 hover:text-ink'}`}
+                className={`px-3.5 t-control transition-colors duration-150 ${profile.seniority === s ? 'bg-carbon text-paper' : 'text-ink-2 hover:text-ink'}`}
               >
                 {SENIORITY_LABELS[s]}
               </button>
@@ -95,10 +95,10 @@ export function EstimatorWorkbench({ weights, gusWages, gusYear, defaultStacks, 
         </div>
 
         <div className="mt-6 flex items-baseline justify-between gap-3">
-          <h3 className="text-[15px] font-semibold">
+          <h3 className="t-subhead">
             Technologie <span className="t-meta tnum">· wybrane {result.contributions.filter((c) => c.kind === 'skill').length} z {vocabulary.length}</span>
           </h3>
-          <div className="flex gap-3 text-[14px]">
+          <div className="flex gap-3 t-control font-medium">
             {!isDefaultStack && defaults.length > 0 && (
               <button type="button" className="font-medium underline underline-offset-[3px]"
                 onClick={() => setProfile((p) => ({ ...p, skills: defaults }))}>
@@ -121,7 +121,7 @@ export function EstimatorWorkbench({ weights, gusWages, gusYear, defaultStacks, 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Szukaj technologii, np. Kubernetes"
-            className="min-w-0 flex-1 bg-transparent text-[15px] outline-none placeholder:text-ink-2"
+            className="min-w-0 flex-1 bg-transparent t-body outline-none placeholder:text-ink-2"
           />
         </label>
         <ul className="mt-3 flex flex-wrap gap-1.5" aria-describedby="skill-hint">
@@ -137,30 +137,30 @@ export function EstimatorWorkbench({ weights, gusWages, gusYear, defaultStacks, 
                   onPointerLeave={() => setHint(null)}
                   onFocus={() => setHint(w)}
                   onBlur={() => setHint(null)}
-                  className={`flex h-8 items-center gap-2 border px-2.5 text-[14px] font-semibold transition-[background-color,color,transform] duration-150 ease-[var(--ease-out)] active:scale-[0.97] ${on ? 'border-carbon bg-carbon text-paper' : 'border-seam bg-paper text-ink hover:border-ink'}`}
+                  className={`flex h-8 items-center gap-2 border px-2.5 t-control transition-[background-color,color,transform] duration-150 ease-[var(--ease-out)] active:scale-[0.97] ${on ? 'border-carbon bg-carbon text-paper' : 'border-seam bg-paper text-ink hover:border-ink'}`}
                 >
                   {w.label}
-                  <span className={`t-table text-[13px] font-medium ${on ? 'text-dot-soft' : 'text-ink-2'}`}>{formatSignedPLN(w.weight)}</span>
+                  <span className={`t-micro font-medium ${on ? 'text-dot-soft' : 'text-ink-2'}`}>{formatSignedPLN(w.weight)}</span>
                 </button>
               </li>
             )
           })}
         </ul>
         {shown.length === 0 && (
-          <p className="mt-3 text-[15px] text-ink-2">
+          <p className="mt-3 t-body text-ink-2">
             Brak „{query}” w słowniku modelu. Model zna {vocabulary.length} najczęstszych technologii z ofert.
           </p>
         )}
         <p id="skill-hint" className="t-meta mt-3 min-h-[2.8em]" aria-live="polite">
           {hint
-            ? `${hint.label}: waga ${formatSignedPLN(hint.weight)} / mies., w ${formatNumber(hint.support)} ofertach treningowych.`
-            : 'Najedź lub przejdź klawiszem Tab na technologię, żeby zobaczyć, na ilu ofertach model ją oszacował.'}
+            ? `${hint.label}: ${formatSignedPLN(hint.weight)} / mies., oszacowane na ${formatNumber(hint.support)} ofertach.`
+            : 'Najedź na technologię, żeby zobaczyć, na ilu ofertach ją oszacowano.'}
         </p>
 
         {suggestions.length > 0 && (
           <div className="mt-6 border-t border-seam pt-4">
-            <h3 className="text-[15px] font-semibold">Co podniesie szacunek</h3>
-            <p className="t-meta mt-0.5">Technologie częste w kategorii {labels.category}, których nie masz, z najwyższą wagą.</p>
+            <h3 className="t-subhead">Co podniesie szacunek</h3>
+            <p className="t-meta mt-0.5">Częste w kategorii {labels.category}, a brakuje ich w Twoim stacku.</p>
             <ul className="mt-3 grid gap-px bg-seam sm:grid-cols-2">
               {suggestions.map((w) => (
                 <li key={w.feature} className="bg-paper">
@@ -169,7 +169,7 @@ export function EstimatorWorkbench({ weights, gusWages, gusYear, defaultStacks, 
                     onClick={() => toggle(w.label)}
                     className="flex w-full items-baseline justify-between gap-3 px-3 py-2.5 text-left transition-[background-color,transform] duration-150 ease-[var(--ease-out)] hover:bg-toolbar active:scale-[0.98]"
                   >
-                    <span className="text-[15px] font-semibold">Dodaj {w.label}</span>
+                    <span className="t-control">Dodaj {w.label}</span>
                     <span className="t-table font-semibold">{formatSignedPLN(w.weight)}</span>
                   </button>
                 </li>
@@ -223,21 +223,21 @@ function Readout({ profile, labels, result, mae, gusYear }: ReadoutProps) {
         <span className="t-readout">
           <AnimatedNumber value={result.total} />
         </span>
-        <span className="text-[19px] font-semibold">zł {CONTRACT_UNITS[profile.contract] ?? '/ mies.'}</span>
+        <span className="t-figure-sm font-semibold">zł {CONTRACT_UNITS[profile.contract] ?? '/ mies.'}</span>
       </p>
       <dl className="mt-5 grid grid-cols-1 border-t border-ink sm:grid-cols-3">
-        <Fact term="Typowy zakres" detail={`szacunek ± ${formatPLN(mae)} (średni błąd na ofertach testowych)`}>
+        <Fact term="Typowy zakres" detail={`± ${formatPLN(mae)}, średni błąd modelu`}>
           {formatNumber(result.total - mae)} do {formatNumber(result.total + mae)} zł
         </Fact>
-        <Fact term="Premia techniczna" detail={`wagi skilli ${formatSignedPLN(result.skillsSum)} i liczba skilli ${formatSignedPLN(result.nSkillsTerm)}`}>
+        <Fact term="Premia techniczna" detail={`technologie ${formatSignedPLN(result.skillsSum)}, ich liczba ${formatSignedPLN(result.nSkillsTerm)}`}>
           {formatSignedPLN(result.premium)}
         </Fact>
-        <Fact term="Krotność GUS" detail={`przeciętna płaca ${formatPLN(result.gusWage)} brutto, ${labels.region}, GUS ${gusYear}`}>
+        <Fact term="Krotność GUS" detail={`${formatPLN(result.gusWage)} brutto, GUS ${gusYear}`}>
           {formatMultiple(result.multiple)}
         </Fact>
       </dl>
       {profile.contract === 'b2b' && (
-        <p className="mt-3 text-[13px] font-medium">B2B netto wobec przeciętnej brutto GUS: krotność orientacyjna.</p>
+        <p className="mt-3 t-micro font-medium">B2B netto wobec przeciętnej brutto GUS: krotność orientacyjna.</p>
       )}
     </section>
   )
@@ -246,9 +246,9 @@ function Readout({ profile, labels, result, mae, gusYear }: ReadoutProps) {
 function Fact({ term, detail, children }: { term: string; detail: string; children: ReactNode }) {
   return (
     <div className="border-ink py-3 sm:border-l sm:px-4 sm:first:border-l-0 sm:first:pl-0 sm:last:pr-0">
-      <dt className="text-[13px] font-semibold">{term}</dt>
-      <dd className="mt-0.5 text-[22px] font-bold tnum [font-stretch:85%]">{children}</dd>
-      <dd className="text-[13px] font-medium">{detail}</dd>
+      <dt className="t-micro">{term}</dt>
+      <dd className="mt-1 t-figure-sm">{children}</dd>
+      <dd className="mt-1 t-micro font-medium">{detail}</dd>
     </div>
   )
 }
@@ -260,8 +260,9 @@ function Breakdown({ base, total, contributions }: { base: number; total: number
   return (
     <Panel
       title="Skąd ta kwota"
-      subtitle="Ridge startuje od przeciętnej oferty w danych i dodaje wagę każdej cechy. Minus znaczy mniej niż przeciętnie, nie obniżkę. Waga działa przy pozostałych cechach bez zmian, więc skill typowy dla kategorii (np. React we frontendzie) bywa bliski zera: jego wartość siedzi w wadze kategorii."
-      bodyClassName="px-5 pb-5"
+      subtitle="Model startuje od przeciętnej oferty i dodaje wpływ każdej cechy. Minus znaczy mniej niż przeciętnie, nie obniżkę."
+      footer="Technologia typowa dla kategorii (np. React we frontendzie) bywa bliska zera, bo jej wartość jest już w wadze kategorii."
+      bodyClassName="px-5"
     >
       <div className="t-table flex items-baseline justify-between border-b border-seam pb-2">
         <span className="font-semibold">Przeciętna oferta w danych</span>
@@ -274,7 +275,7 @@ function Breakdown({ base, total, contributions }: { base: number; total: number
           <BarList rows={skillRows} max={max} />
         </>
       )}
-      <div className="t-table mt-3 flex items-baseline justify-between border-t border-ink pt-2 text-[15px]">
+      <div className="t-table mt-3 flex items-baseline justify-between border-t border-ink pt-2">
         <span className="font-bold">Szacunek</span>
         <span className="tnum font-bold">{formatPLN(total)}</span>
       </div>

@@ -25,7 +25,7 @@ export function stageDetail(stage: StageId, detail: Record<string, unknown>): st
     case 'normalize-nbp':
       return `${formatNumber(Number(detail.converted ?? 0))} przeliczeń walut · ${formatNumber(Number(detail.hourly ?? 0))} stawek × 168 h · tabela ${detail.table ?? 'brak danych'}`
     case 'impute-median':
-      return `${formatNumber(Number(detail.imputed ?? 0))} ofert z medianą grupy (is_imputed = 1)`
+      return `${formatNumber(Number(detail.imputed ?? 0))} ofert uzupełnionych medianą grupy`
     case 'filter-iqr':
       return counts(detail.reasons, 'IQR: ') || 'brak wartości poza płotkami'
     case 'classify-tier': {
@@ -33,18 +33,18 @@ export function stageDetail(stage: StageId, detail: Record<string, unknown>): st
       return ['S', 'A', 'B', 'C'].map((t) => `${t} ${formatNumber(tiers[t] ?? 0)}`).join(' · ')
     }
     case 'onehot-encode':
-      return `${formatNumber(Number(detail.columns ?? 0))} kolumn, w tym ${formatNumber(Number(detail.skills ?? 0))} skilli`
+      return `${formatNumber(Number(detail.columns ?? 0))} kolumn, w tym ${formatNumber(Number(detail.skills ?? 0))} technologii`
     case 'cooccur-matrix': {
       const shape = (detail.shape ?? []) as number[]
-      return `macierz ${shape[0] ?? 0} × ${shape[1] ?? 0} · ${formatNumber(Number(detail.pairs ?? 0))} niezerowych par`
+      return `${shape[0] ?? 0} technologii, ${formatNumber(Number(detail.pairs ?? 0))} par występujących razem`
     }
     case 'ml-ridge': {
       const truth = detail.ground_truth as { pearson_r?: number } | undefined
       const base = `alfa ${decimal(detail.alpha, 1)} · R² ${decimal(detail.r2_test, 3)} · MAE ${formatPLN(Number(detail.mae_test ?? 0))}`
-      return truth?.pearson_r != null ? `${base} · r z generatorem ${decimal(truth.pearson_r, 2)}` : base
+      return truth?.pearson_r != null ? `${base} · zgodność z prawdziwymi wagami r = ${decimal(truth.pearson_r, 2)}` : base
     }
     case 'plot-mpl':
-      return String(detail.path ?? 'public/diagnostics/iqr_distribution.svg')
+      return 'wykres zapisany jako SVG, widoczny niżej'
     case 'load-sqlite':
       return `${formatNumber(Number(detail.tables ?? 0))} tabel w jednej transakcji`
     default:

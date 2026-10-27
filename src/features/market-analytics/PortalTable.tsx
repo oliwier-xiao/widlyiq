@@ -1,6 +1,5 @@
 import { PORTAL_LABELS } from '@/shared/lib/filters'
 import { formatNumber, formatSignedPct } from '@/shared/lib/formatters'
-import { CodeButton } from '@/shared/ui/CodeDrawer'
 import { Panel } from '@/shared/ui/Panel'
 
 import type { PortalRow } from './queries'
@@ -12,13 +11,7 @@ export function PortalTable({ portals, className }: { portals: PortalRow[]; clas
     <Panel
       className={className}
       title="Bias portali"
-      subtitle="Ile portal płaci powyżej lub poniżej modelu Ridge dla tego samego profilu"
-      footer={
-        <span className="flex items-center justify-between gap-3">
-          <span>Mediana reszt z walidacji krzyżowej, 5 foldów</span>
-          <CodeButton anchor="ml-ridge" />
-        </span>
-      }
+      subtitle="Czy portal płaci więcej, czy mniej niż reszta rynku za ten sam profil"
     >
       <table className="w-full t-table">
         <thead className="t-meta">
@@ -47,7 +40,7 @@ export function PortalTable({ portals, className }: { portals: PortalRow[]; clas
                     </span>
                   )}
                 </td>
-                <td className="py-2">
+                <td className="py-2 text-right">
                   <span className="flex items-center justify-end gap-2">
                     <span className="relative h-2 w-16" aria-hidden>
                       <span className="absolute inset-y-[-2px] left-1/2 w-px bg-ink-2" />

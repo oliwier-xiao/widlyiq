@@ -3,7 +3,6 @@ import { DownloadSimpleIcon } from '@phosphor-icons/react/dist/ssr'
 import type { RunMetrics } from '@/shared/db/run'
 import { CATEGORIES, CONTRACTS, type Filters } from '@/shared/lib/filters'
 import { formatNumber, formatPLN } from '@/shared/lib/formatters'
-import { CodeButton } from '@/shared/ui/CodeDrawer'
 import { Panel, SeamGrid } from '@/shared/ui/Panel'
 import type { ViewProps } from '@/shared/ui/types'
 
@@ -57,18 +56,13 @@ function ModelPanel({ metrics }: { metrics: RunMetrics }) {
         <Metric term="Alfa z walidacji krzyżowej" value={decimal(metrics.alpha, 1)} />
         <Metric term="Oferty trening / test" value={`${formatNumber(metrics.n_train)} / ${formatNumber(metrics.n_test)}`} />
         <Metric term="Cechy wejściowe" value={formatNumber(metrics.n_features)} />
-        {truth && <Metric term="Zgodność z generatorem" value={`r = ${decimal(truth.pearson_r, 2)}`} />}
+        {truth && <Metric term="Zgodność wag" value={`r = ${decimal(truth.pearson_r, 2)}`} />}
       </dl>
       {truth && (
-        <p className="mt-4 max-w-[68ch] text-[15px] text-ink-2">
-          Snapshot portali jest syntetyczny, więc prawdziwe premie technologii są znane: oszacowane wagi {truth.skills_compared} skilli
-          korelują z nimi na poziomie r = {decimal(truth.pearson_r, 2)}.
+        <p className="mt-4 max-w-[64ch] t-body text-ink-2">
+          Dane portali są syntetyczne, więc prawdziwe premie {truth.skills_compared} technologii są znane i można sprawdzić, jak dobrze model je odtworzył.
         </p>
       )}
-      <div className="mt-4 flex flex-wrap gap-2">
-        <CodeButton anchor="ml-ridge" />
-        <CodeButton anchor="onehot-encode" />
-      </div>
     </Panel>
   )
 }
@@ -99,14 +93,14 @@ function ExportPanel({ matrix, files }: { matrix: EstimatorData['matrix']; files
         {files.map((f) => (
           <li key={f.format}>
             {f.bytes === null ? (
-              <span className="inline-flex h-10 items-center gap-2 border border-seam px-4 text-[15px] text-ink-2">
+              <span className="inline-flex h-10 items-center gap-2 border border-seam px-4 t-control font-medium text-ink-2">
                 {FORMAT_LABELS[f.format]} · brak pliku
               </span>
             ) : (
               <a
                 href={`/api/export?format=${f.format}`}
                 download
-                className="inline-flex h-10 items-center gap-2 bg-carbon px-4 text-[15px] font-semibold text-paper transition-[background-color,transform] duration-150 ease-[var(--ease-out)] hover:bg-carbon-2 active:scale-[0.97]"
+                className="inline-flex h-10 items-center gap-2 bg-carbon px-4 t-control text-paper transition-[background-color,transform] duration-150 ease-[var(--ease-out)] hover:bg-carbon-2 active:scale-[0.97]"
               >
                 <DownloadSimpleIcon size={16} weight="bold" aria-hidden />
                 {FORMAT_LABELS[f.format]}
@@ -116,15 +110,10 @@ function ExportPanel({ matrix, files }: { matrix: EstimatorData['matrix']; files
           </li>
         ))}
       </ul>
-      <p className="mt-4 max-w-[68ch] text-[15px] text-ink-2">
-        Jeden wiersz to jedna czysta oferta: <code className="t-code text-ink">skill__*</code> i <code className="t-code text-ink">seniority__*</code>,{' '}
-        <code className="t-code text-ink">category__*</code>, <code className="t-code text-ink">contract__*</code> jako 0/1,{' '}
-        <code className="t-code text-ink">remote</code>, cechy ciągłe po StandardScaler jako <code className="t-code text-ink">*__z</code>,
-        plus cel <code className="t-code text-ink">salary_pln_month</code> i flaga <code className="t-code text-ink">is_imputed</code>.
+      <p className="mt-4 max-w-[64ch] t-body text-ink-2">
+        Jeden wiersz to jedna oferta po czyszczeniu: technologie, poziom, kategoria i umowa jako kolumny 0/1,
+        cechy liczbowe po standaryzacji, płaca miesięczna i znacznik uzupełnionej płacy.
       </p>
-      <div className="mt-4">
-        <CodeButton anchor="sqlite-query" />
-      </div>
     </Panel>
   )
 }

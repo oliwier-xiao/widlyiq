@@ -96,7 +96,7 @@ export function SkillScatter({ skills, regionLabel, compact = false }: { skills:
   const labels = useMemo(() => placeLabels(model.points, pickLabelled(model.points, activeSkills, geo.labels), geo), [model.points, activeSkills, geo])
 
   if (model.points.length === 0) {
-    return <p className="px-5 pb-6 text-[15px] text-ink-2">Za mało ofert z widełkami w tym filtrze, żeby policzyć mediany technologii.</p>
+    return <p className="px-5 pb-6 t-body text-ink-2">Za mało ofert z widełkami w tym filtrze, żeby policzyć mediany technologii.</p>
   }
 
   const hovered = model.points.find((p) => p.skill === active) ?? null
@@ -171,16 +171,16 @@ export function SkillScatter({ skills, regionLabel, compact = false }: { skills:
       </svg>
       {hovered && (
         <div
-          className="pointer-events-none absolute z-10 w-[232px] bg-carbon px-3 py-2.5 text-paper"
+          className="pointer-events-none absolute z-10 w-[248px] bg-carbon px-3 py-2.5 text-paper"
           style={{
-            left: `clamp(8px, calc(${(hovered.cx / W) * 100}% - 116px), calc(100% - 240px))`,
+            left: `clamp(8px, calc(${(hovered.cx / W) * 100}% - 124px), calc(100% - 256px))`,
             top: `calc(${(hovered.cy / H) * 100}% ${hovered.cy < H * 0.4 ? `+ ${hovered.r + 12}px` : `- ${hovered.r + 12}px`})`,
             transform: hovered.cy < H * 0.4 ? undefined : 'translateY(-100%)',
           }}
           role="status"
         >
-          <p className="text-[15px] font-bold">{hovered.skill}</p>
-          <dl className="t-table mt-1 grid grid-cols-[auto_1fr] gap-x-3 text-[13px] text-dot-soft">
+          <p className="t-subhead">{hovered.skill}</p>
+          <dl className="t-table mt-1 grid grid-cols-[auto_1fr] gap-x-3 text-dot-soft">
             <dt>Popyt</dt><dd className="text-right text-paper">{offersLabel(hovered.demand)}</dd>
             <dt>Mediana</dt><dd className="text-right text-paper">{formatPLN(hovered.median)}</dd>
             <dt>P25 do P75</dt><dd className="text-right text-paper">{formatNumber(hovered.p25)} do {formatPLN(hovered.p75)}</dd>

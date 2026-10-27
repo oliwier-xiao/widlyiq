@@ -4,7 +4,6 @@ import { motion } from 'motion/react'
 
 import { formatDuration, formatNumber } from '@/shared/lib/formatters'
 import { STAGE_META, STAGE_ORDER, type StageId, type StageSnapshot } from '@/shared/lib/stages'
-import { CodeButton } from '@/shared/ui/CodeDrawer'
 import { usePipelineRun, useStageFocus } from '@/shared/ui/PipelineRun'
 
 import { stageDetail } from './stage-detail'
@@ -30,9 +29,10 @@ export function StageList({ stages, raw }: Props) {
         return (
           <li
             key={id}
+            id={`etap-${id}`}
             onPointerEnter={() => setFocus(id)}
             onPointerLeave={() => setFocus(null)}
-            className={`grid grid-cols-[2rem_minmax(0,1fr)] gap-x-3 border-b border-seam px-5 py-3 transition-colors duration-150 md:grid-cols-[2rem_minmax(0,15rem)_minmax(0,1fr)_13.5rem] ${focus === id ? 'bg-toolbar' : ''}`}
+            className={`grid scroll-mt-16 grid-cols-[2rem_minmax(0,1fr)] gap-x-3 border-b border-seam px-5 py-3 transition-colors duration-150 md:grid-cols-[2rem_minmax(0,24rem)_minmax(0,1fr)] md:gap-x-5 ${focus === id ? 'bg-toolbar' : ''}`}
           >
             <span className="t-table pt-0.5 text-ink-2">{String(i + 1).padStart(2, '0')}</span>
             <div className="min-w-0">
@@ -77,9 +77,6 @@ export function StageList({ stages, raw }: Props) {
                 />
                 {lost > 0 && <span className="block h-full" style={{ width: `${Math.max(lost, 0.6)}%`, background: meta.color }} />}
               </div>
-            </div>
-            <div className="col-start-2 mt-2 md:col-start-4 md:mt-0 md:flex md:justify-end md:pl-3">
-              <CodeButton anchor={meta.anchor} />
             </div>
           </li>
         )

@@ -5,12 +5,14 @@ import { useMemo, useState, type ReactNode } from 'react'
 import { CATEGORY_LABELS, CONTRACT_LABELS, PORTAL_LABELS, SENIORITY_LABELS, type Seniority } from '@/shared/lib/filters'
 import { formatMultiple, formatPLN, formatRegion } from '@/shared/lib/formatters'
 import { STAGE_META } from '@/shared/lib/stages'
-import { CodeButton } from '@/shared/ui/CodeDrawer'
 import { useStageFocus } from '@/shared/ui/PipelineRun'
 
 import { SAMPLE_KINDS, SAMPLE_LABELS, type RawSide, type Sample, type SampleKind } from './types'
 
 const rawNumber = new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 2, useGrouping: 'always' })
+// The pipeline logs grouping keys by column name; the UI names them in Polish.
+const GROUP_WORDS: Record<string, string> = { category: 'kategoria', seniority: 'poziom', contract: 'umowa' }
+const groupLabel = (key: string | null) => (key ?? '').split(' × ').map((k) => GROUP_WORDS[k] ?? k).join(' × ')
 
 export function DiffInspector({ samples }: { samples: Sample[] }) {
   const [kind, setKind] = useState<SampleKind>('all')
@@ -34,7 +36,7 @@ export function DiffInspector({ samples }: { samples: Sample[] }) {
             aria-pressed={kind === k}
             disabled={counts[k] === 0}
             onClick={() => setKind(k)}
-            className={`h-8 border px-3 text-[14px] font-semibold transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 ${kind === k ? 'border-carbon bg-carbon text-paper' : 'border-seam bg-paper text-ink hover:bg-toolbar'}`}
+            className={`h-8 border px-3 t-control transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 ${kind === k ? 'border-carbon bg-carbon text-paper' : 'border-seam bg-paper text-ink hover:bg-toolbar'}`}
           >
             {SAMPLE_LABELS[k]} <span className={`tnum ${kind === k ? 'text-dot-soft' : 'text-ink-2'}`}>{counts[k]}</span>
           </button>
@@ -53,8 +55,8 @@ export function DiffInspector({ samples }: { samples: Sample[] }) {
                   onClick={() => setSelectedId(s.id)}
                   className={`block w-full px-5 py-2.5 text-left transition-colors duration-150 ${active ? 'bg-carbon text-paper' : 'hover:bg-toolbar'}`}
                 >
-                  <span className="block truncate text-[15px] font-semibold">{s.title}</span>
-                  <span className={`block truncate text-[13px] ${active ? 'text-dot-soft' : 'text-ink-2'}`}>
+                  <span className="block truncate t-control">{s.title}</span>
+                  <span className={`mt-0.5 block truncate t-meta ${active ? 'text-dot-soft' : ''}`}>
                     {PORTAL_LABELS[s.source] ?? s.source} · {s.rejection ? 'odrzucony' : s.kinds.map((k) => SAMPLE_LABELS[k]).join(', ')}
                   </span>
                 </button>
@@ -73,34 +75,30 @@ function Detail({ sample }: { sample: Sample }) {
   const { raw, clean, rejection, notes } = sample
   return (
     <div className="px-5 py-4">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <h3 className="t-headline">{sample.title}</h3>
-        <span className="t-code text-[12px] text-ink-2">{sample.id}</span>
-      </div>
+      <h3 className="t-headline">{sample.title}</h3>
 
       {rejection && (
         <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 bg-toolbar px-4 py-3">
           <span className="size-2.5 shrink-0" style={{ background: STAGE_META[rejection.stage].color }} aria-hidden />
-          <p className="min-w-0 flex-1 text-[15px]">
+          <p className="min-w-0 flex-1 t-body">
             <strong className="font-semibold">Odrzucony: {STAGE_META[rejection.stage].label}.</strong>{' '}
             {rejection.stage === 'dedupe'
-              ? <>Zachowana kopia: {rejection.keptTitle ?? 'brak w czystym zbiorze'} <span className="t-code text-[12px] text-ink-2">{rejection.keptId}</span></>
+              ? <>Zachowana kopia: {rejection.keptTitle ?? 'brak w czystym zbiorze'}</>
               : rejection.reason}
             {rejection.stage === 'filter-iqr' && rejection.lower_fence != null && (
               <span className="mt-1 block t-table text-ink-2">
-                {formatPLN(rejection.salary_pln_month)} poza płotkami {formatPLN(rejection.lower_fence)} do {formatPLN(rejection.upper_fence)} w grupie {rejection.group_key} · z = {rawNumber.format(rejection.z_score ?? 0)}
+                {formatPLN(rejection.salary_pln_month)}, a płotki grupy {rejection.group_key} to {formatPLN(rejection.lower_fence)} do {formatPLN(rejection.upper_fence)}
               </span>
             )}
           </p>
-          <CodeButton anchor={STAGE_META[rejection.stage].anchor} />
         </div>
       )}
 
-      <div className="mt-4 grid gap-px bg-seam md:grid-cols-2">
-        <Side title="Raw" note="tak, jak przyszło z portalu" className="md:pr-4">
+      <div className="mt-4 grid divide-seam max-md:divide-y md:grid-cols-2 md:divide-x">
+        <Side title="Raw" note="tak, jak przyszło z portalu" className="pb-4 md:pb-0 md:pr-5">
           {raw ? <RawFields raw={raw} /> : <Empty text="Brak surowego rekordu." />}
         </Side>
-        <Side title="Clean" note={clean ? 'po wszystkich etapach' : 'rekord nie przeszedł dalej'} className="pt-4 md:pl-4 md:pt-0">
+        <Side title="Clean" note={clean ? 'po wszystkich etapach' : 'rekord nie przeszedł dalej'} className="pt-4 md:pl-5 md:pt-0">
           {clean ? (
             <>
               <Field label="Kategoria" value={CATEGORY_LABELS[clean.category] ?? clean.category} />
@@ -109,7 +107,7 @@ function Detail({ sample }: { sample: Sample }) {
               <Field label="Region" value={clean.region ? formatRegion(clean.region) : 'brak danych'} />
               <Field
                 label="Płaca"
-                value={<>{formatPLN(clean.salary_pln_month)} / mies.{clean.is_imputed ? <span className="text-ink-2"> · imputowana ({clean.imputation_group})</span> : null}</>}
+                value={<>{formatPLN(clean.salary_pln_month)} / mies.{clean.is_imputed ? <span className="text-ink-2"> · mediana grupy: {groupLabel(clean.imputation_group)}</span> : null}</>}
                 changed
               />
               <Field label="Skille" value={clean.skills.join(', ') || 'brak'} changed={!sameSet(raw?.skills_raw ?? [], clean.skills)} />
@@ -125,7 +123,7 @@ function Detail({ sample }: { sample: Sample }) {
 
       {notes.length > 0 && (
         <div className="mt-4">
-          <h4 className="t-meta">Transformacje w kolejności etapów</h4>
+          <h4 className="t-subhead">Co zmienił pipeline</h4>
           <ol className="mt-2 border-t border-seam">
             {notes.map((n, i) => (
               <li
@@ -135,20 +133,12 @@ function Detail({ sample }: { sample: Sample }) {
                 className={`flex items-center gap-3 border-b border-seam py-2 transition-colors duration-150 ${focus === n.stage ? 'bg-toolbar' : ''}`}
               >
                 <span className="size-2.5 shrink-0" style={{ background: STAGE_META[n.stage].color }} aria-hidden />
-                <span className="w-24 shrink-0 text-[14px] font-semibold">{STAGE_META[n.stage].label}</span>
-                <span className="min-w-0 flex-1 text-[15px]">{n.text}</span>
-                <CodeButton anchor={STAGE_META[n.stage].anchor} />
+                <span className="w-28 shrink-0 t-control">{STAGE_META[n.stage].label}</span>
+                <span className="min-w-0 flex-1 t-body">{n.text}</span>
               </li>
             ))}
           </ol>
         </div>
-      )}
-
-      {raw && (
-        <details className="mt-4 group">
-          <summary className="cursor-pointer text-[14px] font-semibold underline underline-offset-[3px]">Surowy JSON z portalu</summary>
-          <pre className="t-code mt-2 max-h-72 overflow-auto bg-toolbar p-4 text-[12px]">{prettyJson(raw.raw_json)}</pre>
-        </details>
       )}
     </div>
   )
@@ -156,7 +146,7 @@ function Detail({ sample }: { sample: Sample }) {
 
 function Side({ title, note, className = '', children }: { title: string; note: string; className?: string; children: ReactNode }) {
   return (
-    <div className={`bg-paper ${className}`}>
+    <div className={className}>
       <p className="flex items-baseline gap-2 pb-2">
         <span className="t-panel">{title}</span>
         <span className="t-meta">{note}</span>
@@ -201,13 +191,5 @@ function sameText(a: string | null | undefined, b: string): boolean {
 
 function sameSet(a: string[], b: string[]): boolean {
   return a.length === b.length && a.every((x) => b.includes(x))
-}
-
-function prettyJson(text: string): string {
-  try {
-    return JSON.stringify(JSON.parse(text), null, 2)
-  } catch {
-    return text
-  }
 }
 
