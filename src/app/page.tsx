@@ -19,7 +19,7 @@ export default async function Page({ searchParams }: PageProps) {
   const run = ready ? getLatestRun() : null
   const Content = VIEWS[view]
   return (
-    <DashboardShell view={view} filters={filters} run={run}>
+    <DashboardShell view={view} run={run}>
       {run ? <Content filters={filters} regions={regions} run={run} /> : <EmptyState />}
     </DashboardShell>
   )

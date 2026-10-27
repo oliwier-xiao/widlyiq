@@ -22,7 +22,7 @@ export async function POST(request: Request) {
   const mode = requested === 'snapshot' ? 'snapshot' : 'live'
 
   if (state.widlyiqRunning) {
-    return Response.json({ error: 'Pipeline już działa. Poczekaj na koniec bieżącego przebiegu.' }, { status: 409 })
+    return Response.json({ error: 'busy' }, { status: 409 })
   }
   state.widlyiqRunning = true
 
@@ -30,31 +30,40 @@ export async function POST(request: Request) {
     cwd: ROOT,
     env: { ...process.env, PYTHONUNBUFFERED: '1' },
   })
-  const timer = setTimeout(() => child.kill('SIGTERM'), TIMEOUT_MS)
+  let timedOut = false
+  const timer = setTimeout(() => { timedOut = true; child.kill('SIGTERM') }, TIMEOUT_MS)
   let stderrTail = ''
   let sawError = false
 
   const stream = new ReadableStream<Uint8Array>({
     start(controller) {
+      // A failed spawn fires both 'error' and 'close'; the stream must close once and take no writes after that.
+      let closed = false
+      const send = (chunk: Uint8Array) => { if (!closed) controller.enqueue(chunk) }
       const finish = () => {
+        if (closed) return
+        closed = true
         clearTimeout(timer)
         state.widlyiqRunning = false
         controller.close()
       }
       child.stdout.on('data', (chunk: Buffer) => {
         if (chunk.includes('"event": "error"')) sawError = true
-        controller.enqueue(new Uint8Array(chunk))
+        send(new Uint8Array(chunk))
       })
       child.stderr.on('data', (chunk: Buffer) => {
         stderrTail = (stderrTail + chunk.toString('utf8')).slice(-1500)
       })
       child.on('error', (err) => {
-        controller.enqueue(line({ event: 'error', message: `Nie udało się uruchomić Pythona (${pythonBinary()}): ${err.message}` }))
+        sawError = true
+        send(line({ event: 'error', kind: 'spawn', message: err.message }))
         finish()
       })
       child.on('close', (code) => {
-        if (code !== 0 && !sawError) {
-          controller.enqueue(line({ event: 'error', message: stderrTail.trim().split('\n').at(-1) ?? `kod wyjścia ${code}` }))
+        if (timedOut) {
+          send(line({ event: 'error', kind: 'timeout', message: `przerwany po ${TIMEOUT_MS / 60000} min` }))
+        } else if (code !== 0 && !sawError) {
+          send(line({ event: 'error', kind: 'crash', message: stderrTail.trim().split('\n').at(-1) || `kod wyjścia ${code}` }))
         }
         finish()
       })

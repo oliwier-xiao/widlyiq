@@ -6,11 +6,11 @@ import { formatDateTime, formatDuration, formatNumber } from '@/shared/lib/forma
 import { RIBBON_STAGES, STAGE_META, ribbonLabel, ribbonShort, type StageId, type StageSnapshot } from '@/shared/lib/stages'
 
 import { usePipelineRun, useStageFocus } from './PipelineRun'
+import { useViewHref } from './ViewTabs'
 
 export type RibbonRun = {
   stages: StageSnapshot[]
   finishedAt: string
-  etlHref: string
 }
 
 const LOSS_STAGES = new Set<StageId>(['verify-schema', 'dedupe', 'filter-iqr'])
@@ -18,8 +18,11 @@ const LOSS_STAGES = new Set<StageId>(['verify-schema', 'dedupe', 'filter-iqr'])
 export function PipelineRibbon({ run, onEtl }: { run: RibbonRun; onEtl: boolean }) {
   const live = usePipelineRun()
   const { focus, setFocus } = useStageFocus()
+  const href = useViewHref()
   const stored = Object.fromEntries(run.stages.map((s) => [s.stage, s])) as Partial<Record<StageId, StageSnapshot>>
-  const showingLive = live.status === 'running' || live.status === 'error'
+  // Only a run in progress replaces the stored counts. A failed run changed nothing in the database, so once it
+  // stops the ribbon goes back to the last good run instead of freezing half grey.
+  const showingLive = live.status === 'running'
   const source = showingLive ? live.stages : stored
   const raw = source.extract?.rows_out ?? 0
 
@@ -38,7 +41,9 @@ export function PipelineRibbon({ run, onEtl }: { run: RibbonRun; onEtl: boolean 
             <li key={id} className={`relative min-w-0 flex-1 pb-[6px] ${i === 0 ? 'md:flex-[1.08]' : ''}`}>
               <Link
                 // The hash scrolls ETL Lab to this stage's row, from any view.
-                href={`${run.etlHref}#etap-${id}`}
+                href={href('etl', `#etap-${id}`)}
+                // Below xl the cell shows a bare count, so the accessible name carries the stage and what a click does.
+                aria-label={`${snap ? ribbonLabel(snap) : meta.label}. Pokaż etap w ETL Lab`}
                 onPointerEnter={() => setFocus(id)}
                 onPointerLeave={() => setFocus(null)}
                 onFocus={() => setFocus(id)}
@@ -46,10 +51,10 @@ export function PipelineRibbon({ run, onEtl }: { run: RibbonRun; onEtl: boolean 
                 aria-describedby={focused ? 'ribbon-hint' : undefined}
                 className={`relative flex h-full w-full items-center overflow-hidden px-1.5 md:px-3 ${i === 0 ? 'min-[390px]:pl-3 md:pl-5' : ''} ${focused ? 'outline-2 -outline-offset-2 outline-paper' : ''}`}
                 // While a run streams, the cell stays grey and the fill span reveals its colour left to right.
-                style={{ background: snap && live.status === 'idle' ? meta.color : running ? 'transparent' : 'var(--color-pending)' }}
+                style={{ background: snap && !showingLive ? meta.color : running ? 'transparent' : 'var(--color-pending)' }}
               >
                 {running && <span className="ribbon-running absolute inset-0" aria-hidden />}
-                {snap && live.status !== 'idle' && (
+                {snap && showingLive && (
                   <span key={`${snap.rows_out}-${snap.duration_ms}`} className="ribbon-fill absolute inset-0" style={{ background: meta.color }} aria-hidden />
                 )}
                 <span className={`relative truncate t-micro xl:t-table xl:font-semibold ${snap ? 'text-paper' : 'text-ink-2'}`}>
@@ -78,11 +83,11 @@ export function PipelineRibbon({ run, onEtl }: { run: RibbonRun; onEtl: boolean 
         <span className="tnum">
           {live.status === 'running'
             ? `Pipeline działa (${live.mode === 'live' ? 'live' : 'snapshot'})`
-            : live.status === 'error'
-              ? <span className="text-error">Przebieg przerwany: {live.error}</span>
+            : live.status === 'error' && live.error
+              ? <span className="text-error">{live.error.title}</span>
               : `Ostatni przebieg ${formatDateTime(run.finishedAt)}`}
         </span>
-        {!onEtl && <Link href={run.etlHref} className="font-semibold text-ink underline">Pokaż w ETL Lab</Link>}
+        {!onEtl && <Link href={href('etl')} className="font-semibold text-ink underline">{live.status === 'error' ? 'Szczegóły w ETL Lab' : 'Pokaż w ETL Lab'}</Link>}
       </div>
     </div>
   )

@@ -1,13 +1,12 @@
 import Link from 'next/link'
 
-import type { Filters, View } from '@/shared/lib/filters'
+import type { View } from '@/shared/lib/filters'
 
-import { RunPipelineButton } from './RunPipelineButton'
 import { ViewTabs } from './ViewTabs'
 
 type Provenance = { mode: 'live' | 'snapshot'; synthetic: boolean; fallbacks: number } | null
 
-export function AppBar({ view, filters, provenance }: { view: View; filters: Filters; provenance: Provenance }) {
+export function AppBar({ view, provenance }: { view: View; provenance: Provenance }) {
   return (
     <header className="sticky top-0 z-40 bg-carbon text-paper">
       <div className="flex flex-wrap items-center gap-x-5 px-5 lg:h-12 lg:flex-nowrap">
@@ -16,7 +15,7 @@ export function AppBar({ view, filters, provenance }: { view: View; filters: Fil
         </Link>
         {/* Below lg the tabs get their own scrolling row, so all four views stay visible and the bar never overflows. */}
         <div className="order-3 -mx-5 w-[calc(100%+2.5rem)] border-t border-carbon-2 px-3 py-1.5 lg:order-none lg:mx-0 lg:w-auto lg:border-0 lg:p-0">
-          <ViewTabs view={view} filters={filters} />
+          <ViewTabs view={view} />
         </div>
         <div className="ml-auto flex h-12 shrink-0 items-center gap-3">
           {provenance && (
@@ -32,8 +31,6 @@ export function AppBar({ view, filters, provenance }: { view: View; filters: Fil
               <span className="md:hidden">{provenance.synthetic ? 'syntetyczne' : provenance.mode}</span>
             </span>
           )}
-          {/* ETL Lab has its own run toolbar with a mode switch; a second primary button there would compete with it. */}
-          {view !== 'etl' && <RunPipelineButton />}
         </div>
       </div>
     </header>

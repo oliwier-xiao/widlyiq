@@ -40,7 +40,8 @@ export type PipelineEvent =
   | ({ event: 'stage'; status: 'done'; position: number } & StageSnapshot)
   | { event: 'source'; source: string; mode: 'live' | 'snapshot'; reason: string | null; records: number | null; duration_ms: number }
   | { event: 'summary'; run_id: string; duration_ms: number; mode: string }
-  | { event: 'error'; message: string; after_stage?: string }
+  // Python reports its own failures with after_stage; the route handler adds kind for failures around the process.
+  | { event: 'error'; message: string; after_stage?: StageId; kind?: 'spawn' | 'timeout' | 'crash' }
 
 // The wide ribbon names each count, so a bare "140" never has to be decoded from the cell's colour.
 const RIBBON_NAMES: Partial<Record<StageId, string>> = {
