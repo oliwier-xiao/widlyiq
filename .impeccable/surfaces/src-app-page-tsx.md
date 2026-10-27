@@ -21,7 +21,7 @@ OWN-WORLD: Carbon #0F1110 top bar with the active tab as an inverted white plate
 
 STORY: The visitor reads the orange readout (median, GUS multiple, delta to Poland, n), sees their offers in the field, filters, then follows the ribbon into ETL Lab, which explains each stage in plain words.
 
-FIRST VIEWPORT: Carbon bar 48px (wordmark, 4 tabs, provenance, primary "Uruchom pipeline" at right). Pipeline ribbon 36px full width. Filter toolbar. Left about 62%: offer field beeswarm in four seniority lanes plus a rejected lane. Right about 38%: orange readout on top, region ranking below, portals compact at bottom.
+FIRST VIEWPORT: Carbon bar 48px (wordmark, 4 tabs, provenance at right; "Uruchom pipeline" lives only in ETL Lab, user decision 2026-10-27). Pipeline ribbon 36px full width. Filter toolbar. Left about 62%: offer field beeswarm in four seniority lanes plus a rejected lane. Right about 38%: orange readout on top, region ranking below, portals compact at bottom.
 
 FORM: user-pinned variant C lightened with variant A's shell, then reduced to density 6 at the user's request (typeset plus distill); seed:6a5faefb7807a7ed.
 
@@ -44,6 +44,22 @@ The code drawer, every "Kod [anchor]" button, anchors in tooltips, the raw JSON 
 ## Copy pass (clarify, 2026-10-27)
 
 Numbers reconcile across panels: exact percentiles everywhere, portal bias computed per profile from out-of-fold residuals stored per offer (so its counts sum to the readout's n), and footers name any filter a panel ignores. The transform log speaks the UI's Polish. User decision: portal bias follows the filters.
+
+## Hardening (harden, 2026-10-27)
+
+Run failures speak Polish and name a next step (busy, network, HTTP, Python missing, Python error at a named stage, timeout, cut stream), the ribbon resets to the last good run, success leaves a summary. The estimator shows its data support and warns below 10 offers, keeps profile and stack in the URL, and announces only the settled value. Keyboard: skip link, focus rings on selects, search and field lanes, named ribbon cells.
+
+## Adaptation (adapt, 2026-10-27)
+
+Target scene is a laptop and a 1024 to 1366px projector, phones second. Charts choose geometry by their panel's width so chart text stays at 13px or more from 390 to 1920px (it was 8.7px in the Skill Graph scatter and 10px in the field at 768 to 1024px). Skill Graph keeps the matrix on a full row until 1340px. The ribbon names its counts from 768px. Touch screens get 44px targets and tap-to-inspect.
+
+## Layout (layout, 2026-10-27)
+
+Seam grey no longer shows as a cell (odd suggestion spans the row, the Raw vs Clean list fills the detail's height), the record title in Raw vs Clean dropped below the panel title, and the Next dev badge is off because it covered the field's lane labels on a projector.
+
+## Polish (polish, 2026-10-27)
+
+Browser surfaces themed (caret, search clear button), a Polish error boundary for a failed database read with a retry, a missing-library hint for the most common first-run failure, and the field's axis captions no longer touch or clip in the MEDIUM and MOBILE geometries.
 
 ## Unresolved
 
