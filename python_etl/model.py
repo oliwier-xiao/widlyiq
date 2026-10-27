@@ -75,15 +75,24 @@ def ground_truth_check(weights: pd.DataFrame, truth_path: Path) -> dict | None:
     return {"pearson_r": round(r, 3), "skills_compared": len(shared)}
 
 
-def portal_bias(fs: FeatureSet, alpha: float) -> pd.DataFrame:
-    """Out-of-fold residuals per portal: what a portal pays above or below the model for the same profile."""
+def oof_residuals(fs: FeatureSet, alpha: float) -> pd.DataFrame:
+    """Relative out-of-fold residual per observed offer, kept per offer so the dashboard can aggregate it under any filter."""
     observed = fs.matrix[fs.matrix["is_imputed"] == 0].reset_index(drop=True)
     x, y = observed[fs.columns].to_numpy(dtype=float), observed["salary_pln_month"].to_numpy(dtype=float)
     pred = cross_val_predict(RidgeCV(alphas=[alpha]), x, y, cv=KFold(5, shuffle=True, random_state=SEED))
-    rel = (y - pred) / pred
-    frame = pd.DataFrame({"source": observed["source"], "rel": rel})
-    out = frame.groupby("source")["rel"].agg(n="size", median_residual_pct=lambda s: round(float(s.median() * 100), 1))
+    return pd.DataFrame({"offer_id": observed["offer_id"], "source": observed["source"], "cv_residual": (y - pred) / pred})
+
+
+def portal_bias(residuals: pd.DataFrame) -> pd.DataFrame:
+    """Median out-of-fold residual per portal over the whole clean set: what a portal pays above or below the model."""
+    out = residuals.groupby("source")["cv_residual"].agg(n="size", median_residual_pct=lambda s: round(float(s.median() * 100), 1))
     return out.reset_index()
+
+
+def _offers(n: int) -> str:
+    few = n % 10 in (2, 3, 4) and n % 100 not in (12, 13, 14)
+    # Grouped with a no-break space like Intl pl-PL in the dashboard, so the chart and the page print "1 031" alike.
+    return f"{n:,}".replace(",", "\u00a0") + f" {'oferta' if n == 1 else 'oferty' if few else 'ofert'}"
 
 
 def plot_iqr_distribution(clean: pd.DataFrame, rejected: pd.DataFrame, path: Path) -> None:
@@ -125,7 +134,8 @@ def plot_iqr_distribution(clean: pd.DataFrame, rejected: pd.DataFrame, path: Pat
     ax.set_axisbelow(True)
     for side in ("top", "right"):
         ax.spines[side].set_visible(False)
-    ax.set_title(f"Płotki IQR (k = 1,5, na log) · zachowane {len(kept)} · odrzucone {len(out)}",
+    # Imputed offers sit exactly on a group median, so the chart draws only offers that came with a salary range.
+    ax.set_title(f"Płotki IQR (k = 1,5, na log) · {_offers(len(kept))} z widełkami · odrzucone {len(out)}",
                  loc="left", fontsize=13, fontweight="bold", color=INK, pad=12)
     handles = [plt.Line2D([], [], marker="o", ls="", color=GREY, label="oferta"),
                plt.Line2D([], [], marker="o", ls="", color=ORANGE, label="Podkarpackie"),

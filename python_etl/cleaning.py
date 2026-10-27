@@ -21,6 +21,12 @@ MIN_GROUP_N = 12
 TIER_THRESHOLDS = (("S", 3.5), ("A", 2.5), ("B", 1.5), ("C", 0.0))
 CATEGORIES = ("backend", "frontend", "fullstack", "data", "devops", "mobile", "testing", "security", "ai")
 SENIORITY_ORDER = {"junior": 0, "mid": 1, "senior": 2, "lead": 3}
+# The transform log is read in the dashboard, so its notes name values the way the UI does, not by column key.
+CATEGORY_LABELS = {"backend": "Backend", "frontend": "Frontend", "fullstack": "Fullstack", "data": "Data", "devops": "DevOps",
+                   "mobile": "Mobile", "testing": "Testing / QA", "security": "Security", "ai": "AI / ML", "other": "Inne"}
+SENIORITY_LABELS = {"junior": "Junior", "mid": "Mid", "senior": "Senior", "lead": "Lead"}
+CONTRACT_LABELS = {"b2b": "B2B", "uop": "UoP", "other": "inna"}
+GROUP_WORDS = {"category": "kategoria", "seniority": "poziom", "contract": "umowa"}
 
 
 def _fold(text: str | None) -> str:
@@ -136,12 +142,17 @@ def harmonize(raw_records: list[dict]) -> pd.DataFrame:
     # Category is inferred here, not at the tier step, because imputation groups by it.
     missing_cat = df["category"].isna()
     df.loc[missing_cat, "category"] = df.loc[missing_cat].apply(lambda r: _category_from_text(r["title"], r["skills"]), axis=1)
-    df["transform_log"] = _note(df["transform_log"], missing_cat, "classify-tier: kategoria z tytułu i stacku → " + df["category"].astype(str))
+    df["transform_log"] = _note(df["transform_log"], missing_cat, "classify-tier: kategoria z tytułu i stacku → " + df["category"].map(CATEGORY_LABELS).fillna(df["category"].astype(str)))
 
     changed_sen = df["seniority"].notna() & (df["seniority_raw"].map(_fold) != df["seniority"])
-    df["transform_log"] = _note(df["transform_log"], changed_sen, "harmonize: seniority " + df["seniority_raw"].astype(str) + " → " + df["seniority"].astype(str))
+    df["transform_log"] = _note(df["transform_log"], changed_sen, "harmonize: poziom " + df["seniority_raw"].astype(str) + " → " + df["seniority"].map(SENIORITY_LABELS).fillna(""))
+    changed_contract = df["contract"].notna() & (df["contract_raw"].map(_fold) != df["contract"])
+    df["transform_log"] = _note(df["transform_log"], changed_contract, "harmonize: umowa " + df["contract_raw"].astype(str) + " → " + df["contract"].map(CONTRACT_LABELS).fillna(""))
+    # Only the city-derived region is a transformation; a portal that already sent the voivodeship changed nothing.
+    from_city = df["region"].notna() & (df["region"] != "zdalnie") & (df["region_raw"].map(_fold) != df["region"].map(_fold))
+    df["transform_log"] = _note(df["transform_log"], from_city, "harmonize: miasto " + df["city"].astype(str) + " → " + df["region"].astype(str).str.capitalize())
     aliased = df.apply(lambda r: sorted(set(map(str, r["skills_raw"])) - set(r["skills"])), axis=1)
-    df["transform_log"] = _note(df["transform_log"], aliased.map(bool), aliased.map(lambda xs: "harmonize: aliasy skilli " + ", ".join(xs)))
+    df["transform_log"] = _note(df["transform_log"], aliased.map(bool), aliased.map(lambda xs: "harmonize: aliasy technologii " + ", ".join(xs)))
     for col in ("salary_from", "salary_to"):
         df[col] = pd.to_numeric(df[col], errors="coerce")
     return df
@@ -170,7 +181,7 @@ def verify_schema(df: pd.DataFrame, known_currencies: set[str]) -> tuple[pd.Data
 
     missing_level = df["seniority"].isna()
     df.loc[missing_level, "seniority"] = df.loc[missing_level, "title"].map(_seniority_from_title)
-    df["transform_log"] = _note(df["transform_log"], missing_level, "verify-schema: poziom z tytułu → " + df["seniority"].astype(str))
+    df["transform_log"] = _note(df["transform_log"], missing_level, "verify-schema: poziom z tytułu → " + df["seniority"].map(SENIORITY_LABELS).fillna(df["seniority"].astype(str)))
     return df, rejected
 
 
@@ -235,7 +246,7 @@ def impute_median(df: pd.DataFrame) -> pd.DataFrame:
         df.loc[idx, "salary_pln_month"] = fill[filled].round(-1)
         df.loc[idx, "is_imputed"] = 1
         df.loc[idx, "imputation_group"] = " × ".join(keys)
-        df["transform_log"] = _note(df["transform_log"], df.index.isin(idx), "impute-median: mediana grupy " + " × ".join(keys))
+        df["transform_log"] = _note(df["transform_log"], df.index.isin(idx), "impute-median: mediana grupy " + " × ".join(GROUP_WORDS[k] for k in keys))
     return df[df["salary_pln_month"].notna()].copy()
 
 
@@ -263,8 +274,9 @@ def filter_outliers(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     reason[observed & (joined["log_salary"] > hi)] = "IQR: powyżej górnego płotka"
     reason[observed & (joined["log_salary"] < lo)] = "IQR: poniżej dolnego płotka"
     # Z-score catches extreme values in groups whose IQR collapsed to near zero.
-    reason[observed & reason.isna() & (z.abs() > Z_LIMIT)] = f"Z-Score: |z| > {Z_LIMIT:g}"
-    rejected = df[reason.notna()].assign(stage="filter-iqr", reason=reason[reason.notna()])
+    reason[observed & reason.isna() & (z.abs() > Z_LIMIT)] = f"ponad {Z_LIMIT:g} odchylenia standardowe od średniej grupy"
+    # A small group borrows its fences from the coarser key, so the rejected row names the group the fences came from.
+    rejected = df[reason.notna()].assign(stage="filter-iqr", reason=reason[reason.notna()], group_key=df["fence_key"])
     return df[reason.isna()].copy(), rejected
 
 

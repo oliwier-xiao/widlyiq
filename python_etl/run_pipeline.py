@@ -132,7 +132,9 @@ def run(mode: str, paths: dict[str, Path], reporter: Reporter) -> dict:
 
     reporter.start("ml-ridge", len(clean))
     weights, metrics = model.train_ridge(fs)
-    bias = model.portal_bias(fs, metrics["alpha"])
+    residuals = model.oof_residuals(fs, metrics["alpha"])
+    bias = model.portal_bias(residuals)
+    clean = clean.merge(residuals[["offer_id", "cv_residual"]], on="offer_id", how="left")
     truth = model.ground_truth_check(weights, paths["snapshots"] / "ground_truth.json") \
         if all(sources[p].mode == "snapshot" for p in PORTAL_ENDPOINTS) else None
     if truth:

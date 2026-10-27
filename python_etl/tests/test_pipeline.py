@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from python_etl import cleaning, features
+from python_etl import cleaning, features, model
 from python_etl.ingestors import parse_nbp_xml, read_gus_xlsx
 
 SNAPSHOTS = Path(__file__).resolve().parents[1] / "snapshots"
@@ -94,6 +94,29 @@ def test_cooccurrence_diagonal_equals_skill_demand():
     off = pairs[(pairs["skill_a"] == "Python") & (pairs["skill_b"] == "SQL")].iloc[0]
     assert off["count"] == 9
 
+
+
+def test_out_of_fold_residuals_cover_observed_offers_and_feed_portal_bias():
+    rng = np.random.default_rng(3)
+    n = 40
+    df = pd.DataFrame({"offer_id": [f"o{i}" for i in range(n)], "source": ["nofluffjobs", "justjoinit"] * (n // 2),
+                       "skills": [["Python", "SQL"] if i % 3 else ["Python"] for i in range(n)],
+                       "salary_pln_month": rng.normal(20000, 2000, n).round(-1), "is_imputed": [1] + [0] * (n - 1),
+                       "seniority": "mid", "category": "data", "contract": "b2b", "region": "podkarpackie",
+                       "gus_wage": 8195.62, "seniority_rank": 1})
+    old_min = features.MIN_SKILL_COUNT
+    features.MIN_SKILL_COUNT = 1
+    try:
+        fs = features.build_features(df)
+    finally:
+        features.MIN_SKILL_COUNT = old_min
+    residuals = model.oof_residuals(fs, alpha=10.0)
+    # An imputed salary is a group median, so it has no residual of its own and never reaches the bias.
+    assert set(residuals["offer_id"]) == set(df["offer_id"][1:])
+    bias = model.portal_bias(residuals).set_index("source")
+    for source, group in residuals.groupby("source"):
+        assert bias.loc[source, "n"] == len(group)
+        assert bias.loc[source, "median_residual_pct"] == pytest.approx(round(group["cv_residual"].median() * 100, 1))
 
 def test_snapshot_sources_parse():
     table = parse_nbp_xml((SNAPSHOTS / "nbp_table_a.xml").read_text(encoding="utf-8"))
