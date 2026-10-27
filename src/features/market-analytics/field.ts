@@ -17,8 +17,10 @@ export type Geometry = {
  */
 export const DESKTOP: Geometry = { width: 900, laneHeight: 214, labelWidth: 104, plotRight: 752, rejLeft: 784, rejRight: 888, axis: 46,
   dotCenter: 124, spread: 60, maxRadius: 3.4, tickStep: 5000, rejCols: 3, rejGap: 11, compact: false, meta: 14.5, tick: 14.5, name: 18, p50: 15.5 }
-export const MEDIUM: Geometry = { width: 620, laneHeight: 196, labelWidth: 100, plotRight: 506, rejLeft: 530, rejRight: 612, axis: 46,
-  dotCenter: 116, spread: 54, maxRadius: 3.1, tickStep: 10000, rejCols: 2, rejGap: 10, compact: false, meta: 14, tick: 14, name: 17, p50: 15 }
+// The rejected lane needs about 96 units for "nisko" and "wysoko" side by side, and the last tick label 28 units of
+// air before the lane's divider, so MEDIUM is wider than its plot alone would need.
+export const MEDIUM: Geometry = { width: 640, laneHeight: 196, labelWidth: 100, plotRight: 500, rejLeft: 540, rejRight: 636, axis: 46,
+  dotCenter: 116, spread: 54, maxRadius: 3.1, tickStep: 10000, rejCols: 2, rejGap: 10, compact: false, meta: 14.5, tick: 14.5, name: 17, p50: 15.5 }
 // 80 units of label column fit "452 oferty" at 14 under the level name without touching the leftmost dots.
 export const MOBILE: Geometry = { width: 400, laneHeight: 150, labelWidth: 80, plotRight: 322, rejLeft: 342, rejRight: 396, axis: 46,
   dotCenter: 92, spread: 38, maxRadius: 2.6, tickStep: 10000, rejCols: 2, rejGap: 9, compact: true, meta: 14, tick: 14, name: 16, p50: 15 }

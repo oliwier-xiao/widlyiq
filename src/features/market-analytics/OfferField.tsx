@@ -99,8 +99,9 @@ export function OfferField({ layout, filters }: { layout: FieldLayout; filters: 
         ))}
         <text x={g.plotRight} y={plotBottom + 40} textAnchor="end" fontSize={META} className="fill-ink-2">{g.compact ? 'tys. zł / mies.' : 'zł / mies.'}</text>
         <line x1={g.rejLeft - 12} x2={g.rejLeft - 12} y1={0} y2={plotBottom} className="stroke-seam" strokeWidth={1} />
-        <text x={(g.rejLeft + g.rejRight) / 2} y={plotBottom + 40} textAnchor="middle" fontSize={META} className="fill-stage-iqr font-semibold">
-          {g.compact ? 'Odrz. IQR' : 'Odrzucone IQR'}
+        {/* End-anchored to the chart's edge so the caption never clips; a phone keeps "IQR" and lets the legend name it. */}
+        <text x={width - 2} y={plotBottom + 40} textAnchor="end" fontSize={META} className="fill-stage-iqr font-semibold">
+          {g.compact ? 'IQR' : 'Odrzucone IQR'}
         </text>
         {!g.compact && (
           <>
