@@ -275,7 +275,7 @@ A near-neutral, faintly green-grey world with one hot signal and a closed set of
 - **Micro** (`t-micro`, 600, 13px, wdth 90, tabular): the floor. Ribbon counts on narrow screens, the provenance chip, labels inside the readout.
 - **Figure** (`t-figure`, 800, 24px, wdth 88) and **Figure small** (`t-figure-sm`, 700, 20px, wdth 85): secondary numbers in the readouts and model panel.
 
-The wordmark is 19px, weight 800, wdth 125, -0.01em. SVG chart text sizes are set in chart coordinates and scale with the chart.
+The wordmark is 19px, weight 800, wdth 125, -0.01em. SVG chart text sizes are set in chart coordinates with the `fontSize` attribute and scale with the chart; chart text takes `t-chart` (the table's width and figures without a size), never a sized role, because a CSS size would override the chart's own.
 
 ### Named Rules
 **The Role Not Size Rule.** Type is applied by role (readout, headline, panel, subhead, body, control, table, meta, micro). Retune a role; never hand-set a new size for one screen.
@@ -284,7 +284,9 @@ The wordmark is 19px, weight 800, wdth 125, -0.01em. SVG chart text sizes are se
 
 **The Width Axis Rule.** Hierarchy moves on width as much as weight: numbers condense, titles widen. Do not add a second sans family.
 
-**The Polish Numerals Rule.** Every number goes through the pl-PL formatters: always-on grouping with a narrow space ("8 196"), decimal comma, true minus "−", "zł" after the value, "×" for GUS multiples, "brak danych" for missing values. All numerals in tables and readouts are tabular.
+**The Polish Numerals Rule.** Every number goes through the pl-PL formatters: always-on grouping with a narrow space ("8 196"), decimal comma, true minus "−", "zł" after the value, "×" for GUS multiples, "brak danych" for missing values. Every counted noun goes through `plural()` for its three Polish forms ("1 oferta", "522 oferty", "1 307 ofert"); zero reads as "brak" or "nie ma", never "0 ofert, za mało". All numerals in tables and readouts are tabular.
+
+**The One Number Rule.** A figure that appears in two panels reads the same in both: percentiles are shown exactly (17 675, never 17 700) in the headline, the field labels and the readout. Panels on one view count the same sample, the offers with a salary range in the chosen profile, so the portal counts add up to the readout's n. A panel that ignores one of the filters says so in its footer ("Filtr portalu nie dotyczy tego panelu", "macierz dla całej Polski"). Text the pipeline writes for the UI, such as the transform log, uses the UI's words ("poziom", "umowa", "Lead", "UoP"), never column keys.
 
 ## Layout
 
@@ -337,16 +339,16 @@ Square. Every corner in the system is 0px: buttons, selects, chips, tabs, panels
 - **Below lg:** tabs move to a second, horizontally scrolling row under a carbon-2 hairline, so the bar never overflows at tablet width.
 
 ### Pipeline Ribbon (signature)
-Seven flat stage segments with 2px gaps on toolbar grey, each filled with its stage colour and a paper count label ("1 307 surowych", "−78 duplikaty"); below xl the labels shrink to counts. Loss stages carry a notch in the 6px row below, its width scaled to the share of records dropped. Hover or focus outlines the segment in paper, highlights the same stage in the ETL Lab list, and shows a carbon tooltip with the stage name, what it does, rows in and out and duration. A click opens ETL Lab scrolled to that stage. During a live run, pending cells are grey (pending, with pending-stripe for the running stripes), the running cell shows 45° moving stripes, and each finished cell fills left to right (320ms ease-out). At rest, nothing animates.
+Seven flat stage segments with 2px gaps on toolbar grey, each filled with its stage colour and a paper label that names its count ("Surowe 1 307", "Duplikaty −78", "Imputacja 140"); below xl the labels shrink to the counts alone. Only removals carry a sign. Loss stages carry a notch in the 6px row below, its width scaled to the share of records dropped. Hover or focus outlines the segment in paper, highlights the same stage in the ETL Lab list, and shows a carbon tooltip with the stage name, what it does, rows in and out and duration. A click opens ETL Lab scrolled to that stage. During a live run, pending cells are grey (pending, with pending-stripe for the running stripes), the running cell shows 45° moving stripes, and each finished cell fills left to right (320ms ease-out). At rest, nothing animates.
 
 ### Answer Readout (signature)
-An orange field with the profile as a title, the 88px readout with its unit, a sentence of basis (n and imputed offers), and a two-cell grid of secondary figures divided by readout rules. Secondary text uses signal-sub-ink.
+An orange field with the profile as a title, the 88px readout with its unit, a sentence of basis (n and imputed offers), and a grid of secondary figures divided by readout rules (signal-rule). Secondary text uses signal-sub-ink, in the market and the estimator readout alike. The estimator's three figures stack into one column between lg and xl, where side by side they would wrap mid-number.
 
 ### Offer Field (signature)
-A beeswarm of offers on a salary axis in four seniority lanes plus a rejected lane. Poland in grey dots at 70%, the selected region in signal dots with a paper stroke, rejected offers as hollow IQR Red rings. The selected lane label is a carbon plate; the regional P50 is a small signal bar with carbon stroke. Dots glide 200ms ease-out to new positions on a filter change.
+A beeswarm of offers on a salary axis in four seniority lanes plus a rejected lane, drawn in one of three geometries so chart text stays near its set size: MOBILE below md, MEDIUM from lg to 1359px (the two-column laptop and projector width), DESKTOP otherwise. Poland in grey dots at 70%, the selected region in signal dots with a paper stroke, rejected offers as hollow IQR Red rings. The selected lane label is a carbon plate; under each lane label sits its offer count ("279 ofert") and, with a region chosen, a signal dot with the region's count on a second line. The regional P50 is a small signal bar with carbon stroke. Dots glide 200ms ease-out to new positions on a filter change.
 
 ### Ranking and tables
-Rows in table type on seam hairlines, grey bars, hover toolbar grey. The selected region inverts the full row to carbon with a signal bar; the Polska reference row uses a dashed ink-2 rule instead of a bar.
+Rows in table type on seam hairlines, grey bars, hover toolbar grey. The selected region inverts the full row to carbon with a signal bar; the Polska reference row uses a dashed ink-2 rule instead of a bar. A row without a median leaves the multiple blank and says "brak ofert" or "za mało ofert"; when no region has a median, the list collapses to one sentence. The portal bias table follows the profile filters except the portal filter and shows "za mało ofert" below 10 offers.
 
 ## Do's and Don'ts
 

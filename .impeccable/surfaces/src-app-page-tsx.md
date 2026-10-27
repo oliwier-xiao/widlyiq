@@ -35,11 +35,15 @@ Pipeline ribbon: during a live run, segments fill left to right as stages stream
 
 The approved sketch is too dense. Build at density about 6, not 8: one job per panel, one primary action, details behind "Pokaż w ETL Lab" and expanders.
 Type roles (Archivo, ratio about 1.2), retuned 2026-10-27 after the typeset pass for projector legibility: readout 88px wdth 70 wght 800 tabular; page headline 21 to 24px wdth 100 wght 650; panel title 19px wdth 112 wght 700; subhead 16px 700; body 16px; control 15px 600; table 15px wdth 84 tabular; meta 14px at >= 7:1 contrast; micro 13px is the floor.
-Cuts from the sketch: ribbon carries counts only (labels on hover and in ETL Lab); Polska percentile labels only P50, full P10/P50/P90 only on the selected lane; rejected lane shows a count, not ranges; readout drops the P10 to P90 range (the field shows it); region ranking shows top 5 plus Polska plus Podkarpackie with "Pokaż wszystkie 16"; provenance stated once in the bar and once per chart footer; no search field and no theme toggle in the first viewport.
+Cuts from the sketch: below xl the ribbon carries counts only (labels on hover and in ETL Lab), from xl each count is named ("Duplikaty −78"); Polska percentile labels only P50, full P10/P50/P90 only on the selected lane; rejected lane shows a count, not ranges; readout drops the P10 to P90 range (the field shows it); region ranking shows top 5 plus Polska plus Podkarpackie with "Pokaż wszystkie 16"; provenance stated once in the bar and once per chart footer; no search field and no theme toggle in the first viewport.
 
 ## Code removed from the UI (user decision, 2026-10-27)
 
 The code drawer, every "Kod [anchor]" button, anchors in tooltips, the raw JSON dump, internal record ids and column names in copy are gone: the app must be practical, not a show for the evaluator. Panels carry one short subtitle; marks are explained by legends.
+
+## Copy pass (clarify, 2026-10-27)
+
+Numbers reconcile across panels: exact percentiles everywhere, portal bias computed per profile from out-of-fold residuals stored per offer (so its counts sum to the readout's n), and footers name any filter a panel ignores. The transform log speaks the UI's Polish. User decision: portal bias follows the filters.
 
 ## Unresolved
 
